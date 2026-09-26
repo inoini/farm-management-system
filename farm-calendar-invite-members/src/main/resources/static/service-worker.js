@@ -1,4 +1,4 @@
-const CACHE_NAME = "farm-system-20260925-4";
+const CACHE_NAME = "farm-system-20260926-members-ui-1";
 
 const STATIC_ASSETS = [
     "/css/calendar-home.css?v=20260925-4",

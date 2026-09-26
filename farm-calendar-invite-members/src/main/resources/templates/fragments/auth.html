@@ -3,7 +3,6 @@
 <body>
 <div th:fragment="accountBar" class="account-bar" aria-label="ログイン情報">
     <span class="account-user">👤 <strong th:text="${loginUserName}">ユーザー</strong><small th:text="${loginUserEmail}">mail@example.com</small></span>
-    <a class="account-members" th:href="@{/farm/members}" href="/farm/members">農場メンバー</a>
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="account-logout">ログアウト</button>
     </form>

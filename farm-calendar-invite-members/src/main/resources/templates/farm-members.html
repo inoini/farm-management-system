@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>農場メンバー | 農業管理システム</title>
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-invite-1')}" href="/css/auth.css?v=20260926-invite-1">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-members-ui-1')}" href="/css/auth.css?v=20260926-members-ui-1">
 </head>
 <body class="members-page">
 <main class="members-shell">
@@ -51,10 +51,10 @@
                 <thead><tr><th>表示名</th><th>ユーザー名</th><th>メール</th><th>権限</th></tr></thead>
                 <tbody>
                 <tr th:each="member : ${members}">
-                    <td th:text="${member.displayName}">名前</td>
-                    <td th:text="${member.username}">username</td>
-                    <td th:text="${member.email}">mail@example.com</td>
-                    <td th:text="${member.farmRole == 'OWNER' ? '管理者' : 'メンバー'}">メンバー</td>
+                    <td data-label="表示名" th:text="${member.displayName}">名前</td>
+                    <td data-label="ユーザー名" th:text="${member.username}">username</td>
+                    <td data-label="メール" th:text="${member.email}">mail@example.com</td>
+                    <td data-label="権限" th:text="${member.farmRole == 'OWNER' ? '管理者' : 'メンバー'}">メンバー</td>
                 </tr>
                 </tbody>
             </table>

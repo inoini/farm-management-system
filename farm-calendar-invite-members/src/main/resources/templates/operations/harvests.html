@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-members-ui-1')}" href="/css/auth.css?v=20260926-members-ui-1">
 </head>
 <body class="dashboard-body calendar-screen operations-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div><button id="menuBtn" class="menu-btn" type="button" aria-label="メニューを開閉" aria-controls="mainSidebar" aria-expanded="false">☰</button><div class="app-layout"><aside th:replace="~{fragments/operations-sidebar :: sidebar('harvests')}"></aside><main class="main-content"><div class="operations-page">

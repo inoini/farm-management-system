@@ -86,7 +86,7 @@
     <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260925-4')}" href="/css/calendar-home.css?v=20260925-4">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-members-ui-1')}" href="/css/auth.css?v=20260926-members-ui-1">
 </head>
 
 <body class="dashboard-body calendar-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -144,6 +144,10 @@
             <a th:href="@{/reports}" href="/reports">
                 <span aria-hidden="true">📊</span>
                 <span>分析・レポート</span>
+            </a>
+            <a th:href="@{/farm/members}" href="/farm/members">
+                <span aria-hidden="true">👤</span>
+                <span>農場メンバー</span>
             </a>
             <a th:href="@{/settings}" href="/settings">
                 <span aria-hidden="true">⚙</span>

@@ -55,10 +55,22 @@
 .login-message { padding: 12px; border-radius: 7px; background: #383b43; }
 .login-message.error { color: #ffb3ba; background: #542d36; }
 .login-page :focus-visible, .account-bar :focus-visible { outline: 3px solid #bcc2ff; outline-offset: 3px; }
+@media (max-width: 700px) {
+    .account-bar {
+        top: 8px;
+        right: 8px;
+        max-width: calc(100vw - 70px);
+        gap: 6px;
+        padding: 5px 6px 5px 9px;
+        font-size: 12px;
+        flex-wrap: nowrap;
+    }
+    .account-user { max-width: 138px; flex-wrap: nowrap; }
+    .account-user small { display: none; }
+    .account-logout { min-height: 30px; padding: 5px 9px; }
+}
 @media (max-width: 480px) {
     .login-card { padding: 24px 20px; }
-    .account-bar { top: 8px; right: 8px; max-width: calc(100vw - 16px); font-size: 12px; }
-    .account-user { max-width: 120px; }
 }
 
 .login-message.success { color: #c9f7d5; background: #244a31; }
@@ -91,7 +103,7 @@
 .members-header h1 { margin: 2px 0 8px; }
 .members-header p { margin: 0; line-height: 1.7; }
 .members-kicker { font-size: .82rem; font-weight: 800; color: #3c7650; }
-.members-back, .account-members { display: inline-flex; align-items: center; text-decoration: none; font-weight: 700; }
+.members-back { display: inline-flex; align-items: center; text-decoration: none; font-weight: 700; }
 .members-back { background: white; color: #285b39; border: 1px solid #cbd8ce; padding: 10px 14px; border-radius: 10px; white-space: nowrap; }
 .members-card { background: white; border: 1px solid #dfe8e1; border-radius: 16px; padding: 20px; margin: 16px 0; box-shadow: 0 8px 24px rgba(21, 60, 34, .06); }
 .members-card h2 { margin-top: 0; }
@@ -106,10 +118,26 @@
 .member-table { width: 100%; border-collapse: collapse; min-width: 620px; }
 .member-table th, .member-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e6ece7; }
 .member-table th { background: #f6f9f6; }
-.account-members { color: inherit; margin-left: auto; margin-right: 10px; }
 @media (max-width: 700px) {
   .members-header { flex-direction: column; }
   .members-back { width: 100%; justify-content: center; box-sizing: border-box; }
-  .account-bar { flex-wrap: wrap; }
-  .account-members { order: 3; width: 100%; justify-content: center; margin: 6px 0 0; }
 }
+
+
+/* 2026-09-26: farm members live on their own page; mobile list becomes cards. */
+@media (max-width: 700px) {
+    .members-shell { width: min(100% - 20px, 980px); padding-top: 18px; }
+    .members-card { padding: 16px; border-radius: 14px; }
+    .invite-actions { display: grid; grid-template-columns: 1fr; }
+    .invite-actions form, .invite-actions button { width: 100%; }
+    .member-table-wrap { overflow: visible; }
+    .member-table { min-width: 0; border-collapse: separate; border-spacing: 0 10px; }
+    .member-table thead { display: none; }
+    .member-table tbody, .member-table tr, .member-table td { display: block; width: 100%; box-sizing: border-box; }
+    .member-table tr { padding: 10px 12px; border: 1px solid #dfe8e1; border-radius: 12px; background: #fff; }
+    .member-table td { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 7px 0; border-bottom: 1px solid #edf1ed; overflow-wrap: anywhere; }
+    .member-table td:last-child { border-bottom: 0; }
+    .member-table td::before { content: attr(data-label); color: #56705e; font-weight: 800; }
+}
+
+.login-build-version { margin: 18px 0 0; text-align: center; color: #8f96a3; font-size: 11px; }

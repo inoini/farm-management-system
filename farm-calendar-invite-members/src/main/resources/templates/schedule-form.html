@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>作業予定の登録 | 農業管理システム</title>
+    <link rel="stylesheet"
+          th:href="@{/css/style.css(v='20260922-1')}"
+          href="/css/style.css?v=20260922-1">
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="form-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<header class="top-header">
+    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップページへ戻る">
+        <div class="logo-icon" aria-hidden="true">🌱</div>
+        <div>
+            <h1>農業管理システム</h1>
+            <p>Smart Farm Management</p>
+        </div>
+    </a>
+</header>
+
+<main class="app-page-shell schedule-entry-page">
+    <header class="app-page-header">
+        <div>
+            <p class="app-eyebrow">WORK SCHEDULE</p>
+            <h1>📅 作業予定を登録</h1>
+            <p>日時・担当者・圃場・作物・使用資材をまとめて記録します。</p>
+        </div>
+        <a class="app-back-button" th:href="@{/calendar}" href="/calendar">← カレンダーへ戻る</a>
+    </header>
+
+    <section class="app-panel" aria-labelledby="schedule-form-title">
+        <div class="app-panel-heading">
+            <div>
+                <p class="section-kicker">NEW WORK</p>
+                <h2 id="schedule-form-title">作業内容</h2>
+                <p><span class="required-badge">必須</span>の項目を入力してください。</p>
+            </div>
+        </div>
+
+        <form class="standalone-form"
+              th:action="@{/save}"
+              th:object="${schedule}"
+              method="post">
+            <div class="schedule-form-grid">
+                <div class="app-field">
+                    <label for="date">日付 <span class="required-badge">必須</span></label>
+                    <input id="date" type="date" th:field="*{date}" required>
+                </div>
+
+                <div class="app-field">
+                    <label for="userName">担当者 <span class="optional-badge">任意</span></label>
+                    <input id="userName" type="text" th:field="*{userName}"
+                           maxlength="100" placeholder="担当者名">
+                </div>
+
+                <div class="app-field">
+                    <label for="startTime">開始時間 <span class="required-badge">必須</span></label>
+                    <input id="startTime" type="time" th:field="*{startTime}" step="300" required>
+                </div>
+
+                <div class="app-field">
+                    <label for="endTime">終了時間 <span class="required-badge">必須</span></label>
+                    <input id="endTime" type="time" th:field="*{endTime}" step="300" required>
+                </div>
+
+                <div class="app-field schedule-field-wide">
+                    <label for="schedule">作業内容 <span class="required-badge">必須</span></label>
+                    <textarea id="schedule" th:field="*{schedule}" maxlength="1000"
+                              placeholder="例：第1圃場の除草作業" required></textarea>
+                </div>
+
+                <div class="app-field">
+                    <label for="fieldName">圃場名</label>
+                    <input id="fieldName" type="text" th:field="*{fieldName}"
+                           maxlength="100" placeholder="例：第1圃場">
+                </div>
+
+                <div class="app-field">
+                    <label for="cropName">作物</label>
+                    <select id="cropName" th:field="*{cropName}">
+                        <option value="">選択してください</option>
+                        <option value="さつまいも">さつまいも</option>
+                        <option value="じゃがいも">じゃがいも</option>
+                        <option value="米">米</option>
+                        <option value="野菜">野菜</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="workType">作業種類</label>
+                    <select id="workType" th:field="*{workType}">
+                        <option value="">選択してください</option>
+                        <option value="耕起">耕起</option>
+                        <option value="畝立て">畝立て</option>
+                        <option value="植付">植付</option>
+                        <option value="管理">管理</option>
+                        <option value="除草">除草</option>
+                        <option value="防除">防除</option>
+                        <option value="収穫">収穫</option>
+                        <option value="出荷">出荷</option>
+                    </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="itemName">使用資材</label>
+                    <select id="itemName" th:field="*{itemName}">
+                        <option value="">選択してください</option>
+                        <option value="肥料">肥料</option>
+                        <option value="農薬">農薬</option>
+                        <option value="種">種</option>
+                        <option value="苗">苗</option>
+                    </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="useQuantity">使用数量</label>
+                    <input id="useQuantity" type="number" th:field="*{useQuantity}"
+                           min="0" inputmode="numeric" placeholder="0">
+                </div>
+
+                <div class="app-field schedule-field-wide">
+                    <label for="memo">メモ <span class="optional-badge">任意</span></label>
+                    <textarea id="memo" th:field="*{memo}" maxlength="1000"
+                              placeholder="天候、使用資材、注意事項など"></textarea>
+                </div>
+            </div>
+
+            <div class="app-form-actions">
+                <a class="app-secondary-button" th:href="@{/calendar}" href="/calendar">キャンセル</a>
+                <button class="app-primary-button" type="submit">作業予定を登録する</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

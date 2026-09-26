@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>経営管理 | 農業管理システム</title>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 320px;
+            margin: 0;
+            background: var(--discord-surface-raised, #f3f7f3);
+            color: var(--discord-text, #263229);
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page {
+            width: min(1240px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 30px 0 40px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 18px;
+            padding: 26px 28px;
+            border: 1px solid var(--discord-border, #dfe8e0);
+            border-radius: 18px;
+            background: var(--discord-surface, #ffffff);
+            box-shadow: 0 8px 24px var(--discord-shadow, rgba(34, 73, 39, 0.08));
+        }
+
+        .eyebrow {
+            margin: 0 0 5px;
+            color: var(--discord-text-accent, #2d7938);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+        }
+
+        h1 {
+            margin: 0 0 7px;
+            color: var(--discord-text-accent, #245d2b);
+            font-size: clamp(27px, 3vw, 36px);
+        }
+
+        .description {
+            margin: 0;
+            color: var(--discord-text-muted, #69736b);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .back-button {
+            display: inline-flex;
+            flex-shrink: 0;
+            min-height: 44px;
+            padding: 10px 16px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--discord-border, #a9b9ab);
+            border-radius: 9px;
+            background: var(--discord-surface, #ffffff);
+            color: var(--discord-text-accent, #2f6535);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 22px;
+            padding: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--discord-border, #dfe8e0);
+            border-radius: 12px;
+            background: var(--discord-surface, #ffffff);
+        }
+
+        .tabs a {
+            display: inline-flex;
+            flex: 1 0 auto;
+            min-height: 40px;
+            padding: 9px 14px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: var(--discord-text-muted, #657168);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tabs a.active {
+            background: var(--discord-accent, #286d32);
+            color: var(--discord-text, #ffffff);
+        }
+
+        .menu-heading {
+            margin-bottom: 14px;
+            padding: 0 3px;
+        }
+
+        .menu-heading h2 {
+            margin: 0 0 5px;
+            color: var(--discord-text, #294c2e);
+            font-size: 21px;
+        }
+
+        .menu-heading p {
+            margin: 0;
+            color: var(--discord-text-muted, #748078);
+            font-size: 13px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .menu-card {
+            display: flex;
+            min-height: 190px;
+            padding: 23px;
+            flex-direction: column;
+            border: 1px solid var(--discord-border, #dfe7e0);
+            border-top: 4px solid;
+            border-radius: 15px;
+            background: var(--discord-surface, #ffffff);
+            box-shadow: 0 5px 18px var(--discord-shadow, rgba(38, 77, 42, 0.06));
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .menu-card:hover {
+            box-shadow: 0 10px 25px var(--discord-shadow, rgba(38, 77, 42, 0.12));
+            transform: translateY(-3px);
+        }
+
+        .menu-card small {
+            margin-bottom: 10px;
+            color: var(--discord-text-muted, #849087);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+        }
+
+        .menu-card strong {
+            margin-bottom: 9px;
+            color: var(--discord-text, #294c2e);
+            font-size: 21px;
+        }
+
+        .menu-card p {
+            margin: 0;
+            color: var(--discord-text-muted, #69736b);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .menu-card span {
+            margin-top: auto;
+            padding-top: 16px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .expenses-card {
+            border-top-color: var(--discord-border, #d48631);
+            color: var(--discord-text-warning, #94520e);
+        }
+
+        .sales-card {
+            border-top-color: var(--discord-border, #4f9b5a);
+            color: var(--discord-text-accent, #2d7337);
+        }
+
+        .profit-card {
+            border-top-color: var(--discord-border, #3a7dae);
+            color: var(--discord-text-accent, #286894);
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .panel {
+            padding: 24px;
+            border: 1px solid var(--discord-border, #dfe7e0);
+            border-radius: 15px;
+            background: var(--discord-surface, #ffffff);
+            box-shadow: 0 5px 18px var(--discord-shadow, rgba(38, 77, 42, 0.06));
+        }
+
+        .section-label {
+            margin: 0 0 5px;
+            color: var(--discord-text-muted, #7b897e);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+        }
+
+        .panel h2 {
+            margin: 0;
+            color: var(--discord-text, #294c2e);
+            font-size: 20px;
+        }
+
+        .check-list {
+            display: grid;
+            gap: 10px;
+            margin: 16px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .check-list li {
+            position: relative;
+            padding-left: 20px;
+            color: var(--discord-text-muted, #59665c);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .check-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--discord-text-accent, #2e7d32);
+            font-weight: 900;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 24px 4px 0;
+            color: var(--discord-text-muted, #748078);
+            font-size: 12px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer a {
+            color: var(--discord-text-accent, #32683a);
+            font-weight: 800;
+        }
+
+        @media (max-width: 900px) {
+            .menu-grid,
+            .support-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-card {
+                min-height: 0;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 20px, 1240px);
+                padding-top: 10px;
+            }
+
+            .header {
+                align-items: stretch;
+                padding: 20px;
+                flex-direction: column;
+            }
+
+            .back-button {
+                width: 100%;
+            }
+
+            .menu-card,
+            .panel {
+                padding: 19px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="management-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="page">
+
+    <header class="header">
+        <div>
+            <p class="eyebrow">BUSINESS MANAGEMENT</p>
+            <h1>経営管理</h1>
+            <p class="description">
+                売上・経費・収支を一元管理し、農園の経営状況を確認します。
+            </p>
+        </div>
+
+        <a class="back-button app-home-button" th:href="@{/}" href="/">
+            <span aria-hidden="true">🏠</span>
+            <span>トップページに戻る</span>
+        </a>
+    </header>
+
+		<nav class="tabs" aria-label="経営管理メニュー">
+    <a class="active"
+       th:href="@{/management}"
+       href="/management"
+       aria-current="page">
+        経営メニュー
+    </a>
+
+    <a th:href="@{/expenses}" href="/expenses">
+        経費管理
+    </a>
+
+    <a th:href="@{/sales}" href="/sales">
+        売上管理
+    </a>
+
+    <a th:href="@{/profit}" href="/profit">
+        収支確認
+    </a>
+</nav>
+
+    <section class="menu-heading">
+        <h2>経営メニュー</h2>
+        <p>確認・入力したい業務を選択してください。</p>
+    </section>
+
+    <nav class="menu-grid" aria-label="経営業務">
+
+        <a class="menu-card expenses-card"
+           th:href="@{/expenses}"
+           href="/expenses">
+
+            <small>EXPENSES</small>
+            <strong>経費管理</strong>
+
+            <p>
+                肥料・農薬・燃料・資材・機械など、
+                農園運営にかかった支出を登録します。
+            </p>
+
+            <span>経費管理を開く →</span>
+        </a>
+
+        <a class="menu-card sales-card"
+           th:href="@{/sales}"
+           href="/sales">
+
+            <small>SALES</small>
+            <strong>売上管理</strong>
+
+            <p>
+                販売日・作物・金額・メモを登録し、
+                農産物の販売実績を確認します。
+            </p>
+
+            <span>売上管理を開く →</span>
+        </a>
+
+        <a class="menu-card profit-card"
+           th:href="@{/profit}"
+           href="/profit">
+
+            <small>PROFIT &amp; LOSS</small>
+            <strong>収支確認</strong>
+
+            <p>
+                売上合計・経費合計・利益と、
+                それぞれの登録明細を確認します。
+            </p>
+
+            <span>収支確認を開く →</span>
+        </a>
+    </nav>
+
+    <div class="support-grid">
+
+        <section class="panel">
+            <p class="section-label">MONTHLY WORKFLOW</p>
+            <h2>月次確認の流れ</h2>
+
+            <ul class="check-list">
+                <li>販売伝票を確認して売上を登録する</li>
+                <li>領収書・請求書を確認して経費を登録する</li>
+                <li>収支確認で利益と入力漏れを確認する</li>
+            </ul>
+        </section>
+
+        <section class="panel">
+            <p class="section-label">CHECK POINTS</p>
+            <h2>入力時の確認事項</h2>
+
+            <ul class="check-list">
+                <li>売上日・支払日は実際の日付を入力する</li>
+                <li>金額の税込・税抜の扱いを統一する</li>
+                <li>月末に伝票と登録内容を照合する</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>農業管理システム / 経営管理</p>
+    </footer>
+
+</main>
+</body>
+</html>

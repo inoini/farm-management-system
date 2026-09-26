@@ -1,0 +1,699 @@
+/* ==========================================
+   経営管理 共通サブページ
+========================================== */
+
+.management-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 20px;
+    padding: 7px;
+    overflow-x: auto;
+    border: 1px solid var(--discord-border, #dfe8e0);
+    border-radius: 13px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: 0 4px 16px var(--discord-shadow, rgba(34, 73, 39, 0.05));
+    scrollbar-width: thin;
+}
+
+.management-tabs a {
+    display: inline-flex;
+    flex: 1 0 auto;
+    min-height: 42px;
+    padding: 9px 15px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    color: var(--discord-text-muted, #657168);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.management-tabs a:hover {
+    background: var(--discord-surface-raised, #f0f7f1);
+    color: var(--discord-text-accent, #245d2b);
+}
+
+.management-tabs a.is-active {
+    background: var(--discord-accent, #286d32);
+    color: var(--discord-text, #ffffff);
+    box-shadow: 0 4px 10px var(--discord-shadow, rgba(40, 109, 50, 0.2));
+}
+
+.management-tabs a:focus-visible,
+.management-primary-button:focus-visible,
+.management-edit-button:focus-visible,
+.management-delete-button:focus-visible,
+.management-small-link:focus-visible,
+.management-form input:focus-visible,
+.management-form select:focus-visible,
+.management-form textarea:focus-visible {
+    outline: 3px solid var(--discord-border, rgba(249, 168, 37, 0.75));
+    outline-offset: 2px;
+}
+
+.management-record-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.55fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.management-panel {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--discord-border, #dfe7e0);
+    border-radius: 16px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: 0 5px 18px var(--discord-shadow, rgba(38, 77, 42, 0.06));
+}
+
+.management-entry-panel {
+    position: sticky;
+    top: 16px;
+}
+
+.management-panel-heading {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 22px;
+    align-items: flex-start;
+}
+
+.management-panel-heading h2,
+.management-list-heading h2 {
+    margin: 0;
+    color: var(--discord-text, #294c2e);
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+.management-panel-heading p {
+    margin: 5px 0 0;
+    color: var(--discord-text-muted, #768078);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.management-panel-icon {
+    display: inline-flex;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.management-panel-icon-sales {
+    background: var(--discord-surface-raised, #e5f4e8);
+    color: var(--discord-text-accent, #1d7336);
+}
+
+.management-panel-icon-expenses {
+    background: var(--discord-surface-raised, #fff0dc);
+    color: var(--discord-text-warning, #9d570e);
+}
+
+.management-form {
+    display: grid;
+    gap: 17px;
+}
+
+.management-field {
+    display: grid;
+    gap: 7px;
+}
+
+.management-field label {
+    color: var(--discord-text-muted, #394b3c);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.management-required-mark,
+.management-optional-mark {
+    display: inline-flex;
+    margin-left: 3px;
+    padding: 2px 6px;
+    align-items: center;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    vertical-align: 1px;
+}
+
+.management-required-mark {
+    background: var(--discord-surface-raised, #fff0ee);
+    color: var(--discord-text-danger, #b9342b);
+}
+
+.management-optional-mark {
+    background: var(--discord-surface-raised, #eef2ef);
+    color: var(--discord-text-muted, #69736b);
+}
+
+.management-body .management-form input,
+.management-body .management-form select,
+.management-body .management-form textarea {
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--discord-border, #bcc9be);
+    border-radius: 9px;
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text, #263229);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.45;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.management-body .management-form textarea {
+    min-height: 98px;
+    resize: vertical;
+}
+
+.management-body .management-form input:hover,
+.management-body .management-form select:hover,
+.management-body .management-form textarea:hover {
+    border-color: var(--discord-border, #88a58c);
+}
+
+.management-body .management-form input:focus,
+.management-body .management-form select:focus,
+.management-body .management-form textarea:focus {
+    border-color: var(--discord-border, #2f7a39);
+    box-shadow: 0 0 0 3px var(--discord-shadow, rgba(47, 122, 57, 0.12));
+}
+
+.management-body .management-form input::placeholder,
+.management-body .management-form textarea::placeholder {
+    color: var(--discord-text-muted, #9ba49d);
+}
+
+.management-input-unit {
+    position: relative;
+}
+
+.management-body .management-input-unit input {
+    padding-right: 42px;
+}
+
+.management-input-unit > span {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    color: var(--discord-text-muted, #69736b);
+    font-size: 13px;
+    font-weight: 700;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+
+.management-body .management-primary-button {
+    display: inline-flex;
+    width: 100%;
+    min-height: 47px;
+    margin: 3px 0 0;
+    padding: 11px 18px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 10px;
+    background: var(--discord-accent, #2d7938);
+    color: var(--discord-text, #ffffff);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 5px 13px var(--discord-shadow, rgba(45, 121, 56, 0.2));
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.management-body .management-primary-button:hover {
+    background: var(--discord-accent, #22662d);
+    transform: translateY(-1px);
+}
+
+.management-body .management-primary-button-expenses {
+    background: var(--discord-warning, #a15b13);
+    box-shadow: 0 5px 13px var(--discord-shadow, rgba(161, 91, 19, 0.2));
+}
+
+.management-body .management-primary-button-expenses:hover {
+    background: var(--discord-warning, #86480a);
+}
+
+.management-list-panel {
+    overflow: hidden;
+}
+
+.management-list-heading {
+    display: flex;
+    min-height: 45px;
+    margin-bottom: 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.management-section-label {
+    margin: 0 0 4px;
+    color: var(--discord-text-muted, #7b897e);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+}
+
+.management-count-badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    min-height: 34px;
+    padding: 6px 11px;
+    align-items: baseline;
+    gap: 3px;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #e8f5e9);
+    color: var(--discord-text-accent, #2d6633);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.management-count-badge strong {
+    font-size: 15px;
+}
+
+.management-count-badge-expenses {
+    background: var(--discord-surface-raised, #fff1df);
+    color: var(--discord-text-warning, #8c4e0d);
+}
+
+.management-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--discord-border, #e0e6e1);
+    border-radius: 11px;
+    background: var(--discord-surface, #ffffff);
+}
+
+.management-body .management-table {
+    width: 100%;
+    min-width: 680px;
+    margin: 0;
+    border: 0;
+    border-collapse: collapse;
+    table-layout: auto;
+    font-size: 12px;
+}
+
+.management-body .management-table th,
+.management-body .management-table td {
+    padding: 12px 13px;
+    border: 0;
+    border-bottom: 1px solid var(--discord-border, #e8ece8);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.management-body .management-table th {
+    background: var(--discord-surface-raised, #f4f7f4);
+    color: var(--discord-text-muted, #566359);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.management-body .management-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.management-body .management-table tbody tr:not(.management-empty-row):hover {
+    background: var(--discord-surface, #fafcfb);
+}
+
+.management-money-column {
+    text-align: right !important;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.management-memo-cell {
+    min-width: 150px;
+    max-width: 270px;
+    overflow-wrap: anywhere;
+    color: var(--discord-text-muted, #667168);
+}
+
+.management-action-column {
+    width: 122px;
+    white-space: nowrap;
+}
+
+.management-row-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.management-edit-button,
+.management-delete-button {
+    display: inline-flex;
+    min-height: 32px;
+    padding: 6px 10px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.management-edit-button {
+    border-color: var(--discord-border, #b7cfe3);
+    background: var(--discord-surface-raised, #edf5fc);
+    color: var(--discord-text-accent, #245f91) !important;
+}
+
+.management-edit-button:hover {
+    border-color: var(--discord-border, #7cacd2);
+    background: var(--discord-surface-raised, #e2f0fb);
+}
+
+.management-delete-button {
+    border-color: var(--discord-border, #e1b8b5);
+    background: var(--discord-surface, #fff3f2);
+    color: var(--discord-text-danger, #a52d26) !important;
+}
+
+.management-delete-button:hover {
+    border-color: var(--discord-border, #d88e88);
+    background: var(--discord-surface-raised, #ffe9e7);
+}
+
+.management-category-tag {
+    display: inline-flex;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #fff1df);
+    color: var(--discord-text-warning, #8b500f);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.management-empty-row td {
+    padding: 34px 20px !important;
+    color: var(--discord-text-muted, #7a857c);
+    text-align: center !important;
+}
+
+.management-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.management-metric-card {
+    position: relative;
+    min-width: 0;
+    padding: 22px;
+    overflow: hidden;
+    border: 1px solid var(--discord-border, #dfe7e0);
+    border-radius: 16px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: 0 5px 18px var(--discord-shadow, rgba(38, 77, 42, 0.06));
+}
+
+.management-metric-card::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    bottom: -54px;
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.05;
+}
+
+.management-metric-card > p {
+    margin: 0 0 10px;
+    color: var(--discord-text-muted, #677269);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.management-metric-card > strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--discord-text, #263b2a);
+    font-size: clamp(23px, 3vw, 32px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.management-metric-card > strong small {
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.management-metric-card > span {
+    color: var(--discord-text-muted, #859087);
+    font-size: 11px;
+}
+
+.management-metric-sales {
+    border-top: 4px solid var(--discord-border, #4f9b5a);
+    color: var(--discord-text-accent, #2f7c3c);
+}
+
+.management-metric-expenses {
+    border-top: 4px solid var(--discord-border, #d48631);
+    color: var(--discord-text-warning, #a46119);
+}
+
+.management-metric-profit {
+    border-top: 4px solid var(--discord-border, #3a7dae);
+    color: var(--discord-text-accent, #286894);
+}
+
+.management-metric-profit.is-negative {
+    border-top-color: var(--discord-border, #c9473f);
+    color: var(--discord-text-danger, #a52d26);
+}
+
+.management-metric-profit.is-negative > strong {
+    color: var(--discord-text-danger, #a52d26);
+}
+
+.management-statement-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.management-small-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    min-height: 34px;
+    padding: 7px 11px;
+    align-items: center;
+    border-radius: 8px;
+    background: var(--discord-surface-raised, #e8f5e9);
+    color: var(--discord-text-accent, #2d6633) !important;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.management-small-link:hover {
+    background: var(--discord-surface-raised, #dcedde);
+}
+
+.management-small-link-expenses {
+    background: var(--discord-surface-raised, #fff1df);
+    color: var(--discord-text-warning, #8c4e0d) !important;
+}
+
+.management-small-link-expenses:hover {
+    background: var(--discord-surface-raised, #f9e5ca);
+}
+
+.management-accounting-note {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 15px 18px;
+    align-items: flex-start;
+    border: 1px solid var(--discord-border, #ead5a6);
+    border-radius: 11px;
+    background: var(--discord-surface-raised, #fff9eb);
+    color: var(--discord-text-warning, #725319);
+}
+
+.management-accounting-note > span {
+    display: inline-flex;
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--discord-warning, #e9bd55);
+    color: var(--discord-text, #ffffff);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.management-accounting-note p {
+    margin: 1px 0 0;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+@media screen and (max-width: 980px) {
+    .management-record-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .management-entry-panel {
+        position: static;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .management-metric-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .management-metric-card {
+        padding: 18px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .management-tabs {
+        margin-bottom: 14px;
+        padding: 5px;
+        border-radius: 11px;
+    }
+
+    .management-tabs a {
+        min-height: 38px;
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .management-panel {
+        padding: 19px 15px;
+        border-radius: 14px;
+    }
+
+    .management-panel-heading h2,
+    .management-list-heading h2 {
+        font-size: 18px;
+    }
+
+    .management-list-heading {
+        align-items: flex-start;
+    }
+
+    .management-table-wrap {
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .management-body .management-table {
+        min-width: 0;
+    }
+
+    .management-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .management-body .management-table,
+    .management-body .management-table tbody,
+    .management-body .management-table tr,
+    .management-body .management-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .management-body .management-table tbody {
+        display: grid;
+        gap: 11px;
+    }
+
+    .management-body .management-table tbody tr {
+        overflow: hidden;
+        border: 1px solid var(--discord-border, #dfe7e0);
+        border-radius: 10px;
+        background: var(--discord-surface, #ffffff);
+    }
+
+    .management-body .management-table td {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 12px;
+        min-height: 42px;
+        padding: 10px 11px;
+        align-items: start;
+        text-align: left !important;
+    }
+
+    .management-body .management-table td::before {
+        content: attr(data-label);
+        color: var(--discord-text-muted, #6e7970);
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .management-body .management-table .management-empty-row td {
+        display: block;
+        padding: 28px 15px !important;
+    }
+
+    .management-body .management-table .management-empty-row td::before {
+        content: none;
+    }
+
+    .management-memo-cell {
+        max-width: none;
+    }
+
+    .management-action-column {
+        width: auto;
+    }
+
+    .management-row-actions {
+        flex-wrap: wrap;
+    }
+
+    .management-accounting-note {
+        padding: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .management-tabs a,
+    .management-primary-button,
+    .management-form input,
+    .management-form select,
+    .management-form textarea {
+        transition: none;
+    }
+}

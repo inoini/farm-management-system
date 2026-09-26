@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ログイン | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-invite-1')}" href="/css/auth.css?v=20260926-invite-1">
+</head>
+<body class="login-page">
+<main class="login-card">
+    <div class="login-mark" aria-hidden="true">🌱</div>
+    <h1>農業管理システム</h1>
+    <p class="login-intro">メンバーごとに自分のユーザー名・パスワードでログインし、同じ農場のデータを共有できます。</p>
+    <p class="login-message error" role="alert" th:if="${param.error != null}">ユーザー名またはパスワードが正しくありません。</p>
+    <p class="login-message" role="status" th:if="${param.logout != null}">ログアウトしました。</p>
+    <p class="login-message success" role="status" th:if="${param.registered != null}">農場と管理者アカウントを作成しました。ログインしてください。</p>
+    <p class="login-message success" role="status" th:if="${param.joined != null}">農場への参加登録が完了しました。自分のユーザー名とパスワードでログインしてください。</p>
+    <p class="login-message success" role="status" th:if="${param.passwordReset != null}">パスワードを変更しました。新しいパスワードでログインしてください。</p>
+    <form th:action="@{/login}" method="post">
+        <label for="username">ユーザー名</label>
+        <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
+        <label for="password">パスワード</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button class="login-submit" type="submit">ログイン</button>
+    </form>
+    <div class="recovery-links" aria-label="アカウント復旧">
+        <a th:href="@{/forgot-username}" href="/forgot-username">ユーザー名を忘れた</a>
+        <a th:href="@{/forgot-password}" href="/forgot-password">パスワードを忘れた</a>
+    </div>
+    <div class="auth-switch auth-switch-column">
+        <span>初めて利用する方</span>
+        <a th:href="@{/register}" href="/register">新しい農場を作成</a>
+        <a th:href="@{/join}" href="/join">招待コードで農場に参加</a>
+    </div>
+</main>
+</body>
+</html>

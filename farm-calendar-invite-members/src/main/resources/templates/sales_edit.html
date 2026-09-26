@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>売上編集 | 農業管理システム</title>
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="edit-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="edit-page">
+    <header class="app-page-header">
+        <div>
+            <p class="app-eyebrow">BUSINESS MANAGEMENT / SALES</p>
+            <h1>売上を編集</h1>
+            <p>登録済みの販売日・作物・金額・メモを変更します。</p>
+        </div>
+        <a class="app-back-button" th:href="@{/sales}" href="/sales">← 売上管理へ戻る</a>
+    </header>
+
+    <section class="app-panel" aria-labelledby="sale-edit-title">
+        <div class="app-panel-heading">
+            <div>
+                <p class="section-kicker">EDIT RECORD</p>
+                <h2 id="sale-edit-title">売上情報</h2>
+                <p><span class="required-badge">必須</span>の項目を確認してください。</p>
+            </div>
+        </div>
+
+        <form class="edit-form"
+              th:action="@{/sales/update}"
+              th:object="${sale}"
+              method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="app-field">
+                <label for="saleDate">販売日 <span class="required-badge">必須</span></label>
+                <input id="saleDate" type="date" th:field="*{date}" required>
+            </div>
+
+            <div class="app-field">
+                <label for="saleCrop">作物名 <span class="required-badge">必須</span></label>
+                <input id="saleCrop" type="text" th:field="*{crop}"
+                       maxlength="100" placeholder="例：さつまいも" required>
+            </div>
+
+
+                <div role="alert" th:if="${#fields.hasAnyErrors()}">
+                    <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
+                </div>
+                <div class="app-field">
+                    <label for="baseWeightKg">何kgあたり（kg）</label>
+                    <input id="baseWeightKg" type="number" th:field="*{baseWeightKg}" min="0.001" max="999999999.999" step="0.001" inputmode="decimal" placeholder="例：5">
+                </div>
+                <div class="app-field">
+                    <label for="basePrice">その重量の販売価格（円）</label>
+                    <input id="basePrice" type="number" th:field="*{basePrice}" min="0" max="999999999999" step="1" inputmode="numeric" placeholder="例：1500">
+                </div>
+                <div class="app-field">
+                    <label for="packageCount">販売数量（セット）</label>
+                    <input id="packageCount" type="number" th:field="*{packageCount}" min="1" max="1000000" step="1" inputmode="numeric" placeholder="例：3">
+                    <small>5kgあたり1,500円 × 3セット → 合計15kg・4,500円。1セットなら「1」を入力します。</small>
+                    <small>重量で記録しない場合は、上の3項目を空欄にして売上金額を入力してください。</small>
+                    <p id="sales-price-preview" aria-live="polite"></p>
+                </div>
+            <div class="app-field">
+                <label for="saleAmount">売上金額 <span class="required-badge">必須</span></label>
+                <input id="saleAmount" type="number" th:field="*{amount}"
+                       min="0" step="1" inputmode="numeric" required>
+            </div>
+
+            <div class="app-field">
+                <label for="saleMemo">メモ <span class="optional-badge">任意</span></label>
+                <textarea id="saleMemo" th:field="*{memo}" maxlength="500" rows="5"></textarea>
+            </div>
+
+            <div class="app-form-actions">
+                <a class="app-secondary-button" th:href="@{/sales}" href="/sales">キャンセル</a>
+                <button class="app-primary-button" type="submit">変更を保存する</button>
+            </div>
+        </form>
+    </section>
+</main>
+<script defer th:src="@{/js/sales-pricing.js(v='20260926-1')}" src="/js/sales-pricing.js?v=20260926-1"></script>
+</body>
+</html>

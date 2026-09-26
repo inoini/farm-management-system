@@ -1,0 +1,43 @@
+.calendar-search-panel {
+    padding: 18px; margin: 0 0 20px; border: 1px solid var(--discord-border, #dfe6e2);
+    border-radius: 14px; background: var(--discord-surface, #fff); color: var(--discord-text, #263d32);
+}
+.calendar-search-panel h2 { margin: 0 0 12px; font-size: 18px; }
+.calendar-search-form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.calendar-search-input { flex: 1 1 280px; }
+.calendar-search-form label { display: block; margin-bottom: 5px; font-weight: 700; }
+.calendar-search-form input[type="search"], .calendar-search-form select {
+    width: 100%; min-height: 44px; padding: 10px; box-sizing: border-box;
+    border: 1px solid var(--discord-border, #a9b9b0); border-radius: 8px;
+    background: var(--discord-surface-raised, #fff); color: inherit; font: inherit;
+}
+.calendar-search-form > a { padding: 12px 0; color: var(--discord-text-accent, #08734b); }
+.calendar-search-panel p { font-size: 13px; line-height: 1.7; }
+.search-result-list { display: grid; gap: 10px; max-height: 420px; overflow-y: auto; }
+.calendar-search-results .search-result-card {
+    display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 14px;
+    text-align: left; white-space: normal; overflow-wrap: anywhere;
+    background: var(--discord-surface-raised, #f4f8f5); color: inherit;
+    border: 1px solid var(--discord-border, #c6d8cc); border-radius: 10px; font: inherit; cursor: pointer;
+}
+.search-result-card:focus-visible { outline: 3px solid var(--discord-accent, #08734b); outline-offset: -3px; }
+@media (max-width: 520px) {
+    .calendar-search-form > div { flex: 1 1 100%; }
+    .calendar-search-form button { flex: 1; }
+}
+
+/* Calendar is the main workspace, with navigation on the left. */
+.dashboard-body.calendar-screen .calendar-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.calendar-workspace > * { width: 100%; min-width: 0; box-sizing: border-box; }
+.calendar-workspace .today-work-sidebar { min-height: 0; }
+.calendar-workspace .today-work-list {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;
+}
+.calendar-kpi-grid { margin-top: 24px; }
+@media (max-width: 768px) {
+    .calendar-workspace .today-work-list { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>経費編集 | 農業管理システム</title>
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="edit-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="edit-page">
+    <header class="app-page-header">
+        <div>
+            <p class="app-eyebrow">BUSINESS MANAGEMENT / EXPENSES</p>
+            <h1>経費を編集</h1>
+            <p>登録済みの支払日・費目・金額・メモを変更します。</p>
+        </div>
+        <a class="app-back-button" th:href="@{/expenses}" href="/expenses">← 経費管理へ戻る</a>
+    </header>
+
+    <section class="app-panel" aria-labelledby="expense-edit-title">
+        <div class="app-panel-heading">
+            <div>
+                <p class="section-kicker">EDIT RECORD</p>
+                <h2 id="expense-edit-title">経費情報</h2>
+                <p><span class="required-badge">必須</span>の項目を確認してください。</p>
+            </div>
+        </div>
+
+        <form class="edit-form"
+              th:action="@{/expenses/update}"
+              th:object="${expense}"
+              method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="app-field">
+                <label for="expenseDate">支払日 <span class="required-badge">必須</span></label>
+                <input id="expenseDate" type="date" th:field="*{date}" required>
+            </div>
+
+            <div class="app-field">
+                <label for="expenseCategory">費目 <span class="required-badge">必須</span></label>
+                <select id="expenseCategory" th:field="*{category}" required>
+                    <option value="">選択してください</option>
+                    <option value="肥料">肥料</option>
+                    <option value="農薬">農薬</option>
+                    <option value="燃料">燃料</option>
+                    <option value="資材">資材</option>
+                    <option value="機械">機械</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+
+            <div class="app-field">
+                <label for="expenseAmount">金額 <span class="required-badge">必須</span></label>
+                <input id="expenseAmount" type="number" th:field="*{amount}"
+                       min="0" step="1" inputmode="numeric" required>
+            </div>
+
+            <div class="app-field">
+                <label for="expenseMemo">メモ <span class="optional-badge">任意</span></label>
+                <textarea id="expenseMemo" th:field="*{memo}" maxlength="500" rows="5"></textarea>
+            </div>
+
+            <div class="app-form-actions">
+                <a class="app-secondary-button" th:href="@{/expenses}" href="/expenses">キャンセル</a>
+                <button class="app-primary-button" type="submit">変更を保存する</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

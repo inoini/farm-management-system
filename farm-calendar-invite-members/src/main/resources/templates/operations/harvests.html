@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>農業管理システム | 収穫・出荷管理</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}"><link rel="stylesheet" th:href="@{/css/calendar-dashboard.css(v='20260922-1')}"><link rel="stylesheet" th:href="@{/css/operations.css(v='20260922-1')}"><script defer th:src="@{/js/script.js(v='20260925-3')}"></script>
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+<body class="dashboard-body calendar-screen operations-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div><button id="menuBtn" class="menu-btn" type="button" aria-label="メニューを開閉" aria-controls="mainSidebar" aria-expanded="false">☰</button><div class="app-layout"><aside th:replace="~{fragments/operations-sidebar :: sidebar('harvests')}"></aside><main class="main-content"><div class="operations-page">
+    <header class="operations-heading"><div><h1>収穫・出荷管理</h1><p>収穫量、出荷量、出荷先を記録します。</p></div></header>
+    <div class="operations-grid">
+        <section class="operations-panel"><h2 th:text="${record.id == null ? '収穫・出荷を登録' : '収穫・出荷を編集'}">収穫・出荷を登録</h2><form th:action="@{/harvests/save}" th:object="${record}" method="post"><input type="hidden" th:field="*{id}"><div class="operations-form-grid">
+            <div><label for="workDate">日付</label><input id="workDate" type="date" th:field="*{workDate}" required></div><div><label for="harvestStatus">状態</label><select id="harvestStatus" th:field="*{status}"><option value="収穫予定">収穫予定</option><option value="収穫済">収穫済</option><option value="出荷済">出荷済</option></select></div>
+            <div><label for="harvestCrop">作物</label><input id="harvestCrop" type="text" th:field="*{cropName}" required></div><div><label for="harvestField">圃場</label><input id="harvestField" type="text" th:field="*{fieldName}"></div>
+            <div><label for="harvestKg">収穫量（kg）</label><input id="harvestKg" type="number" min="0" step="0.1" th:field="*{harvestKg}"></div><div><label for="shippedKg">出荷量（kg）</label><input id="shippedKg" type="number" min="0" step="0.1" th:field="*{shippedKg}"></div>
+            <div class="wide"><label for="destination">出荷先</label><input id="destination" type="text" th:field="*{destination}"></div><div class="wide"><label for="harvestMemo">メモ</label><textarea id="harvestMemo" th:field="*{memo}"></textarea></div>
+        </div><div class="operations-actions"><button class="operation-button primary" type="submit">保存</button><a class="operation-button" th:if="${record.id != null}" th:href="@{/harvests}">キャンセル</a></div></form></section>
+        <section class="operations-panel"><h2>収穫・出荷一覧</h2><div class="operations-table-wrap"><table class="operations-table"><thead><tr><th>日付</th><th>作物</th><th>圃場</th><th>収穫量</th><th>出荷量</th><th>出荷先</th><th>状態</th><th>操作</th></tr></thead><tbody><tr th:each="item : ${records}"><td th:text="${item.workDate}"></td><td th:text="${item.cropName}"></td><td th:text="${item.fieldName}"></td><td th:text="${(item.harvestKg == null ? 0 : item.harvestKg) + ' kg'}"></td><td th:text="${(item.shippedKg == null ? 0 : item.shippedKg) + ' kg'}"></td><td th:text="${item.destination}"></td><td><span class="status-pill" th:text="${item.status}"></span></td><td><div class="operations-actions"><a class="operation-button" th:href="@{/harvests/edit/{id}(id=${item.id})}">編集</a><form th:action="@{/harvests/delete/{id}(id=${item.id})}" method="post" onsubmit="return confirm('この記録を削除しますか？');"><button class="operation-button danger" type="submit">削除</button></form></div></td></tr></tbody></table></div><p class="operations-empty" th:if="${#lists.isEmpty(records)}">収穫・出荷記録はまだありません。</p></section>
+    </div>
+</div></main></div></body></html>

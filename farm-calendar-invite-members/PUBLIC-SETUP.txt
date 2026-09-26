@@ -1,0 +1,78 @@
+【一般公開版：農場ごとの個別ログイン＋共有データ】
+
+この版は「1農場 = 1つの共有データ領域」です。
+ただし、ログイン情報はメンバーごとに別です。
+
+例：
+関根農園
+  - 管理者：1人（農場を最初に作成したユーザー）
+  - メンバー：招待コードから参加したユーザー
+
+同じ農場に所属するユーザーは、作物・圃場・予定・在庫・作業者・収穫/出荷・売上・経費・分析データを共有します。
+別の農場とはデータが分離されます。
+
+【管理者について】
+- 管理者は農場ごとに1人です。
+- 新しい農場を作成した最初のユーザーが管理者になります。
+- 招待コードから参加したユーザーは一般メンバーになります。
+- 招待コードの発行・無効化は管理者だけが行えます。
+- メンバーが自分のパスワードを再設定しても、他のメンバーのパスワードには影響しません。
+
+【招待コード】
+- 管理者が農場メンバー画面から発行します。
+- 形式例：ABCD-EFGH-JKLM
+- 発行から7日間有効です。
+- 管理者は有効な招待コードを無効化できます。
+- 招待コードから参加する人は、自分専用のユーザー名・メールアドレス・パスワードを登録します。
+
+1. 必須のDB環境変数
+SPRING_DATASOURCE_URL=jdbc:postgresql://.../neondb?sslmode=require
+SPRING_DATASOURCE_USERNAME=...
+SPRING_DATASOURCE_PASSWORD=...
+
+Render では追加：
+SESSION_COOKIE_SECURE=true
+APP_BASE_URL=https://あなたのサービス名.onrender.com
+
+2. アカウント復旧メール
+ユーザー名確認・パスワード再設定にはSMTP設定が必要です。
+MAIL_FROM=送信元メールアドレス
+MAIL_HOST=SMTPホスト
+MAIL_PORT=587
+MAIL_USERNAME=SMTPユーザー名
+MAIL_PASSWORD=SMTPパスワード
+MAIL_SMTP_AUTH=true
+MAIL_STARTTLS_ENABLE=true
+MAIL_STARTTLS_REQUIRED=false
+MAIL_SMTP_SSL_ENABLE=false
+
+詳しくは ACCOUNT-RECOVERY-SETUP.txt を参照してください。
+
+3. 既存データを最初の農場管理者へ引き継ぐ場合（任意）
+BOOTSTRAP_OWNER_EMAIL=管理者の復旧用メールアドレス
+BOOTSTRAP_OWNER_USERNAME=管理者のユーザー名
+BOOTSTRAP_OWNER_PASSWORD=8文字以上の初期パスワード
+BOOTSTRAP_OWNER_NAME=管理者の表示名
+BOOTSTRAP_FARM_NAME=農場名
+MIGRATE_LEGACY_DATA=true
+
+最初の正常起動後、既存データに owner_email が付いたことを確認したら、
+MIGRATE_LEGACY_DATA=false に変更してください。
+BOOTSTRAP_OWNER_PASSWORD も不要になれば削除できます。
+
+4. 重要：DBパスワード
+以前の版でDBパスワードをソースに直接書いていた場合は、一般公開前にNeon側で変更し、Renderの環境変数にだけ設定してください。
+
+5. ローカル起動例（Windows CMD）
+set SPRING_DATASOURCE_URL=jdbc:postgresql://.../neondb?sslmode=require
+set SPRING_DATASOURCE_USERNAME=...
+set SPRING_DATASOURCE_PASSWORD=...
+mvn spring-boot:run
+
+新しい農場を作成： http://localhost:8080/register
+招待コードで参加： http://localhost:8080/join
+農場メンバー管理： http://localhost:8080/farm/members
+
+6. Render
+Build Command: ./mvnw clean package -DskipTests
+Start Command: java -jar target/demo-0.0.1-SNAPSHOT.jar

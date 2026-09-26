@@ -1,0 +1,877 @@
+/* 菴懈･ｭ繧ｫ繝ｬ繝ｳ繝�繝ｼ蟆ら畑�ｼ壽･ｭ蜍吶す繧ｹ繝�繝�蝙九Ξ繧､繧｢繧ｦ繝� */
+.calendar-screen {
+    --calendar-sidebar: 220px;
+    --calendar-green: #08734b;
+    --calendar-green-dark: #005437;
+    --calendar-line: #dfe6e2;
+    --calendar-canvas: #f5f7f6;
+    background: var(--calendar-canvas);
+}
+
+.calendar-screen [hidden] {
+    display: none !important;
+}
+
+.calendar-screen .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 蟾ｦ繝｡繝九Η繝ｼ */
+.dashboard-body.calendar-screen .sidebar {
+    width: var(--calendar-sidebar);
+    background: linear-gradient(180deg, var(--discord-accent, #07583f) 0%, var(--discord-accent, #003c2d) 100%);
+    box-shadow: 5px 0 18px var(--discord-shadow, rgba(0, 52, 37, 0.16));
+}
+
+.dashboard-body.calendar-screen .sidebar-header {
+    display: flex;
+    min-height: 64px;
+    padding: 13px 15px;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--discord-border, rgba(255, 255, 255, 0.12));
+    text-align: left;
+}
+
+.dashboard-body.calendar-screen .logo-circle {
+    width: 34px;
+    height: 34px;
+    margin: 0;
+    flex: 0 0 34px;
+    background: var(--discord-tint, rgba(255, 255, 255, 0.12));
+    color: var(--discord-text-accent, #89e6b4);
+    font-size: 19px;
+}
+
+.dashboard-body.calendar-screen .sidebar-header h2 {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+.dashboard-body.calendar-screen .menu {
+    gap: 2px;
+    padding: 8px 8px 10px;
+}
+
+.dashboard-body.calendar-screen .menu a {
+    min-height: 42px;
+    padding: 9px 11px;
+    gap: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dashboard-body.calendar-screen .menu a > span:first-child {
+    width: 20px;
+    font-size: 16px;
+}
+
+.dashboard-body.calendar-screen .menu a.active {
+    background: var(--discord-tint, rgba(96, 196, 145, 0.28));
+    box-shadow: inset 3px 0 var(--discord-shadow, #80e5ae);
+}
+
+.calendar-screen .sidebar-close-control {
+    width: 100%;
+    min-height: 44px;
+    margin-top: auto;
+    padding: 10px 14px;
+    border-top: 1px solid var(--discord-border, rgba(255, 255, 255, 0.12));
+    background: transparent;
+    color: var(--discord-text, #d9eee3);
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+}
+
+.calendar-screen .sidebar-close-control:hover {
+    background: var(--discord-tint, rgba(255, 255, 255, 0.08));
+}
+
+.dashboard-body.calendar-screen .main-content {
+    width: calc(100% - var(--calendar-sidebar));
+    margin-left: var(--calendar-sidebar);
+    background: var(--calendar-canvas);
+    transition: width 0.22s ease, margin-left 0.22s ease;
+}
+
+.calendar-screen.sidebar-is-collapsed .sidebar {
+    transform: translateX(calc(-1 * var(--calendar-sidebar)));
+}
+
+.calendar-screen.sidebar-is-collapsed .main-content {
+    width: 100%;
+    margin-left: 0;
+}
+
+.dashboard-body.calendar-screen.sidebar-is-collapsed > .menu-btn {
+    display: flex !important;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--calendar-green);
+    color: var(--discord-text, #fff);
+    font-size: 21px;
+    box-shadow: 0 4px 14px var(--discord-shadow, rgba(0, 67, 46, 0.24));
+}
+
+/* 荳企Κ繝舌�ｼ */
+.dashboard-body.calendar-screen .calendar-app-header {
+    min-height: 58px;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--calendar-line);
+    box-shadow: 0 2px 7px var(--discord-shadow, rgba(27, 58, 41, 0.05));
+}
+
+.calendar-current-date,
+.calendar-user-tools {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--discord-text, #2f3833);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.calendar-user-tools {
+    color: var(--discord-text-muted, #5d6861);
+}
+
+.calendar-top-menu {
+    position: relative;
+}
+
+.calendar-top-menu > summary {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.calendar-top-menu > summary::-webkit-details-marker {
+    display: none;
+}
+
+.notification-button {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text, #26342c);
+    font-size: 19px;
+}
+
+.calendar-top-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 120;
+    display: grid;
+    width: 220px;
+    padding: 12px;
+    gap: 8px;
+    border: 1px solid var(--discord-border, #dbe4de);
+    border-radius: 8px;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text-muted, #3f4c44);
+    font-size: 12px;
+    box-shadow: 0 12px 30px var(--discord-shadow, rgba(20, 57, 37, 0.16));
+}
+
+.calendar-top-popover p {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.calendar-top-popover a {
+    padding: 7px 8px;
+    border-radius: 5px;
+    background: var(--discord-surface-raised, #edf7f1);
+    color: var(--discord-text-accent, #08734b);
+    font-weight: 800;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--discord-border, #fff);
+    border-radius: 50%;
+    background: var(--discord-danger, #e53935);
+}
+
+.user-avatar {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--discord-surface-deep, #aeb7b2);
+    color: var(--discord-text, #fff);
+    font-size: 12px;
+}
+
+/* 繝壹�ｼ繧ｸ隕句�ｺ縺励→髮�險� */
+.dashboard-body.calendar-screen .calendar-page {
+    width: 100%;
+    padding: 14px 16px 28px;
+}
+
+.dashboard-body.calendar-screen .calendar-header {
+    margin: 0 0 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.dashboard-body.calendar-screen .calendar-header h1 {
+    margin: 0;
+    color: var(--discord-text, #202b25);
+    font-size: 24px;
+    line-height: 1.35;
+}
+
+.calendar-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 13px;
+}
+
+.calendar-kpi-card {
+    display: flex;
+    min-width: 0;
+    min-height: 91px;
+    padding: 14px;
+    align-items: center;
+    gap: 13px;
+    border: 1px solid var(--calendar-line);
+    border-radius: 5px;
+    background: var(--discord-surface, #fff);
+    box-shadow: 0 2px 8px var(--discord-shadow, rgba(20, 56, 36, 0.035));
+}
+
+.calendar-kpi-card .kpi-icon {
+    display: inline-flex;
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 25px;
+}
+
+.calendar-kpi-card > div {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: 9px;
+}
+
+.calendar-kpi-card span:not(.kpi-icon) {
+    grid-column: 1 / -1;
+    color: var(--discord-text-muted, #57625c);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.calendar-kpi-card strong {
+    color: var(--discord-text, #1f2924);
+    font-size: 24px;
+    line-height: 1.1;
+}
+
+.calendar-kpi-card strong em {
+    margin-left: 2px;
+    font-size: 13px;
+    font-style: normal;
+}
+
+.calendar-kpi-card small {
+    overflow: hidden;
+    color: var(--discord-text-muted, #738078);
+    font-size: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.kpi-green .kpi-icon { color: var(--discord-text-accent, #0b9e57); background: var(--discord-surface-raised, #e5f8ed); }
+.kpi-orange .kpi-icon { color: var(--discord-text-warning, #f39a14); background: var(--discord-surface-raised, #fff3de); }
+.kpi-emerald .kpi-icon { color: var(--discord-text-accent, #159863); background: var(--discord-surface-raised, #e4f7ef); }
+.kpi-purple .kpi-icon { color: var(--discord-text-accent, #8758d9); background: var(--discord-surface-raised, #efe8fb); }
+
+/* 謫堺ｽ懊ヰ繝ｼ */
+.calendar-screen .calendar-toolbar {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 9px 10px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid var(--calendar-line);
+    border-radius: 5px;
+    background: var(--discord-surface, #fff);
+}
+
+.calendar-month-controls,
+.calendar-filters {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 5px;
+}
+
+.calendar-screen .icon-control,
+.calendar-screen .today-control {
+    display: inline-flex;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 9px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--discord-border, #d9e0dc);
+    border-radius: 4px;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text-muted, #37443c);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.calendar-screen .icon-control:hover,
+.calendar-screen .today-control:hover {
+    border-color: var(--discord-border, #76b795);
+    background: var(--discord-surface-raised, #edf8f2);
+}
+
+.calendar-screen .month-picker-label input,
+.calendar-screen .calendar-filters select {
+    width: auto;
+    height: 32px;
+    margin: 0;
+    padding: 5px 8px;
+    border: 1px solid var(--discord-border, #d9e0dc);
+    border-radius: 4px;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text-muted, #39443e);
+    font-size: 11px;
+}
+
+.calendar-screen .month-picker-label input {
+    width: 132px;
+    font-weight: 800;
+}
+
+.calendar-screen .calendar-filters select {
+    max-width: 135px;
+}
+
+.calendar-screen .new-work-button {
+    height: 32px;
+    padding: 0 13px;
+    border-radius: 4px;
+    background: var(--discord-accent, #0d8b57);
+    color: var(--discord-text, #fff);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.calendar-screen .new-work-button:hover {
+    background: var(--discord-accent, #066d44);
+}
+
+/* 譛磯俣繧ｫ繝ｬ繝ｳ繝�繝ｼ縺ｨ莉頑律縺ｮ菴懈･ｭ */
+.calendar-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 255px;
+    gap: 10px;
+    align-items: start;
+}
+
+.dashboard-body.calendar-screen .calendar-wrapper {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--calendar-line);
+    border-radius: 5px;
+    background: var(--discord-surface, #fff);
+    box-shadow: none;
+}
+
+.calendar-screen .calendar-table {
+    min-width: 630px;
+}
+
+.calendar-screen .calendar-table th {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+    height: 42px;
+    padding: 9px 6px;
+    border-right: 1px solid var(--discord-border, #edf0ee);
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text-muted, #4c5851);
+    font-size: 14px;
+}
+
+.calendar-screen .calendar-table th.sun { color: var(--discord-text-danger, #e13a3a); }
+.calendar-screen .calendar-table th.sat { color: var(--discord-text-accent, #2471c8); }
+
+.calendar-screen .calendar-table td {
+    height: 94px;
+    padding: 0;
+    border-color: var(--discord-border, #e6ebe8);
+    position: relative;
+}
+
+.calendar-screen .day-box {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    height: auto;
+    min-height: 100%;
+    display: flex;
+    padding: 7px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.calendar-screen .day-number {
+    flex: 0 0 auto;
+    margin: 0 0 5px;
+    color: var(--discord-text, #344039);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: left;
+}
+
+.calendar-screen td:first-child .day-number { color: var(--discord-text-danger, #e13a3a); }
+.calendar-screen td:last-child .day-number { color: var(--discord-text-accent, #2471c8); }
+
+.calendar-screen .today {
+    border: 2px solid var(--discord-border, #2a9a61);
+    background: var(--discord-surface-raised, #effaf4);
+}
+
+.calendar-screen .today .day-number {
+    width: 25px;
+    height: 25px;
+    margin: 0 0 2px auto;
+    font-size: 12px;
+}
+
+.calendar-screen .other-month {
+    background: var(--discord-surface, #fafbfa);
+}
+
+.calendar-screen .add-schedule-button,
+.calendar-screen .schedule-count {
+    display: none;
+}
+
+.calendar-screen .schedule-list {
+    display: flex;
+    min-height: 0;
+    padding-right: 3px;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+    gap: 5px;
+    scrollbar-gutter: stable;
+}
+
+.calendar-screen .calendar-month-panel .schedule-card {
+    display: grid;
+    min-height: 48px;
+    margin: 0;
+    padding: 6px 7px;
+    align-content: center;
+    gap: 3px;
+    flex: 0 0 auto;
+    border: 0;
+    border-left: 3px solid var(--discord-border, #6b60c9);
+    border-radius: 2px;
+    background: var(--discord-surface-raised, #eeeafa);
+    color: var(--discord-text-accent, #4f478d);
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.calendar-screen .calendar-month-panel .schedule-card[data-work-type="蜿守ｩｫ"] { border-left-color: var(--discord-border, #e3ad30); background: var(--discord-surface-raised, #fff5d8); color: var(--discord-text-warning, #826418); }
+.calendar-screen .calendar-month-panel .schedule-card[data-work-type="蜃ｺ闕ｷ"] { border-left-color: var(--discord-border, #3382ce); background: var(--discord-surface-raised, #e8f3fd); color: var(--discord-text-accent, #275d91); }
+.calendar-screen .calendar-month-panel .schedule-card[data-work-type="髦ｲ髯､"] { border-left-color: var(--discord-border, #db625f); background: var(--discord-surface-raised, #fdeae9); color: var(--discord-text-danger, #934340); }
+.calendar-screen .calendar-month-panel .schedule-card[data-work-type="邂｡逅�"],
+.calendar-screen .calendar-month-panel .schedule-card[data-work-type="髯､闕�"] { border-left-color: var(--discord-border, #45a16c); background: var(--discord-surface-raised, #e7f6ec); color: var(--discord-text-accent, #31704b); }
+
+.calendar-event-title,
+.calendar-event-worker {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-event-title {
+    display: -webkit-box;
+    font-size: 13px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.calendar-event-worker {
+    display: block;
+    color: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.calendar-event-worker::before {
+    	content: "\62C5\5F53\FF1A";
+    font-weight: 500;
+}
+
+.calendar-month-panel {
+    width: 100%;
+    max-width: 100%;
+    max-height: 520px;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+.today-work-sidebar {
+    display: flex;
+    width: 100%;
+    max-height: 520px;
+    min-height: 420px;
+    padding: 16px;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--calendar-line);
+    border-radius: 5px;
+    background: var(--discord-surface, #fff);
+}
+
+.today-work-heading-row {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.today-work-heading-row h2 {
+    margin: 0;
+    color: var(--discord-text, #26322b);
+    font-size: 20px;
+}
+
+.today-work-heading-row span {
+    color: var(--discord-text-muted, #68756e);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.today-work-list {
+    display: flex;
+    min-height: 0;
+    padding-right: 5px;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.calendar-screen .today-work-card {
+    display: flex;
+    width: 100%;
+    min-height: 112px;
+    margin: 0;
+    padding: 13px 12px 13px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    flex: 0 0 auto;
+    border: 1px solid var(--discord-border, #e7ece9);
+    border-left: 3px solid var(--discord-border, #6d63ce);
+    border-radius: 4px;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text, #2f3a34);
+    text-align: left;
+    transform: none;
+}
+
+.calendar-screen .today-work-card:hover {
+    background: var(--discord-surface, #f7faf8);
+    transform: translateY(-1px);
+}
+
+.calendar-screen .today-work-card.status-complete { border-left-color: var(--discord-border, #20a05c); }
+.calendar-screen .today-work-card.status-progress { border-left-color: var(--discord-border, #f0a11b); }
+.calendar-screen .today-work-card.status-pending { border-left-color: var(--discord-border, #4a79d8); }
+
+.today-work-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.today-work-title-row strong {
+    overflow: hidden;
+    font-size: 16px;
+    white-space: normal;
+    text-overflow: ellipsis;
+}
+
+.today-work-title-row em {
+    flex-shrink: 0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--discord-surface-raised, #edf2ef);
+    color: var(--discord-text-muted, #536159);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 800;
+}
+
+.status-complete .today-work-title-row em { background: var(--discord-surface-raised, #dff5e7); color: var(--discord-text-accent, #08743d); }
+.status-progress .today-work-title-row em { background: var(--discord-surface-raised, #fff0d3); color: var(--discord-text-warning, #a26300); }
+.status-pending .today-work-title-row em { background: var(--discord-surface-raised, #e5edff); color: var(--discord-text-accent, #315fae); }
+
+.today-work-location,
+.today-work-time {
+    color: var(--discord-text-muted, #68756e);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.today-work-location b { font-weight: 700; }
+
+.today-work-empty {
+    display: grid;
+    min-height: 150px;
+    place-items: center;
+    align-content: center;
+    gap: 7px;
+    color: var(--discord-text-muted, #7b8981);
+    text-align: center;
+}
+
+.today-work-empty span {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--discord-surface-raised, #e8f7ef);
+    color: var(--discord-text-accent, #15945b);
+    font-size: 20px;
+}
+
+.today-work-empty p { margin: 0; font-size: 11px; }
+
+.calendar-screen .work-history-link {
+    display: flex;
+    min-height: 32px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--discord-border, #dbe3df);
+    border-radius: 4px;
+    color: var(--discord-text-muted, #536159);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.calendar-screen .work-history-link:hover {
+    background: var(--discord-surface-raised, #f1f7f4);
+}
+
+@media screen and (max-width: 1100px) {
+    .calendar-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .calendar-screen .calendar-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .calendar-filters {
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .sidebar {
+        width: min(86vw, 320px);
+        transform: none;
+    }
+
+    .dashboard-body.calendar-screen .main-content,
+    .calendar-screen.sidebar-is-collapsed .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .dashboard-body.calendar-screen .calendar-app-header {
+        min-height: 58px;
+        padding: 10px 12px 10px 64px;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .calendar-user-tools .user-menu summary > span:not(.user-avatar) {
+        display: none;
+    }
+
+    .calendar-workspace {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .calendar-month-panel {
+        overflow-x: auto !important;
+    }
+
+    .today-work-sidebar {
+        max-height: 55vh;
+        min-height: 280px;
+    }
+
+    .calendar-month-panel {
+        max-height: 70vh;
+    }
+
+    .calendar-screen .sidebar-close-control {
+        position: sticky;
+        bottom: 0;
+        background: var(--discord-accent, #004632);
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .calendar-kpi-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .calendar-kpi-card {
+        min-height: 78px;
+        padding: 11px 13px;
+    }
+
+    .calendar-month-controls,
+    .calendar-filters {
+        flex-wrap: wrap;
+    }
+
+    .calendar-screen .month-picker-label input {
+        width: 125px;
+    }
+
+    .calendar-screen .calendar-filters select {
+        max-width: none;
+        flex: 1 1 45%;
+    }
+
+    .calendar-screen .new-work-button {
+        flex: 1 1 100%;
+    }
+}
+/* スマホ：カレンダー表示とメニューの影を修正 */
+@media screen and (max-width: 768px) {
+
+    /* カレンダーを縦・横の両方向にスクロール */
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        min-width: 0;
+        max-width: 100%;
+        overflow: auto !important;
+        touch-action: auto;
+        overscroll-behavior: auto;
+        scrollbar-gutter: auto;
+    }
+
+    /* 7列の幅をそろえる */
+    .calendar-screen .calendar-table {
+        width: 100%;
+        min-width: 700px;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    /* 日付枠と中身の高さをそろえる */
+    .calendar-screen .calendar-table tbody tr,
+    .calendar-screen .calendar-table tbody td {
+        height: 180px;
+    }
+
+    .calendar-screen .calendar-table tbody td {
+        padding: 0;
+        vertical-align: top;
+    }
+
+    .calendar-screen .calendar-table .day-box {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: 180px;
+        min-height: 0;
+        box-sizing: border-box;
+    }
+
+    /* 日付内の作業一覧は縦スクロール */
+    .calendar-screen .day-box .schedule-list {
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        touch-action: auto;
+        scrollbar-gutter: auto;
+    }
+
+    /* メニュー右側の暗い領域を消す */
+    .dashboard-body.calendar-screen .sidebar.active::after {
+        content: none;
+        display: none;
+    }
+
+    /* メニュー自体の影も消す */
+    .dashboard-body.calendar-screen .sidebar {
+        box-shadow: none;
+    }
+}

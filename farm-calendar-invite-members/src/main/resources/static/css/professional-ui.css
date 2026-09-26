@@ -1,0 +1,1470 @@
+/* =========================================================
+   農業管理システム 共通業務UI
+   画面固有CSSの後に読み込み、全画面の操作感を統一する
+========================================================= */
+
+:root {
+    --ui-green-950: #123524;
+    --ui-green-900: #17452d;
+    --ui-green-800: #1e5b35;
+    --ui-green-700: #28733f;
+    --ui-green-600: #358b4d;
+    --ui-green-100: #e8f4eb;
+    --ui-green-50: #f4faf5;
+    --ui-ink: #1f2d23;
+    --ui-muted: #647168;
+    --ui-border: #d7e1d9;
+    --ui-surface: #ffffff;
+    --ui-canvas: #f3f6f3;
+    --ui-warning: #a85f11;
+    --ui-warning-bg: #fff5e7;
+    --ui-danger: #b6342e;
+    --ui-danger-bg: #fff0ef;
+    --ui-info: #286b9b;
+    --ui-radius-sm: 8px;
+    --ui-radius: 12px;
+    --ui-radius-lg: 18px;
+    --ui-shadow-sm: 0 4px 14px rgba(24, 61, 35, 0.06);
+    --ui-shadow: 0 10px 30px rgba(24, 61, 35, 0.09);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+}
+
+:where(
+    .dashboard-body,
+    .calendar-screen,
+    .crop-screen,
+    .field-list-body,
+    .field-management-body,
+    .management-screen,
+    .stock-screen,
+    .form-screen,
+    .edit-screen
+) {
+    min-width: 320px;
+    margin: 0;
+    background: var(--ui-canvas);
+    color: var(--ui-ink);
+    font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+:where(
+    .calendar-screen,
+    .crop-screen,
+    .management-screen,
+    .stock-screen,
+    .form-screen,
+    .edit-screen
+) a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:where(
+    .calendar-screen,
+    .crop-screen,
+    .field-list-body,
+    .field-management-body,
+    .management-screen,
+    .stock-screen,
+    .form-screen,
+    .edit-screen
+) :is(button, a, input, select, textarea):focus-visible {
+    outline: 3px solid var(--discord-border, rgba(249, 168, 37, 0.82));
+    outline-offset: 3px;
+}
+
+:where(.app-page-shell, .stock-page, .edit-page) {
+    width: min(1240px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 28px 0 48px;
+}
+
+.page-eyebrow,
+.section-kicker,
+.app-eyebrow {
+    margin: 0 0 6px;
+    color: var(--discord-text-accent, var(--ui-green-700));
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+}
+
+.app-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 18px;
+    padding: 24px 26px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-lg);
+    background: var(--ui-surface);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.app-page-header h1 {
+    margin: 0 0 6px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.25;
+}
+
+.app-page-header p:last-child {
+    margin: 0;
+    color: var(--ui-muted);
+    line-height: 1.65;
+}
+
+.app-back-button,
+.app-secondary-button,
+.app-primary-button,
+.app-danger-button {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.app-primary-button {
+    background: var(--ui-green-700);
+    color: var(--discord-text, #ffffff) !important;
+    box-shadow: 0 5px 13px var(--discord-shadow, rgba(40, 115, 63, 0.2));
+}
+
+.app-primary-button:hover {
+    background: var(--ui-green-800);
+    transform: translateY(-1px);
+}
+
+.app-back-button,
+.app-secondary-button {
+    border-color: var(--discord-border, #aab9ad);
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text-accent, var(--ui-green-800)) !important;
+}
+
+.app-back-button:hover,
+.app-secondary-button:hover {
+    border-color: var(--ui-green-600);
+    background: var(--ui-green-50);
+}
+
+.app-danger-button {
+    border-color: var(--discord-border, #efb8b4);
+    background: var(--ui-danger-bg);
+    color: var(--ui-danger) !important;
+}
+
+.app-panel {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--ui-border);
+    border-radius: 16px;
+    background: var(--ui-surface);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.app-panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.app-panel-heading h2 {
+    margin: 0 0 5px;
+    color: var(--discord-text, #294c2e);
+    font-size: 20px;
+}
+
+.app-panel-heading p {
+    margin: 0;
+    color: var(--ui-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 共通ヘッダー */
+.calendar-screen .top-header,
+.crop-screen .top-header,
+.form-screen .top-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    min-height: 72px;
+    padding: 12px max(20px, calc((100vw - 1240px) / 2));
+    border-bottom: 1px solid var(--discord-border, rgba(255, 255, 255, 0.14));
+    background: var(--ui-green-950);
+    color: var(--discord-text, #ffffff);
+    box-shadow: 0 6px 18px var(--discord-shadow, rgba(15, 50, 31, 0.16));
+}
+
+.calendar-screen .logo-area,
+.crop-screen .logo-area,
+.form-screen .logo-area {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-screen .logo-icon,
+.crop-screen .logo-icon,
+.form-screen .logo-icon {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--discord-tint, rgba(255, 255, 255, 0.13));
+    font-size: 24px;
+}
+
+.calendar-screen .top-header h1,
+.crop-screen .top-header h1,
+.form-screen .top-header h1 {
+    margin: 0;
+    color: var(--discord-text, #ffffff);
+    font-size: 18px;
+}
+
+.calendar-screen .top-header p,
+.crop-screen .top-header p,
+.form-screen .top-header p {
+    margin: 2px 0 0;
+    color: var(--discord-text-muted, #c9ddce);
+    font-size: 11px;
+}
+
+/* ダッシュボード */
+.dashboard-body .sidebar {
+    display: flex;
+    width: 280px;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--ui-green-950), var(--discord-accent, #1b5534));
+    box-shadow: 8px 0 24px var(--discord-shadow, rgba(18, 53, 36, 0.13));
+}
+
+.dashboard-body .sidebar-header {
+    padding: 28px 20px 24px;
+}
+
+.dashboard-body .logo-circle {
+    width: 68px;
+    height: 68px;
+    margin-bottom: 12px;
+    font-size: 34px;
+}
+
+.dashboard-body .sidebar-header h2 {
+    font-size: 22px;
+    line-height: 1.35;
+}
+
+.dashboard-body .menu {
+    display: flex;
+    width: 100%;
+    flex: 1;
+    gap: 8px;
+    margin: 0;
+    padding: 18px 14px 28px;
+}
+
+.dashboard-body .menu a {
+    display: flex;
+    width: 100%;
+    min-height: 62px;
+    margin: 0;
+    padding: 15px 18px;
+    align-items: center;
+    gap: 14px;
+    border-radius: 12px;
+    color: var(--discord-text, #e8f2ea);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.dashboard-body .menu a > span:first-child {
+    width: 28px;
+    flex-shrink: 0;
+    font-size: 23px;
+    line-height: 1;
+    text-align: center;
+}
+
+.dashboard-body .menu a:hover,
+.dashboard-body .menu a.active {
+    background: var(--discord-tint, rgba(255, 255, 255, 0.14));
+    color: var(--discord-text, #ffffff);
+}
+
+.dashboard-body .main-content {
+    width: calc(100% - 280px);
+    min-width: 0;
+    max-width: none;
+    margin-left: 280px;
+    background:
+        radial-gradient(circle at top right, var(--discord-tint, rgba(53, 139, 77, 0.1)), transparent 34rem),
+        var(--ui-canvas);
+}
+
+.dashboard-body .header {
+    min-height: 104px;
+    padding: 22px 30px;
+    border-bottom: 1px solid var(--ui-border);
+    background: var(--discord-surface, rgba(255, 255, 255, 0.94));
+    box-shadow: 0 5px 16px var(--discord-shadow, rgba(20, 57, 31, 0.05));
+    backdrop-filter: blur(10px);
+}
+
+.dashboard-body .header h1 {
+    margin: 0 0 4px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: clamp(24px, 2.5vw, 32px);
+}
+
+.dashboard-body .header > div:first-child > p:last-child {
+    color: var(--ui-muted);
+}
+
+.dashboard-body .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dashboard-body #clock {
+    min-width: 150px;
+    padding: 10px 14px;
+    border: 1px solid var(--ui-border);
+    border-radius: 10px;
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-weight: 800;
+    text-align: center;
+}
+
+.header-primary-action {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--ui-green-700);
+    color: var(--discord-text, #ffffff) !important;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 5px 13px var(--discord-shadow, rgba(40, 115, 63, 0.2));
+}
+
+.dashboard-body .container {
+    display: grid;
+    width: 100%;
+    gap: 18px;
+    max-width: none;
+    margin: 0;
+    padding: 24px 28px 44px;
+}
+
+.dashboard-body .welcome {
+    order: 1;
+    margin: 0;
+    padding: 22px 24px;
+    border: 1px solid var(--discord-border, #cfe0d2);
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--discord-surface, #ffffff), var(--discord-surface-raised, #f0f8f2));
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.dashboard-body .welcome h2 {
+    margin: 0 0 5px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: clamp(22px, 2.4vw, 29px);
+}
+
+.dashboard-body .welcome > p:last-child {
+    margin: 0;
+    color: var(--ui-muted);
+}
+
+.dashboard-body .today-work-panel {
+    order: 2;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--discord-border, #b8d3bd);
+    border-top: 5px solid var(--ui-green-600);
+    border-radius: 18px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: var(--ui-shadow);
+}
+
+.dashboard-body .panel-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--discord-border, #e1e9e2);
+    background: var(--discord-surface, #f8fcf9);
+}
+
+.dashboard-body .panel-heading-row h2 {
+    margin: 0 0 4px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: 23px;
+}
+
+.dashboard-body .panel-description {
+    margin: 0;
+    color: var(--ui-muted);
+    font-size: 13px;
+}
+
+.dashboard-body .today-work-count {
+    display: inline-flex;
+    min-width: 76px;
+    min-height: 58px;
+    padding: 7px 14px;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 12px;
+    background: var(--ui-green-800);
+    color: var(--discord-text, #ffffff);
+}
+
+.dashboard-body .today-work-count strong {
+    font-size: 30px;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-body .today-work-count span {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dashboard-body .today-work-panel > .work-item {
+    position: relative;
+    margin: 16px 20px;
+    padding: 18px 20px;
+    border: 1px solid var(--discord-border, #dce6de);
+    border-left: 5px solid var(--ui-green-600);
+    border-radius: 12px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: none;
+}
+
+.dashboard-body .today-work-panel > .work-item:last-child {
+    margin-bottom: 20px;
+}
+
+.dashboard-body .today-work-panel .work-time {
+    background: var(--ui-green-100);
+}
+
+.dashboard-body .work-detail-link {
+    display: inline-flex;
+    margin-top: 12px;
+    color: var(--discord-text-accent, var(--ui-green-700));
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dashboard-body .dashboard-summary {
+    order: 3;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+}
+
+.dashboard-body .summary-card {
+    min-height: 132px;
+    padding: 18px;
+    border: 1px solid var(--ui-border);
+    border-radius: 14px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.dashboard-body .summary-card h3 {
+    color: var(--ui-muted);
+    font-size: 13px;
+}
+
+.dashboard-body .summary-card p {
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: 25px;
+    font-variant-numeric: tabular-nums;
+}
+
+.dashboard-body .status-area {
+    display: none;
+}
+
+.dashboard-body .stock-overview-panel {
+    order: 4;
+    margin: 0;
+    padding: 22px;
+    border: 1px solid var(--ui-border);
+    border-radius: 16px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.dashboard-body .stock-overview-panel > h2 {
+    margin-bottom: 18px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+}
+
+.dashboard-body .footer {
+    margin-left: 280px;
+    border-top: 1px solid var(--ui-border);
+    background: var(--discord-surface, #ffffff);
+    color: var(--ui-muted);
+}
+
+/* カレンダー・作物・圃場 */
+.calendar-screen .calendar-page,
+.crop-screen :is(.crop-list-page, .crop-form-page),
+.field-list-body .field-list-page,
+.field-management-body :is(.field-form-page, .field-map-page) {
+    width: min(1240px, calc(100% - 40px));
+    margin: 0 auto;
+    padding-top: 26px;
+}
+
+.calendar-screen .calendar-header,
+.crop-screen :is(.crop-list-header, .crop-page-header),
+.field-list-body .field-page-header,
+.field-management-body :is(.field-form-header, .field-map-header) {
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-lg);
+    background: var(--discord-surface, #ffffff);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.calendar-screen .calendar-home-button,
+.crop-screen :is(.crop-home-button, .crop-list-add-button, .crop-save-button),
+.field-list-body .field-button-primary,
+.field-management-body .field-button-primary {
+    background: var(--ui-green-700);
+    color: var(--discord-text, #ffffff);
+}
+
+/* トップページへ戻る操作は全画面で同じ見た目にする */
+.calendar-screen a.app-home-button,
+.crop-screen a.app-home-button,
+.field-list-body a.app-home-button,
+.management-screen a.app-home-button,
+.stock-screen a.app-home-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    min-height: 48px;
+    padding: 12px 22px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 2px solid var(--discord-border, #1b5e20);
+    border-radius: 12px;
+    background: var(--discord-accent, #2e7d32);
+    color: var(--discord-text, #ffffff) !important;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-decoration: none;
+    box-shadow: 0 4px 10px var(--discord-shadow, rgba(27, 94, 32, 0.25));
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.calendar-screen a.app-home-button:hover,
+.crop-screen a.app-home-button:hover,
+.field-list-body a.app-home-button:hover,
+.management-screen a.app-home-button:hover,
+.stock-screen a.app-home-button:hover {
+    border-color: var(--discord-border, #1b5e20);
+    background: var(--discord-accent, #1b5e20);
+    color: var(--discord-text, #ffffff) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px var(--discord-shadow, rgba(27, 94, 32, 0.32));
+}
+
+.app-home-button.app-home-button-compact {
+    min-height: 48px;
+    padding: 12px 22px;
+    font-size: 14px;
+}
+
+.field-list-body .field-header-actions .app-home-button {
+    white-space: nowrap;
+}
+
+@media screen and (min-width: 901px) {
+    .calendar-screen .calendar-page {
+        width: min(1440px, calc(100% - 24px));
+    }
+}
+
+.calendar-screen .calendar-wrapper,
+.crop-screen :is(.crop-list-card, .crop-form-card),
+.field-list-body .field-list-panel,
+.field-management-body :is(.field-form-card, .field-map-canvas-card, .field-map-sidebar) {
+    border-color: var(--ui-border);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+/* 経営管理（既存の画面固有レイアウトを共通トーンへ統一） */
+.management-screen .page {
+    width: min(1240px, calc(100% - 40px));
+    padding-top: 28px;
+}
+
+.management-screen .header {
+    border-color: var(--ui-border);
+    border-radius: var(--ui-radius-lg);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.management-screen .tabs {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    border-color: var(--ui-border);
+    box-shadow: 0 6px 18px var(--discord-shadow, rgba(24, 61, 35, 0.07));
+}
+
+.management-screen .tabs a.active {
+    background: var(--ui-green-700);
+}
+
+.management-screen :is(.panel, .menu-card, .metric) {
+    border-color: var(--ui-border);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+.management-screen :is(input, select, textarea) {
+    min-height: 44px;
+}
+
+/* 在庫 */
+.stock-layout {
+    display: grid;
+    grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.55fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.stock-entry-panel {
+    position: sticky;
+    top: 16px;
+}
+
+.stock-form {
+    display: grid;
+    gap: 15px;
+}
+
+.app-field {
+    display: grid;
+    gap: 7px;
+}
+
+.app-field label {
+    color: var(--discord-text-muted, #394b3c);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.required-badge,
+.optional-badge {
+    display: inline-flex;
+    margin-left: 4px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.required-badge {
+    background: var(--ui-danger-bg);
+    color: var(--ui-danger);
+}
+
+.optional-badge {
+    background: var(--discord-surface-raised, #eef2ef);
+    color: var(--ui-muted);
+}
+
+:where(.stock-screen, .form-screen, .edit-screen) :is(input, select, textarea) {
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--discord-border, #b8c7bb);
+    border-radius: 9px;
+    background: var(--discord-surface, #ffffff);
+    color: var(--ui-ink);
+    font: inherit;
+    font-size: 14px;
+}
+
+:where(.stock-screen, .form-screen, .edit-screen) textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+:where(.stock-screen, .form-screen, .edit-screen) :is(input, select, textarea):focus {
+    border-color: var(--ui-green-600);
+    box-shadow: 0 0 0 3px var(--discord-shadow, rgba(53, 139, 77, 0.12));
+}
+
+.stock-table-scroll {
+    overflow-x: auto;
+}
+
+.stock-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.stock-table th,
+.stock-table td {
+    padding: 12px 11px;
+    border-bottom: 1px solid var(--discord-border, #e4ebe5);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stock-table th {
+    background: var(--discord-surface-raised, #f0f5f1);
+    color: var(--discord-text-muted, #435d48);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.stock-table td {
+    font-size: 13px;
+}
+
+.stock-quantity {
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-row-low .stock-quantity {
+    color: var(--ui-danger);
+}
+
+.stock-status-badge {
+    display: inline-flex;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--ui-green-100);
+    color: var(--discord-text-accent, var(--ui-green-800));
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.stock-status-badge.is-low {
+    background: var(--ui-danger-bg);
+    color: var(--ui-danger);
+}
+
+.stock-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.stock-edit,
+.stock-delete {
+    display: inline-flex;
+    min-height: 34px;
+    padding: 7px 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.stock-edit {
+    background: var(--discord-surface-raised, #e8f1f8);
+    color: var(--ui-info);
+}
+
+.stock-delete {
+    background: var(--ui-danger-bg);
+    color: var(--ui-danger);
+}
+
+.app-empty-state {
+    padding: 30px 18px !important;
+    color: var(--ui-muted);
+    text-align: center !important;
+}
+
+/* 単票フォーム・編集 */
+.edit-form,
+.standalone-form {
+    display: grid;
+    gap: 16px;
+}
+
+.schedule-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.schedule-field-wide {
+    grid-column: 1 / -1;
+}
+
+.edit-page {
+    max-width: 780px;
+}
+
+.app-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 5px;
+}
+
+/* スマホ */
+@media screen and (max-width: 900px) {
+    .dashboard-body .dashboard-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stock-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stock-entry-panel {
+        position: static;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    :where(.app-page-shell, .stock-page, .edit-page) {
+        width: min(100% - 24px, 1240px);
+        padding: 16px 0 32px;
+    }
+
+    .app-page-header {
+        padding: 19px 18px;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .app-back-button,
+    .app-secondary-button,
+    .app-primary-button,
+    .app-danger-button {
+        width: 100%;
+    }
+
+    .dashboard-body .main-content,
+    .dashboard-body .footer {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .dashboard-body .sidebar {
+        width: min(86vw, 320px);
+        left: calc(-1 * min(86vw, 320px));
+    }
+
+    .dashboard-body .sidebar.active {
+        left: 0;
+    }
+
+    .dashboard-body .sidebar-header {
+        padding: 22px 18px 18px;
+    }
+
+    .dashboard-body .menu {
+        gap: 6px;
+        padding: 14px 12px 24px;
+    }
+
+    .dashboard-body .menu a {
+        min-height: 58px;
+        padding: 13px 16px;
+        font-size: 16px;
+    }
+
+    .field-list-body .field-header-actions .app-home-button {
+        width: 100%;
+    }
+
+    .dashboard-body .header {
+        min-height: 0;
+        padding: 18px 16px 18px 64px;
+    }
+
+    .dashboard-body .header-right {
+        display: grid;
+        grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    }
+
+    .dashboard-body #clock,
+    .dashboard-body .header-primary-action {
+        min-width: 0;
+        width: 100%;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .dashboard-body .container {
+        gap: 14px;
+        padding: 14px 12px 32px;
+    }
+
+    .dashboard-body .welcome,
+    .dashboard-body .panel-heading-row,
+    .dashboard-body .stock-overview-panel {
+        padding: 18px;
+    }
+
+    .dashboard-body .today-work-panel > .work-item {
+        margin: 12px;
+        padding: 16px;
+    }
+
+    .calendar-screen .calendar-page,
+    .crop-screen :is(.crop-list-page, .crop-form-page),
+    .field-list-body .field-list-page,
+    .field-management-body :is(.field-form-page, .field-map-page),
+    .management-screen .page {
+        width: min(100% - 24px, 1240px);
+        padding-top: 14px;
+    }
+
+    .management-screen .tabs {
+        top: 0;
+    }
+
+    .app-panel {
+        padding: 18px;
+    }
+
+    .app-form-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        margin: 8px -4px -4px;
+        padding: 12px 4px calc(4px + env(safe-area-inset-bottom));
+        background: var(--discord-surface, rgba(255, 255, 255, 0.96));
+        flex-direction: column-reverse;
+    }
+
+    .schedule-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .schedule-field-wide {
+        grid-column: auto;
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .dashboard-body .dashboard-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-body .summary-card {
+        min-height: 108px;
+    }
+
+    .dashboard-body .panel-heading-row {
+        align-items: flex-start;
+    }
+
+    .dashboard-body .today-work-count {
+        min-width: 64px;
+    }
+
+    .calendar-screen .top-header,
+    .crop-screen .top-header,
+    .form-screen .top-header {
+        min-height: 64px;
+        padding: 10px 14px;
+    }
+
+    .stock-table {
+        min-width: 0;
+    }
+
+    .stock-table thead {
+        display: none;
+    }
+
+    .stock-table tbody,
+    .stock-table tr,
+    .stock-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .stock-table tr {
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid var(--ui-border);
+        border-left: 4px solid var(--ui-green-600);
+        border-radius: 11px;
+        background: var(--discord-surface, #ffffff);
+    }
+
+    .stock-table tr.stock-row-low {
+        border-left-color: var(--ui-danger);
+    }
+
+    .stock-table td {
+        display: grid;
+        grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.2fr);
+        gap: 10px;
+        padding: 8px 3px;
+        border-bottom: 1px solid var(--discord-border, #edf1ed);
+        text-align: right;
+    }
+
+    .stock-table td::before {
+        content: attr(data-label);
+        color: var(--ui-muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-align: left;
+    }
+
+    .stock-table td:last-child {
+        border-bottom: 0;
+    }
+
+    .stock-actions {
+        justify-content: flex-end;
+    }
+
+    .app-panel-heading {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================
+   設定で切り替える配色・レイアウト
+========================================================= */
+body.theme-blue {
+    --ui-green-950: #172554;
+    --ui-green-900: #1e3a8a;
+    --ui-green-800: #1d4ed8;
+    --ui-green-700: #2563eb;
+    --ui-green-600: #3b82f6;
+    --ui-green-100: #dbeafe;
+    --ui-green-50: #eff6ff;
+    --ui-ink: #172033;
+    --ui-muted: #60708a;
+    --ui-border: #cfdae9;
+    --ui-canvas: #f3f7fc;
+}
+
+body.theme-earth {
+    --ui-green-950: #3f2d1f;
+    --ui-green-900: #5b3c26;
+    --ui-green-800: #755033;
+    --ui-green-700: #90643e;
+    --ui-green-600: #ad7b50;
+    --ui-green-100: #efe2d2;
+    --ui-green-50: #faf5ee;
+    --ui-ink: #33281f;
+    --ui-muted: #77685c;
+    --ui-border: #e1d5c8;
+    --ui-canvas: #f7f2eb;
+}
+
+body.theme-discord {
+    color-scheme: dark;
+    --ui-green-950: #3730a3;
+    --ui-green-900: #4752c4;
+    --ui-green-800: #5865f2;
+    --ui-green-700: #7983f5;
+    --ui-green-600: #949cf7;
+    --ui-green-100: #3c4270;
+    --ui-green-50: #353743;
+    --ui-ink: #f2f3f5;
+    --ui-muted: #b5bac1;
+    --ui-border: #3f4147;
+    --ui-surface: #2b2d31;
+    --ui-canvas: #313338;
+    --ui-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.22);
+    --ui-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-blue .sidebar,
+body.theme-blue.dashboard-body.calendar-screen .sidebar {
+    background: linear-gradient(180deg, #1e4f91 0%, #153566 100%);
+}
+
+body.theme-earth .sidebar,
+body.theme-earth.dashboard-body.calendar-screen .sidebar {
+    background: linear-gradient(180deg, #65472f 0%, #3f2d1f 100%);
+}
+
+body.theme-discord .sidebar,
+body.theme-discord.dashboard-body.calendar-screen .sidebar {
+    background: #1e1f22;
+    box-shadow: 5px 0 18px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-blue .menu a.active,
+body.theme-blue .operation-button.primary,
+body.theme-blue .app-primary-button {
+    background: #2563eb;
+}
+
+body.theme-earth .menu a.active,
+body.theme-earth .operation-button.primary,
+body.theme-earth .app-primary-button {
+    background: #8a5d39;
+}
+
+body.theme-discord .menu a.active,
+body.theme-discord .operation-button.primary,
+body.theme-discord .app-primary-button {
+    border-color: #5865f2;
+    background: #5865f2;
+}
+
+body.theme-discord,
+body.theme-discord .main-content,
+body.theme-discord.dashboard-body.calendar-screen .main-content {
+    background: var(--ui-canvas);
+    color: var(--ui-ink);
+}
+
+body.theme-discord :is(
+    .app-page-header,
+    .operations-panel,
+    .dashboard-card,
+    .summary-card,
+    .calendar-header,
+    .calendar-wrapper,
+    .management-header,
+    .management-panel,
+    .stock-card,
+    .edit-card,
+    .form-card
+) {
+    border-color: var(--ui-border);
+    background: var(--ui-surface);
+    color: var(--ui-ink);
+    box-shadow: var(--ui-shadow-sm);
+}
+
+body.theme-discord :is(h1, h2, h3, h4, label, strong),
+body.theme-discord .operations-heading h1,
+body.theme-discord .operations-panel h2,
+body.theme-discord .app-page-header h1 {
+    color: var(--ui-ink);
+}
+
+body.theme-discord :is(p, small, .settings-help),
+body.theme-discord .operations-heading p {
+    color: var(--ui-muted);
+}
+
+body.theme-discord :is(input, select, textarea) {
+    border-color: #4e5058;
+    background: #1e1f22;
+    color: #f2f3f5;
+}
+
+body.theme-discord :is(input, select, textarea)::placeholder {
+    color: #949ba4;
+}
+
+body.theme-discord :is(table, th, td) {
+    border-color: #3f4147;
+    color: var(--ui-ink);
+}
+
+body.theme-discord :is(th, .operations-table th) {
+    background: #232428;
+    color: #dbdee1;
+}
+
+body.layout-compact {
+    --calendar-sidebar: 200px;
+}
+
+body.layout-compact .sidebar {
+    width: 210px;
+}
+
+body.layout-compact .main-content {
+    margin-left: 210px;
+}
+
+body.layout-compact :is(.app-page-shell, .stock-page, .edit-page, .operations-page, .management-page) {
+    width: min(1440px, calc(100% - 24px));
+    padding-top: 16px;
+}
+
+body.layout-compact :is(.operations-panel, .app-page-header, .dashboard-card, .summary-card) {
+    padding: 14px;
+}
+
+body.layout-wide :is(.app-page-shell, .stock-page, .edit-page, .operations-page, .management-page) {
+    width: calc(100% - 28px);
+    max-width: none;
+}
+
+.dashboard-body.calendar-screen.layout-compact .sidebar {
+    width: var(--calendar-sidebar);
+}
+
+.dashboard-body.calendar-screen.layout-compact .main-content {
+    width: calc(100% - var(--calendar-sidebar));
+    margin-left: var(--calendar-sidebar);
+}
+
+.settings-page {
+    max-width: 1120px;
+}
+
+.settings-section {
+    margin-bottom: 18px;
+}
+
+.settings-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.settings-help {
+    margin: -8px 0 14px;
+    color: var(--ui-muted);
+}
+
+.settings-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.theme-choice-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.settings-choice {
+    display: grid;
+    min-height: 126px;
+    margin: 0;
+    padding: 14px;
+    border: 2px solid var(--ui-border);
+    border-radius: 12px;
+    background: var(--ui-surface);
+    color: var(--ui-ink);
+    cursor: pointer;
+    gap: 7px;
+}
+
+.settings-choice:has(input:checked) {
+    border-color: var(--ui-green-700);
+    box-shadow: 0 0 0 3px var(--ui-green-100);
+}
+
+.settings-choice input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+}
+
+.settings-choice small {
+    color: var(--ui-muted);
+    line-height: 1.45;
+}
+
+.theme-preview {
+    display: block;
+    height: 34px;
+    border-radius: 8px;
+}
+
+.theme-preview-green { background: linear-gradient(90deg, #17452d 0 34%, #e8f4eb 34%); }
+.theme-preview-blue { background: linear-gradient(90deg, #1e4f91 0 34%, #dbeafe 34%); }
+.theme-preview-earth { background: linear-gradient(90deg, #65472f 0 34%, #efe2d2 34%); }
+.theme-preview-discord { background: linear-gradient(90deg, #1e1f22 0 34%, #5865f2 34% 60%, #313338 60%); }
+
+.layout-choice {
+    min-height: 98px;
+}
+
+.settings-save-bar {
+    position: sticky;
+    bottom: 12px;
+    z-index: 20;
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px;
+    border: 1px solid var(--ui-border);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--ui-surface) 92%, transparent);
+    box-shadow: var(--ui-shadow);
+    backdrop-filter: blur(10px);
+}
+
+.settings-save-bar .operation-button {
+    min-height: 46px;
+    padding-inline: 22px;
+}
+
+@media screen and (max-width: 900px) {
+    .theme-choice-grid,
+    .settings-choice-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body.layout-compact .main-content,
+    .dashboard-body.calendar-screen.layout-compact .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .settings-form-grid,
+    .theme-choice-grid,
+    .settings-choice-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* =========================================================
+   作業カレンダー：ダッシュボード共通サイドバーレイアウト
+========================================================= */
+.dashboard-body.calendar-screen > .menu-btn {
+    display: none;
+}
+
+.dashboard-body.calendar-screen .sidebar {
+    z-index: 80;
+}
+
+.dashboard-body.calendar-screen .calendar-main-content {
+    overflow-x: hidden;
+}
+
+.dashboard-body.calendar-screen .calendar-app-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.dashboard-body.calendar-screen .calendar-page {
+    max-width: none;
+    padding-bottom: 44px;
+}
+
+.dashboard-body.calendar-screen .calendar-header {
+    padding: 22px 24px;
+}
+
+.dashboard-body.calendar-screen .calendar-header-text h2 {
+    margin: 0 0 7px;
+    color: var(--discord-text-accent, var(--ui-green-900));
+    font-size: clamp(20px, 2vw, 27px);
+}
+
+.dashboard-body.calendar-screen .calendar-header-text p {
+    color: var(--ui-muted);
+    line-height: 1.6;
+}
+
+.dashboard-body.calendar-screen .month-nav {
+    gap: 16px;
+    padding: 4px 2px;
+}
+
+.dashboard-body.calendar-screen .calendar-wrapper {
+    min-width: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen > .menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dashboard-body.calendar-screen .calendar-app-header {
+        position: relative;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .dashboard-body.calendar-screen .calendar-app-header .header-right {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .dashboard-body.calendar-screen .calendar-page {
+        width: 100%;
+        padding: 14px 12px 32px;
+    }
+
+    .dashboard-body.calendar-screen .calendar-header {
+        padding: 18px;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .dashboard-body.calendar-screen .calendar-app-header .header-right {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-body.calendar-screen .month-nav {
+        gap: 8px;
+    }
+
+    .dashboard-body.calendar-screen .month-button {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .dashboard-body.calendar-screen .month-title {
+        font-size: 21px;
+    }
+}

@@ -1,0 +1,698 @@
+/* 圃場登録・圃場マップ共通 */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.field-management-body {
+    min-width: 320px;
+    margin: 0;
+    background:
+        radial-gradient(circle at top right, var(--discord-tint, rgba(102, 187, 106, 0.12)), transparent 28rem),
+        var(--discord-surface-raised, #f4f7f4);
+    color: var(--discord-text, #243027);
+    font-family: "Yu Gothic", "Meiryo", sans-serif;
+}
+
+.field-management-body a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.field-management-body button,
+.field-management-body input,
+.field-management-body textarea {
+    font: inherit;
+}
+
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 100000;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text, #1b5e20);
+    font-weight: 700;
+    box-shadow: 0 4px 16px var(--discord-shadow, rgba(0, 0, 0, 0.2));
+    transform: translateY(-150%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.field-page-eyebrow {
+    margin: 0 0 6px;
+    color: var(--discord-text-accent, #558b2f);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+.field-button {
+    display: inline-flex;
+    min-height: 46px;
+    margin: 0;
+    padding: 11px 18px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s,
+        box-shadow 0.2s, transform 0.2s;
+}
+
+.field-button-primary {
+    border-color: var(--discord-border, #1b5e20);
+    background: var(--discord-accent, #2e7d32);
+    color: var(--discord-text, #ffffff) !important;
+    box-shadow: 0 4px 10px var(--discord-shadow, rgba(46, 125, 50, 0.22));
+}
+
+.field-button-primary:hover {
+    background: var(--discord-accent, #1b5e20);
+    transform: translateY(-1px);
+}
+
+.field-button-secondary {
+    border-color: var(--discord-border, #a9b9ab);
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text-accent, #2f6535) !important;
+}
+
+.field-button-secondary:hover {
+    border-color: var(--discord-border, #2e7d32);
+    background: var(--discord-surface-raised, #f0f7f1);
+}
+
+.field-button:focus-visible,
+.field-form-card input:focus-visible,
+.field-form-card textarea:focus-visible,
+.field-map-item:focus-visible {
+    outline: 3px solid var(--discord-border, rgba(249, 168, 37, 0.72));
+    outline-offset: 3px;
+}
+
+.field-alert {
+    margin-bottom: 18px;
+    padding: 14px 18px;
+    border: 1px solid;
+    border-radius: 10px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.field-alert-error {
+    border-color: var(--discord-border, #ef9a9a);
+    background: var(--discord-surface, #fff2f2);
+    color: var(--discord-text-danger, #a01818);
+}
+
+/* 圃場登録・編集 */
+
+.field-form-page {
+    width: min(960px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 32px 0 56px;
+}
+
+.field-form-header,
+.field-map-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 22px;
+    padding: 26px 28px;
+    border: 1px solid var(--discord-border, #dfe8e0);
+    border-radius: 18px;
+    background: var(--discord-surface, rgba(255, 255, 255, 0.96));
+    box-shadow: 0 7px 24px var(--discord-shadow, rgba(34, 73, 39, 0.08));
+}
+
+.field-form-header h1,
+.field-map-header h1 {
+    margin: 0 0 7px;
+    color: var(--discord-text-accent, #1f5d27);
+    font-size: clamp(25px, 3vw, 34px);
+    line-height: 1.3;
+}
+
+.field-form-header > div > p:last-child,
+.field-map-header > div > p:last-child {
+    margin: 0;
+    color: var(--discord-text-muted, #637067);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.field-form-card {
+    padding: 30px;
+    border: 1px solid var(--discord-border, #dfe8e0);
+    border-radius: 18px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: 0 8px 28px var(--discord-shadow, rgba(34, 73, 39, 0.08));
+}
+
+.field-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 24px;
+}
+
+.field-form-group {
+    min-width: 0;
+}
+
+.field-form-group-wide {
+    grid-column: 1 / -1;
+}
+
+.field-form-group label {
+    display: block;
+    margin: 0 0 7px;
+    color: var(--discord-text-accent, #245d2b);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.field-required {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--discord-danger, #c62828);
+    color: var(--discord-text, #ffffff);
+    font-size: 10px;
+    line-height: 1.4;
+    vertical-align: middle;
+}
+
+.field-form-card input,
+.field-form-card textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 11px 13px;
+    border: 1px solid var(--discord-border, #b7c2b9);
+    border-radius: 9px;
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text, #263328);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.field-form-card input {
+    height: 48px;
+}
+
+.field-form-card textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
+.field-form-card input:focus,
+.field-form-card textarea:focus {
+    border-color: var(--discord-border, #2e7d32);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--discord-shadow, rgba(46, 125, 50, 0.14));
+}
+
+.field-form-card input::placeholder,
+.field-form-card textarea::placeholder {
+    color: var(--discord-text-muted, #929a94);
+}
+
+.field-form-help {
+    margin: 7px 0 0;
+    color: var(--discord-text-muted, #748078);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.field-input-with-unit {
+    position: relative;
+}
+
+.field-input-with-unit input {
+    padding-right: 46px;
+}
+
+.field-input-with-unit > span {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    color: var(--discord-text-muted, #5e6b61);
+    font-size: 13px;
+    font-weight: 800;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.field-address-notice {
+    display: flex;
+    gap: 13px;
+    margin-top: 26px;
+    padding: 16px 18px;
+    border: 1px solid var(--discord-border, #b9d8bc);
+    border-radius: 11px;
+    background: var(--discord-surface-raised, #f0f8f1);
+    color: var(--discord-text-muted, #315b36);
+}
+
+.field-address-notice > span {
+    font-size: 22px;
+}
+
+.field-address-notice strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14px;
+}
+
+.field-address-notice p {
+    margin: 0;
+    color: var(--discord-text-muted, #5f7062);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.field-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--discord-border, #e1e7e2);
+}
+
+.field-form-actions .field-button {
+    min-width: 155px;
+}
+
+/* 圃場マップ */
+
+.field-map-page {
+    width: min(1500px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 26px 0 42px;
+}
+
+.field-map-header-actions {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 12px;
+}
+
+.field-map-count {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 9px 14px;
+    align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #e8f5e9);
+    color: var(--discord-text-accent, #2b6331);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.field-map-count strong {
+    font-size: 18px;
+}
+
+.field-map-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 18px;
+    min-height: 650px;
+}
+
+.field-map-canvas-card,
+.field-map-sidebar {
+    overflow: hidden;
+    border: 1px solid var(--discord-border, #dfe8e0);
+    border-radius: 16px;
+    background: var(--discord-surface, #ffffff);
+    box-shadow: 0 7px 24px var(--discord-shadow, rgba(34, 73, 39, 0.08));
+}
+
+.field-map-canvas-card {
+    position: relative;
+}
+
+.field-map-canvas {
+    width: 100%;
+    height: 100%;
+    min-height: 650px;
+    background: var(--discord-surface-raised, #e8eee8);
+}
+
+.field-map-message {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    z-index: 500;
+    width: min(520px, calc(100% - 28px));
+    padding: 11px 14px;
+    border: 1px solid var(--discord-border, #e3c365);
+    border-radius: 9px;
+    background: var(--discord-surface-raised, rgba(255, 250, 230, 0.96));
+    color: var(--discord-text-warning, #714d00);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    box-shadow: 0 4px 14px var(--discord-shadow, rgba(0, 0, 0, 0.12));
+    transform: translateX(-50%);
+}
+
+.field-map-message[hidden] {
+    display: none;
+}
+
+.field-map-sidebar {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.field-map-sidebar-heading {
+    padding: 20px 20px 15px;
+    border-bottom: 1px solid var(--discord-border, #e4eae5);
+}
+
+.field-map-sidebar-heading h2 {
+    margin: 0 0 4px;
+    color: var(--discord-text-accent, #245d2b);
+    font-size: 19px;
+}
+
+.field-map-sidebar-heading p {
+    margin: 0;
+    color: var(--discord-text-muted, #748078);
+    font-size: 12px;
+}
+
+.field-map-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.field-map-item {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    gap: 10px;
+    width: 100%;
+    margin: 0;
+    padding: 15px 16px;
+    align-items: start;
+    border: 0;
+    border-bottom: 1px solid var(--discord-border, #e8ece9);
+    background: var(--discord-surface, #ffffff);
+    color: var(--discord-text, #263328);
+    text-align: left;
+    cursor: pointer;
+}
+
+.field-map-item:hover,
+.field-map-item.is-active {
+    background: var(--discord-surface-raised, #edf7ee);
+}
+
+.field-map-item:disabled {
+    background: var(--discord-surface, #f8f9f8);
+    color: var(--discord-text-muted, #858d87);
+    cursor: not-allowed;
+}
+
+.field-map-item-marker {
+    margin-top: 2px;
+    color: var(--discord-text-accent, #2e7d32);
+    font-size: 15px;
+}
+
+.field-map-item:disabled .field-map-item-marker {
+    color: var(--discord-text-muted, #aeb5b0);
+}
+
+.field-map-item-content {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+}
+
+.field-map-item-content strong {
+    overflow: hidden;
+    color: var(--discord-text, #294f2e);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.field-map-item-content > span {
+    overflow: hidden;
+    color: var(--discord-text-muted, #667169);
+    font-size: 11px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.field-map-item-content small {
+    width: max-content;
+    margin-top: 3px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #e8f5e9);
+    color: var(--discord-text-accent, #23612b);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.field-map-item-status {
+    margin-top: 1px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background: var(--discord-surface-raised, #eeeeee);
+    color: var(--discord-text-muted, #747b76);
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.field-map-empty {
+    display: flex;
+    flex: 1;
+    padding: 30px 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.field-map-empty > span {
+    margin-bottom: 10px;
+    font-size: 38px;
+}
+
+.field-map-empty strong {
+    margin-bottom: 5px;
+    color: var(--discord-text-muted, #35563a);
+}
+
+.field-map-empty p {
+    margin: 0 0 16px;
+    color: var(--discord-text-muted, #748078);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.field-map-attribution-note {
+    margin: 0;
+    padding: 10px 14px;
+    border-top: 1px solid var(--discord-border, #e4eae5);
+    color: var(--discord-text-muted, #7b847d);
+    font-size: 10px;
+    text-align: right;
+}
+
+.field-map-attribution-note a {
+    color: var(--discord-text-accent, #356b3c);
+    text-decoration: underline;
+}
+
+.field-map-popup {
+    min-width: 190px;
+    color: var(--discord-text, #263328);
+    font-family: "Yu Gothic", "Meiryo", sans-serif;
+}
+
+.field-map-popup > strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--discord-text, #205927);
+    font-size: 15px;
+}
+
+.field-map-popup > p {
+    margin: 0 0 8px;
+    color: var(--discord-text-muted, #5f6a61);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.field-map-popup dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 3px 8px;
+    margin: 0 0 9px;
+    padding-top: 7px;
+    border-top: 1px solid var(--discord-border, #e4e9e5);
+    font-size: 11px;
+}
+
+.field-map-popup dt {
+    color: var(--discord-text-muted, #748078);
+    font-weight: 700;
+}
+
+.field-map-popup dd {
+    margin: 0;
+}
+
+.field-map-popup > a {
+    color: var(--discord-text-accent, #1f6530);
+    font-size: 11px;
+    font-weight: 800;
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 1000px) {
+    .field-form-header,
+    .field-map-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .field-map-header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .field-map-layout {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+    }
+
+    .field-map-canvas,
+    .field-map-layout {
+        min-height: 520px;
+    }
+
+    .field-map-sidebar {
+        max-height: 420px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .field-form-page,
+    .field-map-page {
+        width: min(100% - 20px, 960px);
+        padding: 10px 0 30px;
+    }
+
+    .field-form-header,
+    .field-map-header {
+        gap: 18px;
+        margin-bottom: 12px;
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .field-form-header .field-button {
+        width: 100%;
+    }
+
+    .field-form-card {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .field-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .field-form-group-wide {
+        grid-column: auto;
+    }
+
+    .field-form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .field-form-actions .field-button {
+        width: 100%;
+    }
+
+    .field-map-header-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .field-map-count {
+        justify-content: center;
+    }
+
+    .field-map-canvas-card,
+    .field-map-sidebar {
+        border-radius: 13px;
+    }
+
+    .field-map-canvas,
+    .field-map-layout {
+        min-height: 440px;
+    }
+
+    .field-map-sidebar {
+        max-height: 390px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .field-button,
+    .field-map-item,
+    .skip-link {
+        transition: none;
+    }
+}

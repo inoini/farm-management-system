@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="圃場の所在地、面積、作物、メモをまとめて管理する一覧画面です。">
+    <title>圃場一覧 | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
+    
+    <script th:src="@{/js/field-list.js(v='20260822-3')}" src="/js/field-list.js?v=20260822-3" defer></script>
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="field-list-body" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+    <a class="skip-link" href="#field-list-main">本文へ移動</a>
+
+    <main id="field-list-main" class="field-list-page">
+        <header class="field-page-header">
+            <div class="field-page-heading">
+                <p class="field-page-eyebrow">FIELD MANAGEMENT</p>
+                <h1>圃場一覧</h1>
+                <p>所在地や作付状況を確認し、日々の圃場情報を一元管理します。</p>
+            </div>
+
+            <nav class="field-header-actions" aria-label="圃場メニュー">
+                <a class="app-home-button"
+                   th:href="@{/}"
+                   href="/"
+                   aria-label="トップページへ戻る">
+                    <span aria-hidden="true">🏠</span>
+                    <span>トップページに戻る</span>
+                </a>
+                <a class="field-button field-button-secondary"
+                   th:href="@{/field/map}"
+                   href="/field/map">
+                    <span aria-hidden="true">🗺️</span>
+                    圃場マップ
+                </a>
+                <a class="field-button field-button-primary"
+                   th:href="@{/field/new}"
+                   href="/field/new">
+                    <span aria-hidden="true">＋</span>
+                    圃場を追加
+                </a>
+            </nav>
+        </header>
+
+        <div class="field-alert field-alert-success"
+             th:if="${successMessage}"
+             th:text="${successMessage}"
+             role="status"></div>
+        <div class="field-alert field-alert-error"
+             th:if="${errorMessage}"
+             th:text="${errorMessage}"
+             role="alert"></div>
+
+        <section class="field-summary-grid" aria-label="圃場集計">
+            <article class="field-summary-card">
+                <div class="field-summary-icon field-summary-icon-green" aria-hidden="true">田</div>
+                <div>
+                    <p class="field-summary-label">登録圃場</p>
+                    <p class="field-summary-value">
+                        <span id="fieldTotalCount"
+                              th:text="${fields == null ? 0 : #lists.size(fields)}">0</span>
+                        <span class="field-summary-unit">件</span>
+                    </p>
+                </div>
+            </article>
+
+            <article class="field-summary-card">
+                <div class="field-summary-icon field-summary-icon-blue" aria-hidden="true">㎡</div>
+                <div>
+                    <p class="field-summary-label">合計面積</p>
+                    <p class="field-summary-value">
+                        <span id="fieldTotalArea">0</span>
+                        <span class="field-summary-unit">a</span>
+                    </p>
+                </div>
+            </article>
+
+            <article class="field-summary-card">
+                <div class="field-summary-icon field-summary-icon-amber" aria-hidden="true">作</div>
+                <div>
+                    <p class="field-summary-label">作物の種類</p>
+                    <p class="field-summary-value">
+                        <span id="fieldCropCount">0</span>
+                        <span class="field-summary-unit">種類</span>
+                    </p>
+                </div>
+            </article>
+        </section>
+
+        <section class="field-list-panel" aria-labelledby="field-table-title">
+            <div class="field-panel-heading">
+                <div>
+                    <h2 id="field-table-title">登録圃場</h2>
+                    <p>圃場名・所在地・作物名から絞り込めます。</p>
+                </div>
+                <p class="field-result-count" aria-live="polite">
+                    <span id="fieldResultCount">0</span>件を表示
+                </p>
+            </div>
+
+            <div class="field-list-toolbar" data-field-toolbar hidden>
+                <div class="field-search-box">
+                    <label class="visually-hidden" for="fieldSearch">圃場を検索</label>
+                    <span class="field-search-icon" aria-hidden="true">⌕</span>
+                    <input id="fieldSearch"
+                           type="search"
+                           inputmode="search"
+                           autocomplete="off"
+                           placeholder="圃場名・所在地・作物名で検索">
+                </div>
+
+                <div class="field-filter-box">
+                    <label for="fieldCropFilter">作物</label>
+                    <select id="fieldCropFilter">
+                        <option value="">すべての作物</option>
+                    </select>
+                </div>
+
+                <button id="fieldFilterReset"
+                        class="field-reset-button"
+                        type="button">
+                    条件をクリア
+                </button>
+            </div>
+
+            <div class="field-table-scroll">
+                <table class="field-table">
+                    <caption class="visually-hidden">登録されている圃場の一覧</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" data-sort-column="name">
+                                <button class="field-sort-button" type="button" data-sort="name">
+                                    圃場名 <span aria-hidden="true">↕</span>
+                                </button>
+                            </th>
+                            <th scope="col" data-sort-column="location">
+                                <button class="field-sort-button" type="button" data-sort="location">
+                                    所在地 <span aria-hidden="true">↕</span>
+                                </button>
+                            </th>
+                            <th scope="col" data-sort-column="crop">
+                                <button class="field-sort-button" type="button" data-sort="crop">
+                                    作物 <span aria-hidden="true">↕</span>
+                                </button>
+                            </th>
+                            <th scope="col" data-sort-column="area">
+                                <button class="field-sort-button" type="button" data-sort="area">
+                                    面積 <span aria-hidden="true">↕</span>
+                                </button>
+                            </th>
+                            <th scope="col">座標</th>
+                            <th scope="col">メモ</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="fieldTableBody">
+                        <tr class="field-data-row"
+                            th:each="field : ${fields}"
+                            data-field-row
+                            th:attr="data-name=${field.name},
+                                     data-location=${field.location},
+                                     data-crop=${field.cropName},
+                                     data-area=${field.area}">
+                            <td data-label="圃場名">
+                                <strong class="field-name" th:text="${field.name}">圃場名</strong>
+                            </td>
+                            <td data-label="所在地">
+                                <span th:text="${#strings.isEmpty(field.location) ? '未登録' : field.location}">未登録</span>
+                            </td>
+                            <td data-label="作物">
+                                <span class="field-crop-badge"
+                                      th:classappend="${#strings.isEmpty(field.cropName)} ? ' field-crop-badge-empty'"
+                                      th:text="${#strings.isEmpty(field.cropName) ? '未設定' : field.cropName}">未設定</span>
+                            </td>
+                            <td data-label="面積">
+                                <span class="field-area-value" th:text="${field.area == null ? 0 : field.area}">0</span>
+                                <span class="field-area-unit">a</span>
+                            </td>
+                            <td data-label="座標">
+                                <div class="field-coordinate"
+                                     th:if="${field.latitude != null or field.longitude != null}">
+                                    <span>緯度 <span th:text="${field.latitude == null ? '-' : field.latitude}">-</span></span>
+                                    <span>経度 <span th:text="${field.longitude == null ? '-' : field.longitude}">-</span></span>
+                                </div>
+                                <span class="field-muted"
+                                      th:if="${field.latitude == null and field.longitude == null}">未登録</span>
+                            </td>
+                            <td data-label="メモ">
+                                <span class="field-memo"
+                                      th:title="${field.memo}"
+                                      th:text="${#strings.isEmpty(field.memo) ? '—' : field.memo}">—</span>
+                            </td>
+                            <td data-label="操作">
+                                <div class="field-row-actions">
+                                    <a class="field-action-button field-edit-button"
+                                       th:href="@{/field/edit/{id}(id=${field.id})}"
+                                       href="#">編集</a>
+                                    <form th:action="@{/field/delete/{id}(id=${field.id})}"
+                                          method="post" style="margin:0;display:inline-flex;">
+                                        <button class="field-action-button field-delete-button"
+                                                type="submit"
+                                                th:attr="data-field-name=${field.name}">消去</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr class="field-empty-row" th:if="${#lists.isEmpty(fields)}">
+                            <td colspan="7">
+                                <div class="field-empty-state">
+                                    <span class="field-empty-icon" aria-hidden="true">🌱</span>
+                                    <strong>圃場がまだ登録されていません</strong>
+                                    <p>最初の圃場を追加すると、ここに一覧で表示されます。</p>
+                                    <a class="field-button field-button-primary"
+                                       th:href="@{/field/new}"
+                                       href="/field/new">圃場を追加</a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr id="fieldNoResults" class="field-empty-row" hidden>
+                            <td colspan="7">
+                                <div class="field-empty-state field-no-results-state">
+                                    <span class="field-empty-icon" aria-hidden="true">🔍</span>
+                                    <strong>条件に一致する圃場がありません</strong>
+                                    <p>検索語や作物の条件を変更してください。</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

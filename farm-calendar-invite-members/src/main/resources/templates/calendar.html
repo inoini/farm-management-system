@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2E7D32">
+
+    <title>農業管理システム | 作業カレンダー</title>
+
+    <link rel="manifest" th:href="@{/manifest.json}" href="/manifest.json">
+    <link rel="apple-touch-icon" th:href="@{/icons/icon-192.png}" href="/icons/icon-192.png">
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
+    
+   	<link rel="stylesheet"
+      th:href="@{/css/calendar-dashboard.css(v='20260922-1')}"
+      href="/css/calendar-dashboard.css?v=20260922-1">
+    	<script defer
+        th:src="@{/js/script.js(v='20260925-3')}"
+        src="/js/script.js?v=20260925-3"></script>
+
+    <style>
+        /* 作業カレンダー見出しとトップページボタン */
+        .calendar-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .calendar-header-text h2 {
+            margin-bottom: 8px;
+        }
+
+        .calendar-header-text p {
+            margin: 0;
+        }
+
+        .calendar-home-button {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+            padding: 12px 22px;
+            border: 2px solid var(--discord-border, #1b5e20);
+            border-radius: 12px;
+            background: var(--discord-accent, #2e7d32);
+            color: var(--discord-text, #ffffff);
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 10px var(--discord-shadow, rgba(27, 94, 32, 0.25));
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calendar-home-button:hover {
+            background: var(--discord-accent, #1b5e20);
+            color: var(--discord-text, #ffffff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px var(--discord-shadow, rgba(27, 94, 32, 0.32));
+        }
+
+        .calendar-home-button:focus-visible {
+            outline: 3px solid var(--discord-border, #f9a825);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 700px) {
+            .calendar-header-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .calendar-home-button {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+         .calendar-event-worker::before {
+        content: "\62C5\5F53\FF1A" !important;
+    }
+    </style>
+    
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260925-4')}" href="/css/calendar-home.css?v=20260925-4">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="dashboard-body calendar-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<button id="menuBtn"
+        class="menu-btn"
+        type="button"
+        aria-label="メニューを開閉"
+        aria-controls="mainSidebar"
+        aria-expanded="false">
+    ☰
+</button>
+
+<div class="app-layout">
+    <aside id="mainSidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-circle" aria-hidden="true">🌾</div>
+            <h2 th:text="${farmName}">農業管理システム</h2>
+        </div>
+
+        <nav class="menu" aria-label="メインメニュー">
+            
+            <a th:href="@{/calendar}" href="/calendar" class="active" aria-current="page">
+                <span aria-hidden="true">📅</span>
+                <span>作業カレンダー</span>
+            </a>
+            <a th:href="@{/crop}" href="/crop">
+                <span aria-hidden="true">🌱</span>
+                <span>作物管理</span>
+            </a>
+            <a th:href="@{/field}" href="/field">
+                <span aria-hidden="true">🚜</span>
+                <span>圃場管理</span>
+            </a>
+            <a th:href="@{/work-history}" href="/work-history">
+                <span aria-hidden="true">◷</span>
+                <span>作業履歴</span>
+            </a>
+            <a th:href="@{/management}" href="/management">
+                <span aria-hidden="true">💰</span>
+                <span>経営管理</span>
+            </a>
+            <a th:href="@{/stock}" href="/stock">
+                <span aria-hidden="true">📦</span>
+                <span>在庫管理</span>
+            </a>
+            <a th:href="@{/workers}" href="/workers">
+                <span aria-hidden="true">👥</span>
+                <span>作業者管理</span>
+            </a>
+            <a th:href="@{/harvests}" href="/harvests">
+                <span aria-hidden="true">🚚</span>
+                <span>収穫・出荷管理</span>
+            </a>
+            <a th:href="@{/reports}" href="/reports">
+                <span aria-hidden="true">📊</span>
+                <span>分析・レポート</span>
+            </a>
+            <a th:href="@{/settings}" href="/settings">
+                <span aria-hidden="true">⚙</span>
+                <span>設定</span>
+            </a>
+        </nav>
+
+        <button class="sidebar-close-control" type="button" aria-label="メニューを閉じる">
+            ‹&nbsp;&nbsp;メニューを閉じる
+        </button>
+    </aside>
+
+    <main class="main-content calendar-main-content">
+        <header class="header calendar-app-header">
+            <div class="calendar-current-date">
+                <span th:text="${todayLabel}">2026年7月25日（土）</span>
+                <span aria-hidden="true">▣</span>
+            </div>
+
+            <div class="calendar-user-tools">
+                <details class="calendar-top-menu notification-menu">
+                    <summary class="notification-button" aria-label="通知">
+                        🔔<span class="notification-dot" th:if="${notificationsEnabled and unfinishedCount > 0}" aria-hidden="true"></span>
+                    </summary>
+                    <div class="calendar-top-popover">
+                        <strong>作業通知</strong>
+                        <p>本日の未完了作業は <b th:text="${unfinishedCount}">0</b>件です。</p>
+                        <a th:href="@{/work-history}">作業履歴を確認</a>
+                    </div>
+                </details>
+                <details class="calendar-top-menu user-menu">
+                    <summary><span class="user-avatar" aria-hidden="true">●</span><span>管理者</span><span aria-hidden="true">⌄</span></summary>
+                    <div class="calendar-top-popover">
+                        <a th:href="@{/workers}">作業者管理</a>
+                        <a th:href="@{/settings}">システム設定</a>
+                    </div>
+                </details>
+            </div>
+        </header>
+
+        <div class="calendar-page">
+    <section class="calendar-header" aria-labelledby="calendar-heading">
+        <div class="calendar-header-row">
+            <div class="calendar-header-text">
+                <h1 id="calendar-heading">作業カレンダー</h1>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div th:if="${successMessage}"
+         class="alert alert-success"
+         role="status"
+         th:text="${successMessage}">
+        作業予定を登録しました。
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="alert alert-error"
+         role="alert"
+         th:text="${errorMessage}">
+        入力内容を確認してください。
+    </div>
+
+    <section class="calendar-search-panel" aria-labelledby="calendar-search-heading">
+        <h2 id="calendar-search-heading">予定を検索</h2>
+        <form class="calendar-search-form" method="get" th:action="@{/calendar}" action="/calendar" role="search">
+            <input type="hidden" name="year" th:value="${year}">
+            <input type="hidden" name="month" th:value="${month}">
+            <div class="calendar-search-input">
+                <label for="scheduleSearch">キーワード</label>
+                <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
+                       placeholder="例：収穫、さつまいも、A圃場、担当者名" aria-describedby="searchHelp">
+            </div>
+            <div>
+                <label for="searchScope">検索範囲</label>
+                <select id="searchScope" name="scope">
+                    <option value="all" th:selected="${searchScope == 'all'}">すべての期間</option>
+                    <option value="month" th:selected="${searchScope == 'month'}">表示中の月</option>
+                </select>
+            </div>
+            <button type="submit" class="new-work-button">検索</button>
+            <a th:href="@{/calendar(year=${year},month=${month})}">検索を解除</a>
+        </form>
+        <p id="searchHelp">作業内容・作物・圃場・担当者・作業種類・状態・メモ・日付を検索。スペースで区切ると、すべての語を含む予定を探せます。</p>
+        <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">
+            <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
+            <p>検索結果はこの欄に表示します。下の月間カレンダーの表示は変わりません。</p>
+            <p th:if="${#lists.isEmpty(searchResults)}">該当する予定はありません。キーワードや検索範囲を変更してください。</p>
+            <div class="search-result-list">
+                <button type="button" class="schedule-card search-result-card"
+                        th:each="result : ${searchResults}" th:attr="data-id=${result.id}">
+                    <span><b th:text="${result.date}"></b> <span th:text="${result.startTime}"></span>〜<span th:text="${result.endTime}"></span></span>
+                    <strong th:text="${#strings.isEmpty(result.schedule) ? '作業内容未設定' : result.schedule}"></strong>
+                    <span>作物：<span th:text="${result.cropName}"></span> ／ 圃場：<span th:text="${result.fieldName}"></span></span>
+                    <span>担当：<span th:text="${result.userName}"></span> ／ <span th:text="${result.status}"></span></span>
+                    <small>押すと予定を確認・編集</small>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="calendar-toolbar" aria-label="表示月と絞り込み">
+        <div class="calendar-month-controls">
+            <a class="icon-control" th:href="@{/calendar(year=${year - 1},month=${month})}" aria-label="前年">«</a>
+            <a class="icon-control" th:href="@{/calendar(year=${prevYear},month=${prevMonth})}" aria-label="前月">‹</a>
+            <label class="month-picker-label">
+                <span class="sr-only">表示月</span>
+                <input id="calendarMonthPicker" type="month" th:value="${monthValue}">
+            </label>
+            <a class="icon-control" th:href="@{/calendar(year=${nextYear},month=${nextMonth})}" aria-label="次月">›</a>
+            <a class="icon-control" th:href="@{/calendar(year=${year + 1},month=${month})}" aria-label="翌年">»</a>
+            <a class="today-control" th:href="@{/calendar}">今日</a>
+        </div>
+
+        <div class="calendar-filters">
+            <select id="workerFilter" aria-label="作業者で絞り込み"><option value="">すべての作業者</option><option th:each="worker : ${workers}" th:value="${worker}" th:text="${worker}"></option></select>
+            <select id="cropFilter" aria-label="作物で絞り込み"><option value="">すべての作物</option><option th:each="crop : ${cropNames}" th:value="${crop}" th:text="${crop}"></option></select>
+            <select id="workTypeFilter" aria-label="作業種類で絞り込み"><option value="">すべての作業種類</option><option th:each="type : ${workTypes}" th:value="${type}" th:text="${type}"></option></select>
+            <button id="openTodaySchedule" class="new-work-button" type="button" th:attr="data-date=${todayIso}">＋ 作業登録</button>
+        </div>
+    </section>
+
+    <div class="calendar-workspace">
+    <section class="calendar-wrapper calendar-month-panel" aria-label="月間作業予定">
+        <table class="calendar-table">
+            <thead>
+            <tr>
+                <th class="sun" scope="col">日</th>
+                <th scope="col">月</th>
+                <th scope="col">火</th>
+                <th scope="col">水</th>
+                <th scope="col">木</th>
+                <th scope="col">金</th>
+                <th class="sat" scope="col">土</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="week : ${#numbers.sequence(0, 5)}">
+                <td th:each="day : ${#numbers.sequence(0, 6)}"
+                    th:with="idx=${week * 7 + day}">
+                    <div th:if="${idx < calendarDays.size()}"
+                         class="day-box"
+                         th:attr="data-date=${calendarDays[idx].date}"
+                         th:classappend="${!calendarDays[idx].currentMonth} ? ' other-month' :
+                             (${calendarDays[idx].today} ? ' today' :
+                             (${calendarDays[idx].scheduleCount > 0} ? ' has-schedule' : ''))">
+
+                        <div class="day-number">
+                            <span th:text="${calendarDays[idx].day}">1</span>
+                        </div>
+
+                        <button type="button"
+                                class="add-schedule-button"
+                                aria-haspopup="dialog"
+                                th:attr="data-date=${calendarDays[idx].date},aria-label=${calendarDays[idx].date + 'の作業を追加'}">
+                            ＋ 新規追加
+                        </button>
+
+                        <div class="schedule-count"
+                             th:if="${calendarDays[idx].scheduleCount > 0}">
+                            🚜 <span th:text="${calendarDays[idx].scheduleCount}">1</span>件
+                        </div>
+
+                        <div class="schedule-list">
+                            <div th:each="schedule : ${calendarDays[idx].scheduleList}"
+                                 class="schedule-card"
+                                 role="button"
+                                 tabindex="0"
+                                 aria-label="作業予定を編集"
+                                 th:attr="data-id=${schedule.id},data-worker=${schedule.userName},data-crop=${schedule.cropName},data-work-type=${schedule.workType},data-status=${schedule.status}">
+                                <span class="calendar-event-title" th:text="${#strings.isEmpty(schedule.schedule) ? (#strings.isEmpty(schedule.workType) ? '作業内容未設定' : schedule.workType) : schedule.schedule}">じゃがいもの収穫</span>
+                                <span class="calendar-event-worker" th:text="${#strings.isEmpty(schedule.userName) ? '未定' : schedule.userName}">A担当</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+<aside class="today-work-sidebar" aria-labelledby="today-work-heading">
+        <div class="today-work-heading-row">
+            <h2 id="today-work-heading">今日の作業</h2>
+            <span th:text="${'(' + todayShortLabel + ')'}">(7/25)</span>
+        </div>
+
+        <div class="today-work-list">
+            <button th:each="schedule : ${todaySchedules}"
+                    type="button"
+                    class="today-work-card schedule-card"
+                    th:classappend="${schedule.status == '完了'} ? ' status-complete' : (${schedule.status == '進行中'} ? ' status-progress' : ' status-pending')"
+                    th:attr="data-id=${schedule.id},data-worker=${schedule.userName},data-crop=${schedule.cropName},data-work-type=${schedule.workType},data-status=${schedule.status}">
+                <span class="today-work-title-row">
+                    <strong th:text="${#strings.isEmpty(schedule.schedule) ? (#strings.isEmpty(schedule.workType) ? '作業内容未設定' : schedule.workType) : schedule.schedule}">じゃがいもの収穫</strong>
+                    <em th:text="${#strings.isEmpty(schedule.status) ? '未着手' : schedule.status}">完了</em>
+                </span>
+                <span class="today-work-location">📍 <b th:text="${#strings.isEmpty(schedule.fieldName) ? '圃場未設定' : schedule.fieldName}">A圃場</b>・<b th:text="${#strings.isEmpty(schedule.userName) ? '担当者未設定' : schedule.userName}">担当者</b></span>
+                <span class="today-work-time" th:text="${(#strings.isEmpty(schedule.startTime) ? '--:--' : schedule.startTime) + ' - ' + (#strings.isEmpty(schedule.endTime) ? '--:--' : schedule.endTime)}">08:00 - 10:00</span>
+            </button>
+
+            <div class="today-work-empty" th:if="${#lists.isEmpty(todaySchedules)}">
+                <span aria-hidden="true">✓</span>
+                <p>今日の作業はまだありません。</p>
+            </div>
+        </div>
+
+        <a class="work-history-link" th:href="@{/work-history}" href="/work-history">すべての今日の作業を見る</a>
+    </aside>
+    </div>
+
+    <section class="calendar-kpi-grid" aria-label="作業状況の集計">
+        <article class="calendar-kpi-card kpi-green">
+            <span class="kpi-icon" aria-hidden="true">▣</span>
+            <div><span>今日の作業</span><strong th:text="${todayScheduleCount}">0</strong><small>予定 <b th:text="${todayScheduleCount}">0</b>件 / 完了 <b th:text="${completedCount}">0</b>件</small></div>
+        </article>
+        <article class="calendar-kpi-card kpi-orange">
+            <span class="kpi-icon" aria-hidden="true">◷</span>
+            <div><span>未完了の作業</span><strong th:text="${unfinishedCount}">0</strong><small>本日の未完了 <b th:text="${unfinishedCount}">0</b>件</small></div>
+        </article>
+        <article class="calendar-kpi-card kpi-emerald">
+            <span class="kpi-icon" aria-hidden="true">▦</span>
+            <div><span>登録圃場数</span><strong th:text="${fieldCount}">0</strong><small>作付中 <b th:text="${activeCropCount}">0</b>件</small></div>
+        </article>
+        <article class="calendar-kpi-card kpi-purple">
+            <span class="kpi-icon" aria-hidden="true">▰</span>
+            <div><span>今月の収穫予定</span><strong><b th:text="${#numbers.formatDecimal(monthlyHarvestKg, 0, 1)}">0</b><em>kg</em></strong><small>目標 <b th:text="${#numbers.formatDecimal(harvestTargetKg, 0, 0)}">1000</b>kg / 達成 <b th:text="${harvestProgress}">0</b>%</small></div>
+        </article>
+    </section>
+
+    <div id="modal"
+         class="modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="selectedDate"
+         aria-hidden="true">
+        <div class="modal-content" role="document">
+            <button type="button"
+                    class="modal-close"
+                    aria-label="入力画面を閉じる"
+                    onclick="closeModal()">×</button>
+
+            <h2 id="selectedDate">作業登録</h2>
+
+            <section aria-labelledby="registered-schedule-heading">
+                <h3 id="registered-schedule-heading" class="schedule-title">登録済み作業</h3>
+                <div id="scheduleList" class="schedule-history" aria-live="polite">
+                    日付を選択してください。
+                </div>
+            </section>
+
+            <hr>
+
+            <form id="scheduleForm" th:action="@{/save}" action="/save" method="post">
+                <input type="hidden" id="scheduleId" name="id">
+                <input type="hidden" id="date" name="date">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startTime">開始時間 <span class="required">必須</span></label>
+                        <input type="time"
+                               id="startTime"
+                               name="startTime"
+                               value="08:00"
+                               step="300"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endTime">終了時間 <span class="required">必須</span></label>
+                        <input type="time"
+                               id="endTime"
+                               name="endTime"
+                               value="09:00"
+                               step="300"
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">担当者 <span class="required">必須</span></label>
+                    <input type="text"
+                           id="userName"
+                           name="userName"
+                           list="workerOptions"
+                           maxlength="50"
+                           autocomplete="name"
+                           placeholder="例：関根"
+                           required>
+                    <datalist id="workerOptions">
+                        <option th:each="worker : ${workers}" th:value="${worker}"></option>
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="schedule">作業内容 <span class="required">必須</span></label>
+                    <textarea id="schedule"
+                              name="schedule"
+                              maxlength="500"
+                              rows="3"
+                              placeholder="例：苗の植え付けを行う"
+                              required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fieldName">圃場名</label>
+                    <input type="text"
+                           id="fieldName"
+                           name="fieldName"
+                           maxlength="100"
+                           placeholder="例：第1圃場">
+                </div>
+
+                <div class="form-group">
+                    <label for="cropName">作物</label>
+                    <select id="cropName" name="cropName">
+                        <option value="">選択してください</option>
+                        <option value="さつまいも">さつまいも</option>
+                        <option value="じゃがいも">じゃがいも</option>
+                        <option value="米">米</option>
+                        <option value="野菜">野菜</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="workType">作業種類</label>
+                    <select id="workType" name="workType">
+                        <option value="">選択してください</option>
+                        <option value="耕起">耕起</option>
+                        <option value="畝立て">畝立て</option>
+                        <option value="植付">植付</option>
+                        <option value="管理">管理</option>
+                        <option value="除草">除草</option>
+                        <option value="防除">防除</option>
+                        <option value="収穫">収穫</option>
+                        <option value="出荷">出荷</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">進捗状態</label>
+                    <select id="status" name="status">
+                        <option value="未着手">未着手</option>
+                        <option value="進行中">進行中</option>
+                        <option value="完了">完了</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="memo">メモ</label>
+                    <textarea id="memo"
+                              name="memo"
+                              maxlength="1000"
+                              rows="4"
+                              placeholder="天候・使用資材・気づいたこと"></textarea>
+                </div>
+
+                <p id="formError" class="form-error" role="alert" hidden></p>
+
+                <div class="modal-buttons">
+                    <button id="saveBtn" type="submit">登録</button>
+                    <button id="updateBtn"
+                            type="submit"
+                            style="display:none;">更新</button>
+                    <button id="deleteBtn"
+                            type="button"
+                            class="danger-button"
+                            style="display:none;"
+                            onclick="deleteSchedule()">消去</button>
+                    <button type="button" class="secondary-button" onclick="closeModal()">閉じる</button>
+                </div>
+            </form>
+        </div>
+    </div>
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("modal");
+    const modalContent = modal ? modal.querySelector(".modal-content") : null;
+    const form = document.getElementById("scheduleForm");
+    const startTime = document.getElementById("startTime");
+    const endTime = document.getElementById("endTime");
+    const formError = document.getElementById("formError");
+    let lastFocusedElement = null;
+
+    function openNewScheduleModal(date) {
+        if (!modal || !date) {
+            return;
+        }
+
+        if (typeof window.openModal === "function") {
+            window.openModal(date);
+            return;
+        }
+
+        lastFocusedElement = document.activeElement;
+        form.reset();
+        document.getElementById("scheduleId").value = "";
+        document.getElementById("date").value = date;
+        document.getElementById("selectedDate").textContent = date + " の作業登録";
+        document.getElementById("saveBtn").style.display = "inline-block";
+        document.getElementById("updateBtn").style.display = "none";
+        document.getElementById("deleteBtn").style.display = "none";
+        startTime.value = "08:00";
+        endTime.value = "09:00";
+        clearFormError();
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        startTime.focus();
+    }
+
+    function clearFormError() {
+        formError.textContent = "";
+        formError.hidden = true;
+        endTime.setCustomValidity("");
+    }
+
+    function validateTimes() {
+        clearFormError();
+        if (startTime.value && endTime.value && startTime.value >= endTime.value) {
+            const message = "終了時間は開始時間より後にしてください。";
+            formError.textContent = message;
+            formError.hidden = false;
+            endTime.setCustomValidity(message);
+            return false;
+        }
+        return true;
+    }
+
+    document.querySelectorAll(".day-box").forEach(function (dayBox) {
+        dayBox.addEventListener("click", function (event) {
+            if (event.target.closest(".schedule-card")) {
+                return;
+            }
+            openNewScheduleModal(dayBox.dataset.date);
+        });
+    });
+
+    document.querySelectorAll(".schedule-card").forEach(function (card) {
+        card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                card.click();
+            }
+        });
+    });
+
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            if (!validateTimes()) {
+                event.preventDefault();
+                endTime.focus();
+            }
+        });
+    }
+
+    startTime.addEventListener("change", validateTimes);
+    endTime.addEventListener("change", validateTimes);
+
+    if (typeof window.closeModal !== "function") {
+        window.closeModal = function () {
+            if (!modal) {
+                return;
+            }
+            modal.classList.remove("show");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("modal-open");
+            clearFormError();
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        };
+    }
+
+    if (modal) {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                window.closeModal();
+            }
+        });
+    }
+
+    if (modalContent) {
+        modalContent.addEventListener("click", function (event) {
+            event.stopPropagation();
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal && modal.classList.contains("show")) {
+            window.closeModal();
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+
+/* Theme tokens are inherited by every component, including dialogs and mobile layouts.
+   Original literal fallbacks preserve the green, blue and earth themes. */
+body.theme-discord {
+    --discord-accent: #4752c4;
+    --discord-border: #4e5058;
+    --discord-danger: #8f3041;
+    --discord-overlay: rgba(0,0,0,0.68);
+    --discord-shadow: rgba(0,0,0,0.28);
+    --discord-surface: #2b2d31;
+    --discord-surface-deep: #232428;
+    --discord-surface-raised: #35373c;
+    --discord-text: #f2f3f5;
+    --discord-text-accent: #bcc2ff;
+    --discord-text-danger: #ffb3ba;
+    --discord-text-muted: #c4c8cf;
+    --discord-text-warning: #f6ce7c;
+    --discord-tint: #383b43;
+    --discord-warning: #624719;
+
+    --calendar-green: #4752c4;
+    --calendar-green-dark: #3c45a5;
+    --calendar-line: #4e5058;
+    --calendar-canvas: #313338;
+    --ui-warning: #f6ce7c;
+    --ui-warning-bg: #624719;
+    --ui-danger: #ffb3ba;
+    --ui-danger-bg: #542d36;
+    --ui-info: #b6caff;
+    color-scheme: dark;
+    background: #313338;
+    color: #f2f3f5;
+}
+body.theme-discord .sidebar { background: #1e1f22; }
+body.theme-discord :is(.app-back-button, .app-secondary-button) {
+    color: #f2f3f5 !important;
+    background: #3b3d44;
+    border-color: #676a75;
+}
+body.theme-discord :is(.app-primary-button, .operation-button.primary, .menu a.active) {
+    background: #4752c4;
+    color: #ffffff !important;
+}
+body.theme-discord :is(input, select, textarea, option) {
+    background-color: #1e1f22;
+    color: #f2f3f5;
+    border-color: #676a75;
+    accent-color: #7983f5;
+}
+body.theme-discord ::placeholder { color: #b5bac1; opacity: 1; }
+body.theme-discord :is(.settings-save-bar, .app-form-actions, .history-editor-actions) {
+    background: #2b2d31;
+}
+body.theme-discord .calendar-header-text h2 { color: #f2f3f5; }
+body.theme-discord .other-month { opacity: 0.75; }
+body.theme-discord :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid #b6bdff;
+    outline-offset: 3px;
+}
+/* Leaflet owns its map tiles; only its controls/popups need readable colors. */
+body.theme-discord :is(.leaflet-popup-content-wrapper, .leaflet-popup-tip, .leaflet-bar a) {
+    background: #2b2d31; color: #f2f3f5;
+}
+body.theme-discord .leaflet-container a { color: #bcc2ff; }
+body.theme-discord .leaflet-control-attribution { background: #232428; color: #c4c8cf; }

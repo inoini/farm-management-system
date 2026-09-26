@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>農業管理システム | 設定</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}">
+    
+    <link rel="stylesheet" th:href="@{/css/calendar-dashboard.css(v='20260922-1')}">
+    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260922-1')}">
+    <script defer th:src="@{/js/script.js(v='20260925-3')}"></script>
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+<body class="dashboard-body calendar-screen operations-screen"
+      th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<button id="menuBtn" class="menu-btn" type="button" aria-label="メニューを開閉"
+        aria-controls="mainSidebar" aria-expanded="false">☰</button>
+<div class="app-layout">
+    <aside th:replace="~{fragments/operations-sidebar :: sidebar('settings')}"></aside>
+    <main class="main-content">
+        <div class="operations-page settings-page">
+            <header class="operations-heading">
+                <div>
+                    <h1>設定</h1>
+                    <p>基本情報と、画面の配色・レイアウトを選択します。</p>
+                </div>
+            </header>
+
+            <div class="alert alert-success" th:if="${param.saved}">設定を保存しました。トップページで配置を確認できます。 <a href="/" th:href="@{/}">トップページを開く</a></div>
+
+            <form th:action="@{/settings/save}" th:object="${setting}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <section class="operations-panel settings-section">
+                    <h2>基本設定</h2>
+                    <div class="settings-form-grid">
+                        <div>
+                            <label for="farmName">システム・農園名</label>
+                            <input id="farmName" type="text" th:field="*{farmName}"
+                                   maxlength="100" required>
+                        </div>
+                        <div>
+                            <label for="monthlyHarvestTargetKg">月間収穫目標（kg）</label>
+                            <input id="monthlyHarvestTargetKg" type="number" min="1" step="0.1"
+                                   th:field="*{monthlyHarvestTargetKg}" required>
+                        </div>
+                    </div>
+                    <label class="operations-checkbox">
+                        <input type="checkbox" name="notificationsEnabled" value="true"
+                               th:checked="${setting.notificationsEnabled == null or setting.notificationsEnabled}">
+                        通知を有効にする
+                    </label>
+                </section>
+
+                <section class="operations-panel settings-section">
+                    <h2>配色デザイン</h2>
+                    <p class="settings-help">見やすい配色を1つ選択してください。</p>
+                    <div class="settings-choice-grid theme-choice-grid">
+                        <label class="settings-choice">
+                            <input type="radio" th:field="*{uiTheme}" value="green" required>
+                            <span class="theme-preview theme-preview-green" aria-hidden="true"></span>
+                            <strong>ナチュラルグリーン</strong>
+                            <small>農業管理に合う標準デザイン</small>
+                        </label>
+                        <label class="settings-choice">
+                            <input type="radio" th:field="*{uiTheme}" value="blue">
+                            <span class="theme-preview theme-preview-blue" aria-hidden="true"></span>
+                            <strong>スカイブルー</strong>
+                            <small>明るく落ち着いた青色デザイン</small>
+                        </label>
+                        <label class="settings-choice">
+                            <input type="radio" th:field="*{uiTheme}" value="earth">
+                            <span class="theme-preview theme-preview-earth" aria-hidden="true"></span>
+                            <strong>アースブラウン</strong>
+                            <small>土や畑をイメージした暖色デザイン</small>
+                        </label>
+                        <label class="settings-choice">
+                            <input type="radio" th:field="*{uiTheme}" value="discord">
+                            <span class="theme-preview theme-preview-discord" aria-hidden="true"></span>
+                            <strong>Discord風ダーク</strong>
+                            <small>濃いグレーと紫のダークデザイン</small>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="operations-panel settings-section">
+                    <h2>画面レイアウト</h2>
+                    <p class="settings-help">トップページは作業カレンダーです。左側に機能メニューを並べます。スマホではメニューボタンから開けます。</p>
+                    <div class="settings-choice-grid">
+                        <label class="settings-choice layout-choice">
+                            <input type="radio" th:field="*{layoutMode}" value="sidebar" required>
+                            <strong>カレンダー中心・左メニュー型（標準）</strong>
+                            <small>左：機能メニュー ／ 中央：カレンダー ／ 下：今日の作業</small>
+                        </label>
+                        <label class="settings-choice layout-choice">
+                            <input type="radio" th:field="*{layoutMode}" value="compact">
+                            <strong>コンパクト</strong>
+                            <small>左メニュー型で余白を減らして多く表示</small>
+                        </label>
+                        <label class="settings-choice layout-choice">
+                            <input type="radio" th:field="*{layoutMode}" value="wide">
+                            <strong>ワイド</strong>
+                            <small>左メニュー型でPC画面の横幅を広く使用</small>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="settings-save-bar">
+                    <button class="operation-button primary" type="submit">設定を保存して反映</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

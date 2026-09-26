@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<body>
+<aside th:fragment="sidebar(activePage)" id="mainSidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-circle" aria-hidden="true">🌾</div>
+        <h2 th:text="${farmName}">農業管理システム</h2>
+    </div>
+    <nav class="menu" aria-label="メインメニュー">
+        
+        <a th:href="@{/calendar}" th:classappend="${activePage == 'calendar'} ? ' active'"><span>📅</span><span>作業カレンダー</span></a>
+        <a th:href="@{/crop}" th:classappend="${activePage == 'crop'} ? ' active'"><span>🌱</span><span>作物管理</span></a>
+        <a th:href="@{/field}" th:classappend="${activePage == 'field'} ? ' active'"><span>🚜</span><span>圃場管理</span></a>
+        <a th:href="@{/work-history}" th:classappend="${activePage == 'history'} ? ' active'"><span>◷</span><span>作業履歴</span></a>
+        <a th:href="@{/management}" th:classappend="${activePage == 'management'} ? ' active'"><span>💰</span><span>経営管理</span></a>
+        <a th:href="@{/stock}" th:classappend="${activePage == 'stock'} ? ' active'"><span>📦</span><span>在庫管理</span></a>
+        <a th:href="@{/workers}" th:classappend="${activePage == 'workers'} ? ' active'"><span>👥</span><span>作業者管理</span></a>
+        <a th:href="@{/harvests}" th:classappend="${activePage == 'harvests'} ? ' active'"><span>🚚</span><span>収穫・出荷管理</span></a>
+        <a th:href="@{/reports}" th:classappend="${activePage == 'reports'} ? ' active'"><span>📊</span><span>分析・レポート</span></a>
+        <a th:href="@{/settings}" th:classappend="${activePage == 'settings'} ? ' active'"><span>⚙</span><span>設定</span></a>
+    </nav>
+    <button class="sidebar-close-control" type="button">‹&nbsp;&nbsp;メニューを閉じる</button>
+</aside>
+</body>
+</html>

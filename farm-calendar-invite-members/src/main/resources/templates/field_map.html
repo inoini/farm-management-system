@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="登録圃場の位置を地図で確認する画面です。">
+    <title>圃場マップ | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" th:href="@{/css/field-management.css(v='20260922-1')}" href="/css/field-management.css?v=20260922-1">
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script th:src="@{/js/field-map.js(v='20260822-2')}" src="/js/field-map.js?v=20260822-2" defer></script>
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="field-management-body" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+    <a class="skip-link" href="#field-map-main">本文へ移動</a>
+
+    <main id="field-map-main" class="field-map-page">
+        <header class="field-map-header">
+            <div>
+                <p class="field-page-eyebrow">FIELD MAP</p>
+                <h1>圃場マップ</h1>
+                <p>目印を選択すると、圃場名・住所・作物情報を確認できます。</p>
+            </div>
+
+            <div class="field-map-header-actions">
+                <span class="field-map-count">
+                    <strong th:text="${mapMarkerCount != null ? mapMarkerCount : 0}">0</strong>件の目印
+                </span>
+                <a class="field-button field-button-secondary"
+                   th:href="@{/field}"
+                   href="/field">← 圃場一覧へ</a>
+            </div>
+        </header>
+
+        <div class="field-map-layout">
+            <section class="field-map-canvas-card" aria-labelledby="field-map-title">
+                <h2 id="field-map-title" class="visually-hidden">登録圃場の地図</h2>
+                <div id="fieldMap"
+                     class="field-map-canvas"
+                     role="application"
+                     aria-label="登録圃場の位置を表示する地図"></div>
+                <div id="fieldMapMessage" class="field-map-message" hidden role="status"></div>
+            </section>
+
+            <aside class="field-map-sidebar" aria-labelledby="field-map-list-title">
+                <div class="field-map-sidebar-heading">
+                    <h2 id="field-map-list-title">登録圃場</h2>
+                    <p>圃場を選ぶと地図が移動します。</p>
+                </div>
+
+                <div class="field-map-list" th:if="${!#lists.isEmpty(fields)}">
+                    <button class="field-map-item"
+                            type="button"
+                            th:each="field : ${fields}"
+                            data-field-marker
+                            th:disabled="${field.latitude == null or field.longitude == null}"
+                            th:attr="data-field-id=${field.id},
+                                     data-field-name=${field.name},
+                                     data-address=${field.location},
+                                     data-crop=${field.cropName},
+                                     data-area=${field.area},
+                                     data-latitude=${field.latitude},
+                                     data-longitude=${field.longitude},
+                                     data-edit-url=@{/field/edit/{id}(id=${field.id})}">
+                        <span class="field-map-item-marker" aria-hidden="true">●</span>
+                        <span class="field-map-item-content">
+                            <strong th:text="${#strings.isEmpty(field.name) ? '圃場名未設定' : field.name}">圃場名</strong>
+                            <span th:text="${#strings.isEmpty(field.location) ? '住所未登録' : field.location}">住所</span>
+                            <small th:if="${!#strings.isEmpty(field.cropName)}"
+                                   th:text="${#strings.isEmpty(field.cropName) ? '未設定' : field.cropName}">作物</small>
+                        </span>
+                        <span class="field-map-item-status"
+                              th:if="${field.latitude == null or field.longitude == null}">位置未取得</span>
+                    </button>
+                </div>
+
+                <div class="field-map-empty" th:if="${#lists.isEmpty(fields)}">
+                    <span aria-hidden="true">🌱</span>
+                    <strong>圃場が登録されていません</strong>
+                    <p>圃場を登録すると、住所から地図に目印を表示します。</p>
+                    <a class="field-button field-button-primary"
+                       th:href="@{/field/new}"
+                       href="/field/new">圃場を登録</a>
+                </div>
+
+                <p class="field-map-attribution-note">
+                    地図：<a href="https://maps.gsi.go.jp/development/ichiran.html"
+                            target="_blank"
+                            rel="noopener noreferrer">国土地理院</a><br>
+                    位置検索：<a href="https://www.openstreetmap.org/copyright"
+                               target="_blank"
+                               rel="noopener noreferrer">© OpenStreetMap contributors</a>
+                </p>
+            </aside>
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>農業管理システム | 作物登録</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
+    
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<header class="top-header">
+    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップページへ戻る">
+        <div class="logo-icon" aria-hidden="true">🌱</div>
+        <div>
+            <h1>農業管理システム</h1>
+            <p>Smart Farm Management</p>
+        </div>
+    </a>
+</header>
+
+<main class="crop-form-page">
+    <section class="crop-page-header" aria-labelledby="crop-page-title">
+        <div class="crop-page-header-row">
+            <div class="crop-page-header-text">
+                <h2 id="crop-page-title">🌱 作物登録</h2>
+                <p>栽培する作物・圃場・日程を登録します</p>
+            </div>
+
+            <a th:href="@{/}"
+               href="/"
+               class="crop-home-button"
+               aria-label="トップページへ戻る">
+                <span aria-hidden="true">🏠</span>
+                <span>トップページに戻る</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="crop-form-card" aria-label="作物登録フォーム">
+        <form th:action="@{/crop/save}"
+              th:object="${crop}"
+              method="post"
+              class="crop-form">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="crop-form-grid">
+                <div class="crop-form-group">
+                    <label for="cropName">
+                        作物名
+                        <span class="crop-required">必須</span>
+                    </label>
+                    <input type="text"
+                           th:field="*{cropName}"
+                           maxlength="100"
+                           placeholder="例：さつまいも"
+                           required>
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="variety">品種</label>
+                    <input type="text"
+                           th:field="*{variety}"
+                           maxlength="100"
+                           placeholder="例：紅はるか">
+                </div>
+
+                <div class="crop-form-group crop-form-group-wide">
+                    <label for="fieldName">圃場</label>
+                    <input type="text"
+                           th:field="*{fieldName}"
+                           maxlength="100"
+                           placeholder="例：第1圃場">
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="plantingDate">植付日</label>
+                    <input type="date" th:field="*{plantingDate}">
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="harvestDate">収穫予定日</label>
+                    <input type="date" th:field="*{harvestDate}">
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="area">面積（a）</label>
+                    <input type="number"
+                           th:field="*{area}"
+                           min="0"
+                           step="0.1"
+                           inputmode="decimal"
+                           placeholder="例：30.0">
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="expectedHarvestKg">収穫予定量（kg）</label>
+                    <input type="number"
+                           th:field="*{expectedHarvestKg}"
+                           min="0"
+                           step="0.1"
+                           inputmode="decimal"
+                           placeholder="例：560">
+                </div>
+
+                <div class="crop-form-group">
+                    <label for="status">状態</label>
+                    <select th:field="*{status}">
+                        <option value="">選択してください</option>
+                        <option value="栽培準備">栽培準備</option>
+                        <option value="植付">植付</option>
+                        <option value="生育中">生育中</option>
+                        <option value="収穫待ち">収穫待ち</option>
+                        <option value="収穫済">収穫済</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="crop-form-actions">
+                <button type="submit" id="saveBtn" class="crop-save-button">
+                    保存する
+                </button>
+
+                <a th:href="@{/crop}"
+                   href="/crop"
+                   class="crop-list-button">
+                    一覧へ戻る
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

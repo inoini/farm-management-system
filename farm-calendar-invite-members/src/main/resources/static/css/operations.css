@@ -1,0 +1,461 @@
+.operations-page {
+    width: min(1380px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 22px 0 42px;
+}
+
+.operations-heading {
+    display: flex;
+    margin-bottom: 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.operations-heading h1 {
+    margin: 0 0 5px;
+    color: var(--discord-text, #173f2b);
+    font-size: clamp(24px, 3vw, 34px);
+}
+
+.operations-heading p {
+    margin: 0;
+    color: var(--discord-text-muted, #66736b);
+}
+
+.operations-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.6fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.operations-panel {
+    padding: 20px;
+    border: 1px solid var(--discord-border, #dce5df);
+    border-radius: 10px;
+    background: var(--discord-surface, #fff);
+    box-shadow: 0 5px 18px var(--discord-shadow, rgba(23, 63, 43, 0.06));
+}
+
+.operations-panel h2 {
+    margin: 0 0 16px;
+    color: var(--discord-text, #225638);
+    font-size: 19px;
+}
+
+.operations-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 12px;
+}
+
+.operations-form-grid .wide {
+    grid-column: 1 / -1;
+}
+
+.operations-panel input,
+.operations-panel select,
+.operations-panel textarea {
+    min-height: 42px;
+    margin: 5px 0 12px;
+}
+
+.operations-checkbox {
+    display: flex;
+    margin: 8px 0 16px;
+    align-items: center;
+    gap: 8px;
+}
+
+.operations-checkbox input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+}
+
+.operations-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.operation-button {
+    display: inline-flex;
+    min-height: 38px;
+    padding: 8px 13px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--discord-border, #cfdad3);
+    border-radius: 6px;
+    background: var(--discord-surface, #fff);
+    color: var(--discord-text-muted, #31503e);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.operation-button.primary {
+    border-color: var(--discord-border, #08734b);
+    background: var(--discord-accent, #08734b);
+    color: var(--discord-text, #fff);
+}
+
+.operation-button.danger {
+    border-color: var(--discord-border, #efc4c1);
+    background: var(--discord-surface, #fff4f3);
+    color: var(--discord-text-danger, #b8332e);
+}
+
+.operations-table-wrap {
+    overflow-x: auto;
+}
+
+.operations-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.operations-table th,
+.operations-table td {
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--discord-border, #e4eae6);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.operations-table th {
+    background: var(--discord-surface-raised, #f3f8f5);
+    color: var(--discord-text-muted, #456052);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.operations-table .inline-status {
+    display: flex;
+    min-width: 145px;
+    align-items: center;
+    gap: 5px;
+}
+
+.operations-table .inline-status select {
+    min-height: 34px;
+    margin: 0;
+    padding: 5px;
+    font-size: 11px;
+}
+
+.status-pill {
+    display: inline-flex;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #eaf4ee);
+    color: var(--discord-text-accent, #227044);
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.operations-empty {
+    padding: 42px 20px;
+    color: var(--discord-text-muted, #77847c);
+    text-align: center;
+}
+
+.report-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.report-card {
+    padding: 18px;
+    border: 1px solid var(--discord-border, #dce5df);
+    border-radius: 9px;
+    background: var(--discord-surface, #fff);
+}
+
+.report-card span {
+    display: block;
+    color: var(--discord-text-muted, #68776e);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.report-card strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--discord-text, #173f2b);
+    font-size: 26px;
+}
+
+.work-type-row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) 48px;
+    gap: 10px;
+    margin: 10px 0;
+    align-items: center;
+    font-size: 13px;
+}
+
+.work-type-bar {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #e8efea);
+}
+
+.work-type-bar i {
+    display: block;
+    height: 100%;
+    min-width: 4px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--discord-accent, #0c8a56), var(--discord-accent, #65bd87));
+}
+
+@media screen and (max-width: 980px) {
+    .operations-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .report-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .operations-page {
+        width: calc(100% - 24px);
+        padding-top: 16px;
+    }
+
+    .operations-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .operations-form-grid,
+    .report-card-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .operations-form-grid .wide {
+        grid-column: auto;
+    }
+}
+
+.work-type-bar {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--discord-surface-raised, #e7eee9);
+}
+
+.work-type-bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--discord-accent, #2e9a62);
+}
+
+@media (max-width: 1000px) {
+    .operations-grid,
+    .report-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .operations-grid .operations-panel:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .operations-page {
+        width: calc(100% - 24px);
+        padding-top: 16px;
+    }
+
+    .operations-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .operations-grid,
+    .report-card-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .operations-grid .operations-panel:last-child {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .operations-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .operations-form-grid .wide {
+        grid-column: auto;
+    }
+}
+
+/* 作業履歴の編集画面 */
+.history-notice { padding: 12px; background: var(--discord-surface-raised, #eaf6ee); color: var(--discord-text, #165d36); }
+.history-error { padding: 12px; background: var(--discord-surface-raised, #fff0ee); color: var(--discord-text-danger, #a32920); }
+.history-row-actions { min-width: 125px; }
+.history-row-actions form, .history-editor-actions form { margin: 0; }
+.history-overlay { position: fixed; inset: 0; z-index: 10000; background: var(--discord-overlay, #0008); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.history-editor { width: min(680px, 100%); max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; }
+.history-editor input, .history-editor select, .history-editor textarea { width: 100%; box-sizing: border-box; }
+.history-editor-actions { position: sticky; bottom: -20px; background: var(--discord-surface, #fff); padding: 14px 0; border-top: 1px solid var(--discord-border, #dce5df); }
+.history-editor .operation-button { min-height: 44px; font-size: 15px; cursor: pointer; }
+
+/* 2026-09-26: analysis report line charts */
+.report-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0;
+}
+
+.chart-panel {
+    min-width: 0;
+}
+
+.chart-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 6px;
+}
+
+.chart-heading h2 {
+    margin: 2px 0 0;
+}
+
+.chart-kicker {
+    display: block;
+    color: var(--discord-text-muted, #68776e);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.chart-unit {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    padding: 5px 10px;
+    background: var(--discord-surface-raised, #e8efea);
+    color: var(--discord-text-muted, #68776e);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 8px 0 2px;
+    color: var(--discord-text-muted, #68776e);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chart-legend i {
+    width: 20px;
+    height: 3px;
+    border-radius: 999px;
+}
+
+.legend-sales { background: #2f80ed; }
+.legend-expenses { background: #e67e22; }
+.legend-profit { background: #2e9a62; }
+
+.chart-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 0 2px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.report-chart {
+    display: block;
+    max-width: none;
+}
+
+@media screen and (max-width: 980px) {
+    .report-chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .report-chart-grid {
+        gap: 14px;
+        margin-top: 14px;
+    }
+
+    .chart-panel {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .chart-scroll {
+        margin-right: -14px;
+        width: calc(100% + 14px);
+    }
+}
+
+/* 2026-09-26: crop-by-crop harvest/shipment charts */
+.crop-trend-section {
+    margin-top: 20px;
+}
+
+.crop-trend-title {
+    margin-bottom: 12px;
+}
+
+.crop-trend-title h2 {
+    margin: 3px 0 4px;
+    color: var(--discord-text, #173f2b);
+}
+
+.crop-trend-title p {
+    margin: 0;
+    color: var(--discord-text-muted, #68776e);
+    font-size: 13px;
+}
+
+.crop-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.crop-chart-panel {
+    min-width: 0;
+}
+
+.legend-harvest {
+    background: var(--discord-accent, #2e9a62);
+}
+
+.legend-shipped {
+    background: #7b61ff;
+}
+
+@media screen and (max-width: 980px) {
+    .crop-chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

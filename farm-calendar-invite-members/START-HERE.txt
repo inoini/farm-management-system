@@ -1,0 +1,26 @@
+農業管理システム：一般公開向け 農場共有アカウント版
+================================================
+
+最初に PUBLIC-SETUP.txt と ACCOUNT-RECOVERY-SETUP.txt を確認してください。
+
+ローカル確認：
+1. SPRING_DATASOURCE_URL / USERNAME / PASSWORD を設定
+2. mvn spring-boot:run
+3. http://localhost:8080/register を開く
+4. 農場名、ユーザー名、復旧用メールアドレス、パスワードを登録
+5. ログインしてデータを登録
+6. 別のPC/ブラウザで同じユーザー名・パスワードを入力し、同じデータが見えることを確認
+
+復旧メールの確認：
+・/forgot-username → ユーザー名確認メール
+・/forgot-password → 30分有効のパスワード再設定メール
+※ SMTP環境変数の設定が必要です。
+
+公開前：
+・NeonのDBパスワードを変更
+・RenderのEnvironmentへDB接続情報を登録
+・SESSION_COOKIE_SECURE=true
+・APP_BASE_URL=https://サービス名.onrender.com
+・MAIL_* のSMTP環境変数を登録
+
+既存データを引き継ぐ場合は PUBLIC-SETUP.txt の BOOTSTRAP_OWNER_* / MIGRATE_LEGACY_DATA を確認してください。

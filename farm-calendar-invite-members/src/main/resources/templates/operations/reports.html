@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>農業管理システム | 分析・レポート</title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260926-1')}">
+    <link rel="stylesheet" th:href="@{/css/calendar-dashboard.css(v='20260926-1')}">
+    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260926-2')}">
+    <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260926-1')}">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260926-1')}" href="/css/discord-theme.css?v=20260926-1">
+    <script defer th:src="@{/js/script.js(v='20260926-1')}"></script>
+    <script defer th:src="@{/js/reports-chart.js(v='20260926-2')}"></script>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+<body class="dashboard-body calendar-screen operations-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<button id="menuBtn" class="menu-btn" type="button" aria-label="メニューを開閉" aria-controls="mainSidebar" aria-expanded="false">☰</button>
+<div class="app-layout">
+    <aside th:replace="~{fragments/operations-sidebar :: sidebar('reports')}"></aside>
+    <main class="main-content">
+        <div class="operations-page">
+            <header class="operations-heading">
+                <div>
+                    <h1>分析・レポート</h1>
+                    <p>作業、生産、経営の登録データを自動集計します。</p>
+                </div>
+            </header>
+
+            <section class="report-card-grid">
+                <article class="report-card"><span>作業完了率</span><strong th:text="${completionRate + '%'}">0%</strong></article>
+                <article class="report-card"><span>登録圃場</span><strong th:text="${fieldCount + '件'}">0件</strong></article>
+                <article class="report-card"><span>登録作物</span><strong th:text="${cropCount + '件'}">0件</strong></article>
+                <article class="report-card"><span>収穫量</span><strong th:text="${#numbers.formatDecimal(harvestedKg, 0, 1) + 'kg'}">0kg</strong></article>
+                <article class="report-card"><span>出荷量</span><strong th:text="${#numbers.formatDecimal(shippedKg, 0, 1) + 'kg'}">0kg</strong></article>
+                <article class="report-card"><span>売上</span><strong th:text="${@moneyFormatter.format(salesTotal)}">0円</strong></article>
+                <article class="report-card"><span>経費</span><strong th:text="${@moneyFormatter.format(expenseTotal)}">0円</strong></article>
+                <article class="report-card"><span>収支</span><strong th:text="${@moneyFormatter.format(profitTotal)}">0円</strong></article>
+            </section>
+
+            <section class="report-chart-grid" aria-label="月別推移グラフ">
+                <article class="operations-panel chart-panel">
+                    <div class="chart-heading">
+                        <div><span class="chart-kicker">HARVEST TREND</span><h2>月別 収穫量</h2></div>
+                        <span class="chart-unit">kg</span>
+                    </div>
+                    <div class="chart-scroll"><canvas id="harvestChart" class="report-chart" aria-label="月別収穫量の折れ線グラフ"></canvas></div>
+                </article>
+
+                <article class="operations-panel chart-panel">
+                    <div class="chart-heading">
+                        <div><span class="chart-kicker">PROFIT TREND</span><h2>月別 売上・経費・利益</h2></div>
+                        <span class="chart-unit">円</span>
+                    </div>
+                    <div class="chart-legend" aria-label="凡例">
+                        <span><i class="legend-sales"></i>売上</span>
+                        <span><i class="legend-expenses"></i>経費</span>
+                        <span><i class="legend-profit"></i>利益</span>
+                    </div>
+                    <div class="chart-scroll"><canvas id="profitChart" class="report-chart" aria-label="月別売上・経費・利益の折れ線グラフ"></canvas></div>
+                </article>
+            </section>
+
+            <section class="crop-trend-section" aria-label="作物別収穫・出荷推移">
+                <div class="crop-trend-title">
+                    <div>
+                        <span class="chart-kicker">CROP TRENDS</span>
+                        <h2>作物別 収穫・出荷推移</h2>
+                        <p>収穫・出荷管理に記録された作物ごとに、直近12か月の折れ線グラフを自動追加します。</p>
+                    </div>
+                </div>
+
+                <div class="crop-chart-grid" th:if="${!cropTrends.isEmpty()}">
+                    <article class="operations-panel chart-panel crop-chart-panel"
+                             th:each="cropTrend, stat : ${cropTrends}">
+                        <div class="chart-heading">
+                            <div>
+                                <span class="chart-kicker">CROP HARVEST / SHIPMENT</span>
+                                <h2 th:text="${cropTrend.cropName}">作物名</h2>
+                            </div>
+                            <span class="chart-unit">kg</span>
+                        </div>
+                        <div class="chart-legend" aria-label="凡例">
+                            <span><i class="legend-harvest"></i>収穫量</span>
+                            <span><i class="legend-shipped"></i>出荷量</span>
+                        </div>
+                        <div class="chart-scroll">
+                            <canvas class="report-chart"
+                                    th:id="|cropChart-${stat.index}|"
+                                    th:attr="aria-label=${cropTrend.cropName + 'の月別収穫量・出荷量の折れ線グラフ'}"></canvas>
+                        </div>
+                    </article>
+                </div>
+                <div class="operations-panel operations-empty" th:if="${cropTrends.isEmpty()}">
+                    収穫・出荷管理に作物を記録すると、ここに作物別グラフが自動で追加されます。
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+<script th:inline="javascript">
+    window.reportTrendData = /*[[${monthlyTrend}]]*/ [];
+    window.cropTrendData = /*[[${cropTrends}]]*/ [];
+</script>
+</body>
+</html>

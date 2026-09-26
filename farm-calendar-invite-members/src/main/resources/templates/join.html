@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>農場に参加 | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-invite-1')}" href="/css/auth.css?v=20260926-invite-1">
+</head>
+<body class="login-page">
+<main class="login-card">
+    <div class="login-mark" aria-hidden="true">🤝</div>
+    <h1>招待コードで参加</h1>
+    <p class="login-intro">農場の管理者から受け取った招待コードを入力してください。自分専用のログイン情報を作成し、農場データだけを共有します。</p>
+    <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">入力内容を確認してください。</p>
+    <form th:action="@{/join}" method="post">
+        <label for="inviteCode">農場の招待コード</label>
+        <input id="inviteCode" name="inviteCode" type="text" maxlength="20" autocomplete="one-time-code"
+               autocapitalize="characters" spellcheck="false" placeholder="ABCD-EFGH-JKLM"
+               th:value="${inviteCode}" required>
+        <p class="field-help">招待コードは発行から7日間有効です。</p>
+
+        <label for="displayName">あなたの表示名</label>
+        <input id="displayName" name="displayName" type="text" maxlength="50" autocomplete="name"
+               th:value="${displayName}" required>
+
+        <label for="username">あなたのユーザー名</label>
+        <input id="username" name="username" type="text" minlength="3" maxlength="40" autocomplete="username"
+               autocapitalize="none" spellcheck="false" th:value="${username}" required>
+
+        <label for="email">あなたのメールアドレス</label>
+        <input id="email" name="email" type="email" maxlength="254" autocomplete="email"
+               autocapitalize="none" spellcheck="false" th:value="${email}" required>
+        <p class="field-help">パスワード再設定はこのメールアドレスを使い、あなたのアカウントだけ変更します。</p>
+
+        <label for="password">あなたのパスワード</label>
+        <input id="password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required>
+
+        <label for="passwordConfirm">パスワード（確認）</label>
+        <input id="passwordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="64" autocomplete="new-password" required>
+        <button class="login-submit" type="submit">この農場に参加</button>
+    </form>
+    <div class="auth-switch auth-switch-column">
+        <a th:href="@{/register}" href="/register">新しい農場を作る</a>
+        <a th:href="@{/login}" href="/login">ログインへ戻る</a>
+    </div>
+</main>
+</body>
+</html>

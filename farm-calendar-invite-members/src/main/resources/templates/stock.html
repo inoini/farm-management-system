@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="肥料・農薬・種・苗などの在庫を登録し、不足状況を確認する画面です。">
+    <title>在庫管理 | 農業管理システム</title>
+    <link rel="stylesheet"
+          th:href="@{/css/style.css(v='20260922-1')}"
+          href="/css/style.css?v=20260922-1">
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="stock-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="stock-page">
+    <header class="app-page-header">
+        <div>
+            <p class="app-eyebrow">INVENTORY CONTROL</p>
+            <h1>📦 在庫管理</h1>
+            <p>肥料・農薬・種・苗の数量を管理し、補充が必要な資材を確認します。</p>
+        </div>
+        <a class="app-back-button app-home-button" th:href="@{/}" href="/">
+            <span aria-hidden="true">🏠</span>
+            <span>トップページに戻る</span>
+        </a>
+    </header>
+
+    <div class="stock-layout">
+        <section class="app-panel stock-entry-panel" aria-labelledby="stock-form-title">
+            <div class="app-panel-heading">
+                <div>
+                    <p class="section-kicker">STOCK ENTRY</p>
+                    <h2 id="stock-form-title" th:text="${stock.id == null ? '資材を登録' : '在庫を編集'}">
+                        資材を登録
+                    </h2>
+                    <p>現在数量と最低在庫を入力してください。</p>
+                </div>
+            </div>
+
+            <form class="stock-form"
+                  th:action="@{/stock/save}"
+                  th:object="${stock}"
+                  method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="app-field">
+                    <label for="itemName">資材名 <span class="required-badge">必須</span></label>
+                    <input id="itemName" type="text" th:field="*{itemName}" maxlength="100"
+                           placeholder="例：化成肥料8-8-8" required>
+                </div>
+
+                <div class="app-field">
+                    <label for="category">カテゴリ</label>
+                    <select id="category" th:field="*{category}">
+                        <option value="肥料">肥料</option>
+                        <option value="農薬">農薬</option>
+                        <option value="種">種</option>
+                        <option value="苗">苗</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="quantity">在庫数量</label>
+                    <input id="quantity" type="number" th:field="*{quantity}" min="0"
+                           inputmode="numeric" placeholder="0">
+                </div>
+
+                <div class="app-field">
+                    <label for="unit">単位</label>
+                    <select id="unit" th:field="*{unit}">
+                        <option value="kg">kg</option>
+                        <option value="袋">袋</option>
+                        <option value="本">本</option>
+                        <option value="箱">箱</option>
+                        <option value="粒">粒</option>
+                    </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="minimumStock">最低在庫</label>
+                    <input id="minimumStock" type="number" th:field="*{minimumStock}" min="0"
+                           inputmode="numeric" placeholder="0">
+                </div>
+
+                <div class="app-field">
+                    <label for="location">保管場所 <span class="optional-badge">任意</span></label>
+                    <input id="location" type="text" th:field="*{location}" maxlength="100"
+                           placeholder="例：第1倉庫">
+                </div>
+
+                <div class="app-field">
+                    <label for="memo">備考 <span class="optional-badge">任意</span></label>
+                    <textarea id="memo" th:field="*{memo}" maxlength="1000"
+                              placeholder="購入先、使用期限、注意事項など"></textarea>
+                </div>
+
+                <button class="app-primary-button" type="submit">💾 保存する</button>
+            </form>
+        </section>
+
+        <section class="app-panel" aria-labelledby="stock-list-title">
+            <div class="app-panel-heading">
+                <div>
+                    <p class="section-kicker">CURRENT STOCK</p>
+                    <h2 id="stock-list-title">在庫一覧</h2>
+                    <p>最低在庫以下の資材は赤色で表示されます。</p>
+                </div>
+                <span class="stock-status-badge">
+                    <strong th:text="${stockList == null ? 0 : #lists.size(stockList)}">0</strong>件
+                </span>
+            </div>
+
+            <div class="stock-table-scroll">
+                <table class="stock-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">資材名</th>
+                        <th scope="col">カテゴリ</th>
+                        <th scope="col">現在数量</th>
+                        <th scope="col">最低在庫</th>
+                        <th scope="col">状態</th>
+                        <th scope="col">保管場所</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(stockList)}">
+                        <td colspan="7" class="app-empty-state">
+                            在庫はまだ登録されていません。左側のフォームから最初の資材を登録してください。
+                        </td>
+                    </tr>
+
+                    <tr th:each="stockItem : ${stockList}"
+                        th:classappend="${stockItem.quantity != null and stockItem.minimumStock != null and stockItem.quantity <= stockItem.minimumStock} ? ' stock-row-low'">
+                        <td data-label="資材名">
+                            <strong th:text="${#strings.isEmpty(stockItem.itemName) ? '名称未設定' : stockItem.itemName}">資材名</strong>
+                        </td>
+                        <td data-label="カテゴリ"
+                            th:text="${#strings.isEmpty(stockItem.category) ? '未設定' : stockItem.category}">未設定</td>
+                        <td data-label="現在数量">
+                            <span class="stock-quantity"
+                                  th:text="${stockItem.quantity != null ? stockItem.quantity : 0}">0</span>
+                            <span th:text="${#strings.isEmpty(stockItem.unit) ? '' : stockItem.unit}"></span>
+                        </td>
+                        <td data-label="最低在庫">
+                            <span th:text="${stockItem.minimumStock != null ? stockItem.minimumStock : 0}">0</span>
+                            <span th:text="${#strings.isEmpty(stockItem.unit) ? '' : stockItem.unit}"></span>
+                        </td>
+                        <td data-label="状態">
+                            <span class="stock-status-badge"
+                                  th:classappend="${stockItem.quantity != null and stockItem.minimumStock != null and stockItem.quantity <= stockItem.minimumStock} ? ' is-low'"
+                                  th:text="${stockItem.quantity != null and stockItem.minimumStock != null and stockItem.quantity <= stockItem.minimumStock ? '要補充' : '適正在庫'}">
+                                適正在庫
+                            </span>
+                        </td>
+                        <td data-label="保管場所"
+                            th:text="${#strings.isEmpty(stockItem.location) ? '未設定' : stockItem.location}">未設定</td>
+                        <td data-label="操作">
+                            <div class="stock-actions">
+                                <a class="stock-edit" th:href="@{/stock/edit/{id}(id=${stockItem.id})}">編集</a>
+                                <form class="auth-delete-form" th:action="@{/stock/delete/{id}(id=${stockItem.id})}" method="post"
+                                      onsubmit="return confirm('この資材を削除しますか？');">
+                                    <button class="stock-delete" type="submit">削除</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

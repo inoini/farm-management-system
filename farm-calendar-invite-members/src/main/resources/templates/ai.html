@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="登録作物の情報を踏まえて栽培・病害虫・肥料について相談できるAI画面です。">
+    <title>AI農業アシスタント | 農業管理システム</title>
+    <link rel="stylesheet"
+          th:href="@{/css/style.css(v='20260922-1')}"
+          href="/css/style.css?v=20260922-1">
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="ai-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="assistant-page">
+    <header class="app-page-header">
+        <div>
+            <p class="app-eyebrow">FARM SUPPORT AI</p>
+            <h1>🤖 AI農業アシスタント</h1>
+            <p>登録済みの作物情報を踏まえて、栽培・病害虫・肥料について回答します。</p>
+        </div>
+        <a class="app-back-button" th:href="@{/}" href="/">
+            ← カレンダーへ戻る
+        </a>
+    </header>
+
+    <div class="assistant-grid">
+        <section class="app-panel" aria-labelledby="assistant-question-title">
+            <div class="app-panel-heading">
+                <div>
+                    <p class="section-kicker">QUESTION</p>
+                    <h2 id="assistant-question-title">相談内容</h2>
+                    <p>症状、発生時期、圃場の状態を具体的に入力すると回答が正確になります。</p>
+                </div>
+            </div>
+
+            <form class="standalone-form" th:action="@{/ai}" action="/ai" method="post">
+                <div class="app-field">
+                    <label for="question">質問 <span class="required-badge">必須</span></label>
+                    <textarea id="question"
+                              name="question"
+                              rows="9"
+                              maxlength="2000"
+                              placeholder="例：さつまいもの葉が黄色くなりました。下葉から広がり、数日前に雨が続きました。考えられる原因と対策を教えてください。"
+                              th:text="${question}"
+                              required></textarea>
+                </div>
+
+                <button class="app-primary-button" type="submit">🌱 AIに相談する</button>
+            </form>
+        </section>
+
+        <section class="app-panel" aria-labelledby="assistant-answer-title">
+            <div class="app-panel-heading">
+                <div>
+                    <p class="section-kicker">RESPONSE</p>
+                    <h2 id="assistant-answer-title">AIからの回答</h2>
+                    <p>最終的な農薬・肥料の使用判断は、ラベルや専門機関の案内も確認してください。</p>
+                </div>
+            </div>
+
+            <div class="assistant-answer" th:if="${answer != null}" th:text="${answer}">
+                AIの回答がここに表示されます。
+            </div>
+
+            <div class="assistant-placeholder" th:if="${answer == null}">
+                <div>
+                    <p aria-hidden="true" style="font-size: 38px; margin: 0 0 10px;">🌿</p>
+                    <strong>左側に相談内容を入力してください</strong>
+                    <p>回答はこの場所に表示されます。</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+</body>
+</html>

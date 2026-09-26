@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="農業管理システムの圃場登録・編集画面です。">
+    <title th:text="${field.id == null ? '圃場登録 | 農業管理システム' : '圃場編集 | 農業管理システム'}">
+        圃場登録 | 農業管理システム
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/field-management.css(v='20260922-1')}" href="/css/field-management.css?v=20260922-1">
+    
+<link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="field-management-body" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+    <a class="skip-link" href="#field-form-main">本文へ移動</a>
+
+    <main id="field-form-main" class="field-form-page">
+        <header class="field-form-header">
+            <div>
+                <p class="field-page-eyebrow">FIELD MANAGEMENT</p>
+                <h1 th:text="${field.id == null ? '圃場を登録' : '圃場を編集'}">圃場を登録</h1>
+                <p>住所を入力すると、保存時に圃場マップ用の位置を自動取得します。</p>
+            </div>
+            <a class="field-button field-button-secondary"
+               th:href="@{/field}"
+               href="/field">← 圃場一覧へ戻る</a>
+        </header>
+
+        <div class="field-alert field-alert-error"
+             th:if="${errorMessage}"
+             th:text="${errorMessage}"
+             role="alert"></div>
+
+        <form class="field-form-card"
+              th:action="@{/field/save}"
+              th:object="${field}"
+              method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="field-form-grid">
+                <div class="field-form-group">
+                    <label for="fieldName">
+                        圃場名 <span class="field-required">必須</span>
+                    </label>
+                    <input id="fieldName"
+                           type="text"
+                           th:field="*{name}"
+                           maxlength="100"
+                           autocomplete="off"
+                           placeholder="例：第1圃場"
+                           required>
+                </div>
+
+                <div class="field-form-group">
+                    <label for="fieldCropName">作物名</label>
+                    <input id="fieldCropName"
+                           type="text"
+                           th:field="*{cropName}"
+                           maxlength="100"
+                           autocomplete="off"
+                           placeholder="例：さつまいも">
+                </div>
+
+                <div class="field-form-group field-form-group-wide">
+                    <label for="fieldLocation">
+                        住所 <span class="field-required">必須</span>
+                    </label>
+                    <input id="fieldLocation"
+                           type="text"
+                           th:field="*{location}"
+                           maxlength="255"
+                           autocomplete="street-address"
+                           placeholder="例：千葉県成田市○○123番地"
+                           aria-describedby="fieldLocationHelp"
+                           required>
+                    <p id="fieldLocationHelp" class="field-form-help">
+                        都道府県・市区町村・町名・番地まで入力すると、地図の目印が正確になります。
+                    </p>
+                </div>
+
+                <div class="field-form-group">
+                    <label for="fieldArea">面積（a）</label>
+                    <div class="field-input-with-unit">
+                        <input id="fieldArea"
+                               type="number"
+                               th:field="*{area}"
+                               min="0.1"
+                               step="0.1"
+                               inputmode="decimal"
+                               placeholder="例：30">
+                        <span aria-hidden="true">a</span>
+                    </div>
+                    <p class="field-form-help">10aは1,000㎡です。</p>
+                </div>
+
+                <div class="field-form-group field-form-group-wide">
+                    <label for="fieldMemo">メモ</label>
+                    <textarea id="fieldMemo"
+                              th:field="*{memo}"
+                              maxlength="2000"
+                              rows="5"
+                              placeholder="土壌の状態、作業予定、注意事項など"></textarea>
+                </div>
+            </div>
+
+            <div class="field-address-notice" role="note">
+                <span aria-hidden="true">📍</span>
+                <div>
+                    <strong>緯度・経度の入力は不要です</strong>
+                    <p>入力した住所から地図表示用の位置を自動取得し、システム内部へ保存します。</p>
+                </div>
+            </div>
+
+            <div class="field-form-actions">
+                <a class="field-button field-button-secondary"
+                   th:href="@{/field}"
+                   href="/field">キャンセル</a>
+                <button class="field-button field-button-primary" type="submit">
+                    <span aria-hidden="true">✓</span>
+                    <span th:text="${field.id == null ? '圃場を登録する' : '変更を保存する'}">圃場を登録する</span>
+                </button>
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

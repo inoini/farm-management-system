@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ユーザー名を忘れた | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-recovery-1')}" href="/css/auth.css?v=20260926-recovery-1">
+</head>
+<body class="login-page">
+<main class="login-card">
+    <div class="login-mark" aria-hidden="true">🌱</div>
+    <h1>ユーザー名を確認</h1>
+    <p class="login-intro">登録した復旧用メールアドレスを入力してください。登録済みの場合、そのメールへユーザー名を送ります。</p>
+    <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+    <p class="login-message success" role="status" th:if="${successMessage}" th:text="${successMessage}"></p>
+    <form th:action="@{/forgot-username}" method="post">
+        <label for="email">復旧用メールアドレス</label>
+        <input id="email" name="email" type="email" maxlength="254" autocomplete="email" th:value="${email}" required autofocus>
+        <button class="login-submit" type="submit">ユーザー名をメールで受け取る</button>
+    </form>
+    <div class="auth-switch"><a th:href="@{/login}" href="/login">ログインへ戻る</a></div>
+</main>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>農業管理システム | 作物一覧</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css(v='20260922-1')}"
+          href="/css/style.css?v=20260922-1">
+
+    <link rel="stylesheet"
+          th:href="@{/css/crop-list.css(v='20260922-1')}"
+          href="/css/crop-list.css?v=20260922-1">
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+
+<header class="top-header">
+    <a th:href="@{/}"
+       href="/"
+       class="logo-area"
+       aria-label="トップページへ戻る">
+
+        <div class="logo-icon" aria-hidden="true">🌱</div>
+
+        <div>
+            <h1>農業管理システム</h1>
+            <p>Smart Farm Management</p>
+        </div>
+    </a>
+</header>
+
+<main class="crop-list-page">
+
+    <section class="crop-list-header"
+             aria-labelledby="crop-list-title">
+
+        <div class="crop-list-header-row">
+
+            <div class="crop-list-header-text">
+                <h2 id="crop-list-title">🌱 作物一覧</h2>
+                <p>登録されている作物を一覧表示します</p>
+            </div>
+
+            <a th:href="@{/}"
+               href="/"
+               class="crop-home-button">
+
+                <span aria-hidden="true">🏠</span>
+                <span>トップページに戻る</span>
+            </a>
+
+        </div>
+
+  		<div class="crop-list-toolbar">
+    <a th:href="@{/crop/add}"
+       href="/crop/add"
+       class="crop-list-add-button crop-register-button">
+        <span aria-hidden="true">＋</span>
+        <span>作物を登録</span>
+    </a>
+</div>
+    </section>
+
+    <section class="crop-list-card"
+             aria-label="登録作物一覧">
+
+        <div class="crop-list-table-scroll">
+
+            <table class="crop-list-table">
+
+                <thead>
+                <tr>
+                    <th scope="col" class="crop-col-name">作物名</th>
+                    <th scope="col" class="crop-col-variety">品種</th>
+                    <th scope="col" class="crop-col-field">圃場</th>
+                    <th scope="col" class="crop-col-date">植付日</th>
+                    <th scope="col" class="crop-col-date">収穫予定日</th>
+                    <th scope="col" class="crop-col-area">面積（a）</th>
+                    <th scope="col" class="crop-col-area">収穫予定（kg）</th>
+                    <th scope="col" class="crop-col-status">状態</th>
+                    <th scope="col"
+                        class="crop-col-action crop-action-heading">
+                        編集
+                    </th>
+                    <th scope="col"
+                        class="crop-col-action crop-action-heading">
+                        消去
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <!-- 作物が登録されていない場合 -->
+                <tr th:if="${#lists.isEmpty(crops)}">
+                    <td colspan="10"
+                        class="crop-list-empty">
+                        登録されている作物はありません。
+                    </td>
+                </tr>
+
+                <!-- 登録されている作物 -->
+                <tr th:each="crop : ${crops}">
+
+                    <td th:text="${#strings.isEmpty(crop.cropName) ? '名称未設定' : crop.cropName}">
+                        さつまいも
+                    </td>
+
+                    <td th:text="${#strings.isEmpty(crop.variety) ? '未設定' : crop.variety}">
+                        紅はるか
+                    </td>
+
+                    <td th:text="${#strings.isEmpty(crop.fieldName) ? '未設定' : crop.fieldName}">
+                        第1圃場
+                    </td>
+
+                    <td class="crop-date-cell"
+                        th:text="${crop.plantingDate != null ? crop.plantingDate : '未設定'}">
+                        2026-08-15
+                    </td>
+
+                    <td class="crop-date-cell"
+                        th:text="${crop.harvestDate != null ? crop.harvestDate : '未設定'}">
+                        2026-10-16
+                    </td>
+
+                    <td th:text="${crop.area != null ? crop.area : 0}">
+                        30.0
+                    </td>
+
+                    <td th:text="${crop.expectedHarvestKg != null ? crop.expectedHarvestKg : 0}">
+                        560
+                    </td>
+
+                    <td>
+                        <span class="crop-status"
+                              th:text="${#strings.isEmpty(crop.status) ? '未設定' : crop.status}">
+                            栽培準備
+                        </span>
+                    </td>
+
+                    <!-- 編集ボタン -->
+                    <td class="crop-action-cell">
+
+                        <a th:href="@{/crop/edit/{id}(id=${crop.id})}"
+                           href="/crop/edit/1"
+                           class="crop-edit-button">
+                            編集
+                        </a>
+
+                    </td>
+
+                    <!-- 消去ボタン -->
+                    <td class="crop-action-cell">
+
+                        <form th:action="@{/crop/delete/{id}(id=${crop.id})}" method="post"
+                              onsubmit="return confirm('この作物を消去しますか？');">
+                            <button type="submit" class="crop-delete-button">消去</button>
+                        </form>
+
+                    </td>
+
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

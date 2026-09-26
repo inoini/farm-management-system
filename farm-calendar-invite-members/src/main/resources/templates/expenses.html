@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>経費管理 | 農業管理システム</title>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 320px;
+            margin: 0;
+            background: var(--discord-surface-raised, #f3f7f3);
+            color: var(--discord-text, #263229);
+            font-family: "Yu Gothic", "Meiryo", sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page {
+            width: min(1240px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 30px 0 40px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 18px;
+            padding: 26px 28px;
+            border: 1px solid var(--discord-border, #dfe8e0);
+            border-radius: 18px;
+            background: var(--discord-surface, #ffffff);
+            box-shadow: 0 8px 24px var(--discord-shadow, rgba(34, 73, 39, 0.08));
+        }
+
+        .eyebrow {
+            margin: 0 0 5px;
+            color: var(--discord-text-warning, #9a610e);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+        }
+
+        h1 {
+            margin: 0 0 7px;
+            color: var(--discord-text-accent, #245d2b);
+            font-size: clamp(27px, 3vw, 36px);
+        }
+
+        .header-description {
+            margin: 0;
+            color: var(--discord-text-muted, #69736b);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .back-button {
+            display: inline-flex;
+            flex-shrink: 0;
+            min-height: 44px;
+            padding: 10px 16px;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--discord-border, #a9b9ab);
+            border-radius: 9px;
+            background: var(--discord-surface, #ffffff);
+            color: var(--discord-text-accent, #2f6535);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+            padding: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--discord-border, #dfe8e0);
+            border-radius: 12px;
+            background: var(--discord-surface, #ffffff);
+        }
+
+        .tabs a {
+            display: inline-flex;
+            flex: 1 0 auto;
+            min-height: 40px;
+            padding: 9px 14px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: var(--discord-text-muted, #657168);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .tabs a.active {
+            background: var(--discord-accent, #286d32);
+            color: var(--discord-text, #ffffff);
+        }
+
+        .alert {
+            margin-bottom: 16px;
+            padding: 13px 16px;
+            border: 1px solid;
+            border-radius: 9px;
+            font-weight: 700;
+        }
+
+        .alert-success {
+            border-color: var(--discord-border, #a5d6a7);
+            background: var(--discord-surface-raised, #edf7ee);
+            color: var(--discord-text, #1b5e20);
+        }
+
+        .alert-error {
+            border-color: var(--discord-border, #ef9a9a);
+            background: var(--discord-surface, #fff2f2);
+            color: var(--discord-text-danger, #a01818);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.55fr);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .panel {
+            min-width: 0;
+            padding: 24px;
+            border: 1px solid var(--discord-border, #dfe7e0);
+            border-radius: 15px;
+            background: var(--discord-surface, #ffffff);
+            box-shadow: 0 5px 18px var(--discord-shadow, rgba(38, 77, 42, 0.06));
+        }
+
+        .panel-heading,
+        .list-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .panel-heading h2,
+        .list-heading h2 {
+            margin: 0;
+            color: var(--discord-text, #294c2e);
+            font-size: 20px;
+        }
+
+        .panel-heading p,
+        .section-label {
+            margin: 4px 0 0;
+            color: var(--discord-text-muted, #7b897e);
+            font-size: 11px;
+        }
+
+        .required,
+        .optional {
+            display: inline-block;
+            margin-left: 4px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .required {
+            background: var(--discord-surface-raised, #fff0ee);
+            color: var(--discord-text-danger, #b9342b);
+        }
+
+        .optional {
+            background: var(--discord-surface-raised, #eef2ef);
+            color: var(--discord-text-muted, #69736b);
+        }
+
+        form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        label {
+            color: var(--discord-text-muted, #394b3c);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            min-height: 44px;
+            margin: 0;
+            padding: 10px 12px;
+            border: 1px solid var(--discord-border, #bcc9be);
+            border-radius: 9px;
+            background: var(--discord-surface, #ffffff);
+            color: var(--discord-text, #263229);
+            font: inherit;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 98px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--discord-border, #2f7a39);
+            outline: 3px solid var(--discord-border, rgba(47, 122, 57, 0.13));
+        }
+
+        .amount-input {
+            position: relative;
+        }
+
+        .amount-input input {
+            padding-right: 42px;
+        }
+
+        .amount-input span {
+            position: absolute;
+            top: 50%;
+            right: 13px;
+            color: var(--discord-text-muted, #69736b);
+            font-size: 13px;
+            font-weight: 700;
+            transform: translateY(-50%);
+        }
+
+        .submit-button {
+            width: 100%;
+            min-height: 47px;
+            margin-top: 3px;
+            padding: 11px 18px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--discord-warning, #a15b13);
+            color: var(--discord-text, #ffffff);
+            font: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 13px var(--discord-shadow, rgba(161, 91, 19, 0.2));
+        }
+
+        .count {
+            display: inline-flex;
+            min-height: 32px;
+            padding: 6px 11px;
+            align-items: center;
+            border-radius: 999px;
+            background: var(--discord-surface-raised, #fff1df);
+            color: var(--discord-text-warning, #8c4e0d);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--discord-border, #e0e6e1);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 680px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 12px 13px;
+            border-bottom: 1px solid var(--discord-border, #e8ece8);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: var(--discord-surface-raised, #f4f7f4);
+            color: var(--discord-text-muted, #566359);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .money {
+            text-align: right;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .category {
+            display: inline-flex;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: var(--discord-surface-raised, #fff1df);
+            color: var(--discord-text-warning, #8b500f);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .edit,
+        .delete {
+            display: inline-flex;
+            min-height: 32px;
+            padding: 6px 10px;
+            align-items: center;
+            border: 1px solid;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .edit {
+            border-color: var(--discord-border, #b7cfe3);
+            background: var(--discord-surface-raised, #edf5fc);
+            color: var(--discord-text-accent, #245f91);
+        }
+
+        .delete {
+            border-color: var(--discord-border, #e1b8b5);
+            background: var(--discord-surface, #fff3f2);
+            color: var(--discord-text-danger, #a52d26);
+        }
+
+        .empty td {
+            padding: 32px 16px;
+            color: var(--discord-text-muted, #7a857c);
+            text-align: center;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 24px 4px 0;
+            color: var(--discord-text-muted, #748078);
+            font-size: 12px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        footer a {
+            color: var(--discord-text-accent, #32683a);
+            font-weight: 800;
+        }
+
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 20px, 1240px);
+                padding-top: 10px;
+            }
+
+            .header {
+                align-items: stretch;
+                padding: 20px;
+                flex-direction: column;
+            }
+
+            .back-button {
+                width: 100%;
+            }
+
+            .panel {
+                padding: 19px 15px;
+            }
+
+            .table-wrap {
+                overflow: visible;
+                border: 0;
+            }
+
+            table,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            table {
+                min-width: 0;
+            }
+
+            thead {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                clip-path: inset(50%);
+            }
+
+            tbody {
+                display: grid;
+                gap: 10px;
+            }
+
+            tbody tr {
+                overflow: hidden;
+                border: 1px solid var(--discord-border, #dfe7e0);
+                border-radius: 10px;
+            }
+
+            td {
+                display: grid;
+                grid-template-columns: 82px 1fr;
+                gap: 10px;
+                text-align: left !important;
+            }
+
+            td::before {
+                content: attr(data-label);
+                color: var(--discord-text-muted, #6e7970);
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+            .empty td {
+                display: block;
+            }
+
+            .empty td::before {
+                content: none;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+    
+<link rel="stylesheet"
+          th:href="@{/css/professional-ui.css(v='20260922-1')}"
+          href="/css/professional-ui.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260926-login-2')}" href="/css/auth.css?v=20260926-login-2">
+</head>
+
+<body class="management-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+<main class="page">
+    <header class="header">
+        <div>
+            <p class="eyebrow">BUSINESS MANAGEMENT / EXPENSES</p>
+            <h1>経費管理</h1>
+            <p class="header-description">
+                農園運営にかかった支出を費目ごとに登録し、支出内容を確認します。
+            </p>
+        </div>
+
+        <a class="back-button"
+           th:href="@{/management}"
+           href="/management">
+            ← 経営管理へ
+        </a>
+    </header>
+
+		<nav class="tabs" aria-label="経営管理メニュー">
+    <a th:href="@{/management}" href="/management">
+        経営メニュー
+    </a>
+
+    <a class="active"
+       th:href="@{/expenses}"
+       href="/expenses"
+       aria-current="page">
+        経費管理
+    </a>
+
+    <a th:href="@{/sales}" href="/sales">
+        売上管理
+    </a>
+
+    <a th:href="@{/profit}" href="/profit">
+        収支確認
+    </a>
+</nav>
+
+    <div class="alert alert-success"
+         th:if="${successMessage}"
+         th:text="${successMessage}"
+         role="status"></div>
+
+    <div class="alert alert-error"
+         th:if="${errorMessage}"
+         th:text="${errorMessage}"
+         role="alert"></div>
+
+    <div class="content">
+        <section class="panel" aria-labelledby="expense-form-title">
+            <div class="panel-heading">
+                <div>
+                    <h2 id="expense-form-title">経費を登録</h2>
+                    <p>
+                        <span class="required">必須</span>
+                        の項目を入力してください。
+                    </p>
+                </div>
+            </div>
+
+            <form th:action="@{/expenses/add}"
+                  action="/expenses/add"
+                  th:object="${expense}"
+                  method="post">
+
+                <div class="field">
+                    <label for="expense-date">
+                        支払日
+                        <span class="required">必須</span>
+                    </label>
+
+                    <input id="expense-date"
+                           type="date"
+                           th:field="*{date}"
+                           required>
+                </div>
+
+                <div class="field">
+                    <label for="expense-category">
+                        費目
+                        <span class="required">必須</span>
+                    </label>
+
+                    <select id="expense-category"
+                            th:field="*{category}"
+                            required>
+                        <option value="">選択してください</option>
+                        <option value="肥料">肥料</option>
+                        <option value="農薬">農薬</option>
+                        <option value="燃料">燃料</option>
+                        <option value="資材">資材</option>
+                        <option value="機械">機械</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="expense-amount">
+                        金額
+                        <span class="required">必須</span>
+                    </label>
+
+                    <div class="amount-input">
+                        <input id="expense-amount"
+                               type="number"
+                               th:field="*{amount}"
+                               min="0"
+                               step="1"
+                               inputmode="numeric"
+                               placeholder="例：12000"
+                               required>
+                        <span>円</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="expense-memo">
+                        メモ
+                        <span class="optional">任意</span>
+                    </label>
+
+                    <textarea id="expense-memo"
+                              th:field="*{memo}"
+                              rows="4"
+                              maxlength="500"
+                              placeholder="例：元肥購入・領収書No.001"></textarea>
+                </div>
+
+                <button class="submit-button" type="submit">
+                    経費を登録する
+                </button>
+            </form>
+        </section>
+
+        <section class="panel" aria-labelledby="expense-list-title">
+            <div class="list-heading">
+                <div>
+                    <p class="section-label">EXPENSE RECORDS</p>
+                    <h2 id="expense-list-title">経費一覧</h2>
+                </div>
+
+                <span class="count">
+                    <strong th:text="${expenses != null ? #lists.size(expenses) : 0}">
+                        0
+                    </strong>
+                    件
+                </span>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th scope="col">日付</th>
+                        <th scope="col">項目</th>
+                        <th scope="col">金額</th>
+                        <th scope="col">メモ</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="expense : ${expenses}">
+                        <td data-label="日付"
+                            th:text="${expense.date != null ? expense.date : '未設定'}">
+                            2026-08-16
+                        </td>
+
+                        <td data-label="項目">
+                            <span class="category"
+                                  th:text="${#strings.isEmpty(expense.category) ? '未設定' : expense.category}">
+                                肥料
+                            </span>
+                        </td>
+
+                        <td data-label="金額" class="money">
+                            <span th:text="${expense.amount != null ? expense.amount : 0}">0</span>円
+                        </td>
+
+                        <td data-label="メモ"
+                            th:text="${#strings.isEmpty(expense.memo) ? '—' : expense.memo}">
+                            元肥購入
+                        </td>
+
+                        <td data-label="操作">
+                            <div class="actions">
+                                <a class="edit"
+                                   th:href="@{/expenses/edit/{id}(id=${expense.id})}"
+                                   href="#">
+                                    編集
+                                </a>
+
+                                <form class="auth-delete-form" th:action="@{/expenses/delete/{id}(id=${expense.id})}" method="post"
+                                      onsubmit="return confirm('この経費データを削除しますか？');">
+                                    <button class="delete" type="submit">削除</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="empty"
+                        th:if="${expenses == null or #lists.isEmpty(expenses)}">
+                        <td colspan="5">
+                            登録されている経費はありません。
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>農業管理システム / 経営管理 / 経費管理</p>
+        <a th:href="@{/}" href="/">トップページへ戻る</a>
+    </footer>
+</main>
+</body>
+</html>

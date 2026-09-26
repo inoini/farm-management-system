@@ -88,10 +88,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="農業管理">
-    <link rel="manifest" th:href="@{/manifest.json}" href="/manifest.json">
+    <link rel="manifest" th:href="@{/manifest.json(v='20260927-install-fix-1')}" href="/manifest.json?v=20260927-install-fix-1">
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
-    <script defer th:src="@{/js/pwa.js(v='20260927-green-icon-2')}" src="/js/pwa.js?v=20260927-green-icon-2"></script>
+    <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
 </head>
 
 <body class="dashboard-body calendar-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -658,5 +658,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+<button type="button" class="pwa-install-floating" data-pwa-install hidden>📲 アプリをインストール</button>
+<style>
+.pwa-install-floating{position:fixed;right:16px;bottom:18px;z-index:1200;border:0;border-radius:999px;padding:12px 18px;background:#138f38;color:#fff;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.22);cursor:pointer}
+.pwa-install-floating:focus-visible{outline:3px solid #f9a825;outline-offset:3px}
+</style>
 </body>
 </html>

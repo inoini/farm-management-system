@@ -44,7 +44,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/login", "/register", "/join", "/forgot-username", "/forgot-password", "/reset-password",
-                    "/health", "/error", "/favicon.ico",
+                    "/health", "/error", "/favicon.ico", "/pwa-check.html",
                     "/manifest.json", "/manifest.webmanifest", "/service-worker.js",
                     "/css/**", "/js/**", "/images/**", "/icons/**"
                 ).permitAll()

@@ -1,29 +1,7 @@
-const CACHE_NAME = "farm-system-20260927-green-icon-2";
-
-const STATIC_ASSETS = [
-    "/css/calendar-home.css?v=20260925-4",
-    "/css/discord-theme.css?v=20260922-1",
-    "/manifest.json",
-    "/icons/icon-192.png",
-    "/icons/icon-512.png",
-    "/icons/apple-touch-icon.png",
-    "/icons/favicon-32.png",
-    "/icons/apple-touch-icon-180.png",
-    "/icons/favicon-64.png",
-    "/js/pwa.js?v=20260927-green-icon-2",
-    "/css/style.css?v=20260922-1",
-    "/css/professional-ui.css?v=20260922-1",
-    "/css/calendar-dashboard.css?v=20260922-1",
-    "/css/operations.css?v=20260922-1",
-    "/js/script.js?v=20260925-3"
-];
+const CACHE_PREFIX = "farm-system-";
+const CACHE_NAME = "farm-system-20260927-install-fix-1";
 
 self.addEventListener("install", (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(STATIC_ASSETS))
-    );
-
     self.skipWaiting();
 });
 
@@ -32,45 +10,17 @@ self.addEventListener("activate", (event) => {
         caches.keys()
             .then((keys) => Promise.all(
                 keys
-                    .filter((key) => key !== CACHE_NAME)
+                    .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
                     .map((key) => caches.delete(key))
             ))
             .then(() => self.clients.claim())
     );
 });
 
+// Network-first passthrough. Keeping a fetch handler makes this compatible
+// with older Chromium PWA installability checks without caching login pages.
 self.addEventListener("fetch", (event) => {
     const request = event.request;
-
-    if (request.method !== "GET") {
-        return;
-    }
-
-    // ダッシュボードや一覧はDBの最新値を表示するため、HTMLをキャッシュしない。
-    if (request.mode === "navigate") {
-        event.respondWith(fetch(request));
-        return;
-    }
-
-    const url = new URL(request.url);
-    const isStaticAsset = url.origin === self.location.origin
-        && ["style", "script", "font", "image", "manifest"].includes(request.destination);
-
-    if (!isStaticAsset) {
-        return;
-    }
-
-    // CSS・JavaScriptはネットワークを優先し、オフライン時だけキャッシュを使う。
-    event.respondWith(
-        fetch(request)
-            .then((response) => {
-                if (response && response.ok) {
-                    const copy = response.clone();
-                    caches.open(CACHE_NAME)
-                        .then((cache) => cache.put(request, copy));
-                }
-                return response;
-            })
-            .catch(() => caches.match(request))
-    );
+    if (request.method !== "GET") return;
+    event.respondWith(fetch(request));
 });

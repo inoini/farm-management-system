@@ -20,10 +20,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="農業管理">
-    <link rel="manifest" th:href="@{/manifest.json}" href="/manifest.json">
+    <link rel="manifest" th:href="@{/manifest.json(v='20260927-install-fix-1')}" href="/manifest.json?v=20260927-install-fix-1">
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
-    <script defer th:src="@{/js/pwa.js(v='20260927-green-icon-2')}" src="/js/pwa.js?v=20260927-green-icon-2"></script>
+    <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
 </head>
 
 <body class="ai-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">

@@ -1,0 +1,12 @@
+PWAインストール修正版
+
+変更点:
+- Service Workerのinstall時一括キャッシュを廃止（1ファイル失敗でSW全体が失敗する問題を回避）
+- 通常アイコン(any)とmaskableアイコンを分離
+- manifestにprefer_related_applications=false、display_overrideを追加
+- manifest idを /farm-management-app に固定
+- manifestとpwa.jsにキャッシュ更新用バージョンを付与
+- 作業カレンダーに「アプリをインストール」ボタンを追加
+- /pwa-check.html を追加（スマホでPWA条件を診断）
+
+Renderへデプロイ後、Chromeで /pwa-check.html を開き、HTTPS / manifest / 192px / 512px / Service Worker がすべて✓になることを確認してください。

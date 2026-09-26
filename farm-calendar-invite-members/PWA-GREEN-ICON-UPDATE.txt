@@ -1,0 +1,23 @@
+農業管理システム PWAアイコン更新版 (2026-09-27)
+
+対応内容
+- 新しい緑色の農業管理アイコンへ差し替え
+- icon-192.png / icon-512.png 作成
+- Apple Touch Icon 180px 作成
+- favicon 32px / 64px 作成
+- manifest.json のアイコン設定確認
+- Android向け purpose: any maskable を追加
+- Service Worker キャッシュ版を 20260927-green-icon-2 に更新
+- pwa.js のService Worker登録版を更新
+
+Renderへ反映する場合
+1. このフォルダを既存のGit管理フォルダとして使用するか、中身を最新版へ上書きします。
+2. git status
+3. git add .
+4. git commit -m "Update PWA app icon"
+5. git push
+6. Renderのデプロイ完了後、スマホ側でサイトを開き直します。
+
+古いアイコンが残る場合
+- 既にホーム画面へ追加済みなら、一度ホーム画面の旧アプリを削除して再追加してください。
+- Chrome側はService Worker更新後に新しいアイコンへ切り替わります。

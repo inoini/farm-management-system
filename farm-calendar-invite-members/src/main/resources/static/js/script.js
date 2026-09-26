@@ -801,7 +801,7 @@ if ("serviceWorker" in navigator) {
 
     window.addEventListener("load", function(){
 
-		navigator.serviceWorker.register("/service-worker.js?v=20260926-members-ui-1")
+		navigator.serviceWorker.register("/service-worker.js?v=20260927-green-icon-2")
         .then(function(registration){
 
             console.log("PWA Ready");

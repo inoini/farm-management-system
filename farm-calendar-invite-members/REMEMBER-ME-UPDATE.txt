@@ -1,0 +1,16 @@
+農業管理システム ログイン保持更新 (2026-09-27)
+
+変更内容
+- Spring Security Remember-Me を有効化
+- ブラウザ / PWA を閉じても30日間ログイン状態を保持
+- Render再起動後もRemember-Me Cookieから自動再認証
+- 手動ログアウト時は JSESSIONID と farm-remember-me Cookie を削除
+- Remember-Me Cookie は Secure 属性を常に有効化
+
+Render推奨設定
+- REMEMBER_ME_KEY に十分長いランダム文字列を設定するとより安全です。
+- 未設定でもアプリは動作するようフォールバックキーを用意しています。
+
+注意
+- ブラウザのCookie削除、シークレットモード、30日経過後は再ログインが必要です。
+- パスワードを変更すると既存のRemember-Me Tokenは無効になります。

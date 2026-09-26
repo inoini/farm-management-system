@@ -35,7 +35,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            UserDetailsService userDetailsService,
+            @org.springframework.beans.factory.annotation.Value("${app.security.remember-me-key}") String rememberMeKey)
+            throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -55,12 +59,20 @@ public class SecurityConfig {
                 .failureUrl("/login?error")
                 .permitAll()
             )
+            .rememberMe(remember -> remember
+                .key(rememberMeKey)
+                .userDetailsService(userDetailsService)
+                .rememberMeCookieName("farm-remember-me")
+                .tokenValiditySeconds(60 * 60 * 24 * 30)
+                .alwaysRemember(true)
+                .useSecureCookie(true)
+            )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
+                .deleteCookies("JSESSIONID", "farm-remember-me")
                 .permitAll()
             );
         return http.build();

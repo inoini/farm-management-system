@@ -2,6 +2,14 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>操作を確認してください</title><link rel="stylesheet" th:href="@{/css/auth.css(v='20260922-login-1')}">    <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="theme-color" content="#1B5E20">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="農業管理">
+    <link rel="manifest" th:href="@{/manifest.json}" href="/manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
+    <script defer th:src="@{/js/pwa.js(v='20260927-green-icon-2')}" src="/js/pwa.js?v=20260927-green-icon-2"></script>
 </head>
 <body class="login-page"><main class="login-card"><h1>操作を完了できませんでした</h1><p>画面の有効期限が切れたか、この操作が許可されていません。</p><p>入力内容を控えてから画面を開き直し、もう一度操作してください。</p><a th:href="@{/}" style="color:#bcc2ff">トップページを開く</a></main></body>
 </html>

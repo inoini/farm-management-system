@@ -141,3 +141,53 @@
 }
 
 .login-build-version { margin: 18px 0 0; text-align: center; color: #8f96a3; font-size: 11px; }
+
+/* PWA install controls */
+.pwa-install-button {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 14px;
+    border: 1px solid #1b5e20;
+    border-radius: 10px;
+    background: #1b5e20;
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.pwa-install-button:hover,
+.pwa-install-button:focus-visible {
+    background: #124217;
+}
+.pwa-ios-help {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #edf7ee;
+    color: #1b5e20;
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+/* PWA install button / green app icon release */
+.pwa-install-button {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 18px;
+    border: 1px solid #50b96c;
+    border-radius: 9px;
+    background: #173d24;
+    color: #eaffef;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+.pwa-install-button:hover { background: #1d4c2c; }
+
+
+.login-persist-note {
+    margin: 10px 0 0;
+    color: #5f6f63;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}

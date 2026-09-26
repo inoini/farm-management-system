@@ -1,4 +1,4 @@
-const CACHE_NAME = "farm-system-20260926-members-ui-1";
+const CACHE_NAME = "farm-system-20260927-green-icon-2";
 
 const STATIC_ASSETS = [
     "/css/calendar-home.css?v=20260925-4",
@@ -6,6 +6,11 @@ const STATIC_ASSETS = [
     "/manifest.json",
     "/icons/icon-192.png",
     "/icons/icon-512.png",
+    "/icons/apple-touch-icon.png",
+    "/icons/favicon-32.png",
+    "/icons/apple-touch-icon-180.png",
+    "/icons/favicon-64.png",
+    "/js/pwa.js?v=20260927-green-icon-2",
     "/css/style.css?v=20260922-1",
     "/css/professional-ui.css?v=20260922-1",
     "/css/calendar-dashboard.css?v=20260922-1",

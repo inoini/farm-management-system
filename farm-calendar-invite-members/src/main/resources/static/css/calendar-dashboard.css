@@ -926,3 +926,61 @@
         box-shadow: none;
     }
 }
+/* 2026-09-27: 今日の作業欄を廃止し、月間カレンダーを全幅・内部縦スクロールなしで表示 */
+.dashboard-body.calendar-screen .calendar-workspace {
+    display: block;
+    width: 100%;
+}
+.dashboard-body.calendar-screen .calendar-month-panel {
+    width: 100%;
+    max-width: 100%;
+    max-height: none !important;
+    height: auto;
+    overflow-y: hidden !important;
+    scrollbar-gutter: auto;
+}
+.calendar-screen .schedule-list {
+    overflow: hidden !important;
+    scrollbar-gutter: auto;
+}
+.calendar-screen .calendar-month-panel .schedule-card {
+    min-height: 34px;
+    padding: 4px 6px;
+    gap: 1px;
+}
+.calendar-screen .calendar-event-title {
+    font-size: 11px;
+    -webkit-line-clamp: 1;
+}
+.calendar-screen .calendar-event-worker {
+    font-size: 10px;
+}
+.calendar-more-count {
+    margin-top: 2px;
+    color: var(--discord-text-muted, #66756d);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.2;
+    cursor: pointer;
+}
+@media screen and (min-width: 769px) {
+    .calendar-screen .calendar-table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+    }
+}
+@media screen and (max-width: 768px) {
+    /* 100px正方形は維持。縦スクロールは作らず、画面幅の都合で横スワイプのみ許可。 */
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+    }
+    .calendar-screen .day-box .schedule-list {
+        overflow: hidden !important;
+    }
+    .calendar-screen .calendar-month-panel .schedule-card {
+        min-height: 34px;
+        padding: 3px 5px;
+    }
+}

@@ -12,8 +12,8 @@
           href="/css/style.css?v=20260922-1">
 
     <link rel="stylesheet"
-          th:href="@{/css/crop-list.css(v='20260922-1')}"
-          href="/css/crop-list.css?v=20260922-1">
+          th:href="@{/css/crop-list.css(v='20260927-weather-1')}"
+          href="/css/crop-list.css?v=20260927-weather-1">
     
 <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
@@ -140,9 +140,16 @@
                         2026-08-15
                     </td>
 
-                    <td class="crop-date-cell"
-                        th:text="${crop.harvestDate != null ? crop.harvestDate : '未設定'}">
-                        2026-10-16
+                    <td class="crop-date-cell">
+                        <div class="crop-harvest-date-main"
+                             th:text="${crop.harvestDate != null ? crop.harvestDate : '未設定'}">
+                            2026-10-16
+                        </div>
+                        <div class="crop-weather-date"
+                             th:if="${crop.weatherAdjustedHarvestDate != null}"
+                             th:title="${crop.weatherAdvice}">
+                            🌦 天候補正：<span th:text="${crop.weatherAdjustedHarvestDate}">2026-10-18</span>
+                        </div>
                     </td>
 
                     <td th:text="${crop.area != null ? crop.area : 0}">

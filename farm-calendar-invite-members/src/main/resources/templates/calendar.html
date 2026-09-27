@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     
    	<link rel="stylesheet"
-      th:href="@{/css/calendar-dashboard.css(v='20260927-compact-2')}"
-      href="/css/calendar-dashboard.css?v=20260927-compact-2">
+      th:href="@{/css/calendar-dashboard.css(v='20260927-crop-calendar-1')}"
+      href="/css/calendar-dashboard.css?v=20260927-crop-calendar-1">
     	<script defer
         th:src="@{/js/script.js(v='20260925-3')}"
         src="/js/script.js?v=20260925-3"></script>
@@ -80,7 +80,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-compact-2')}" href="/css/calendar-home.css?v=20260927-compact-2">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-crop-calendar-1')}" href="/css/calendar-home.css?v=20260927-crop-calendar-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -317,7 +317,8 @@
                         </div>
 
                         <div class="schedule-list">
-                            <div th:each="schedule : ${calendarDays[idx].scheduleList}"
+                            <div th:each="schedule, scheduleStat : ${calendarDays[idx].scheduleList}"
+                                 th:if="${scheduleStat.index == 0}"
                                  class="schedule-card"
                                  role="button"
                                  tabindex="0"
@@ -325,6 +326,9 @@
                                  th:attr="data-id=${schedule.id},data-worker=${schedule.userName},data-crop=${schedule.cropName},data-work-type=${schedule.workType},data-status=${schedule.status}">
                                 <span class="calendar-event-title" th:text="${#strings.isEmpty(schedule.schedule) ? (#strings.isEmpty(schedule.workType) ? '作業内容未設定' : schedule.workType) : schedule.schedule}">じゃがいもの収穫</span>
                                 <span class="calendar-event-worker" th:text="${#strings.isEmpty(schedule.userName) ? '未定' : schedule.userName}">A担当</span>
+                            </div>
+                            <div class="calendar-more-count" th:if="${calendarDays[idx].scheduleCount > 1}">
+                                他 <span th:text="${calendarDays[idx].scheduleCount - 1}">1</span>件
                             </div>
                         </div>
                     </div>
@@ -334,34 +338,8 @@
         </table>
     </section>
 
-<aside class="today-work-sidebar" aria-labelledby="today-work-heading">
-        <div class="today-work-heading-row">
-            <h2 id="today-work-heading">今日の作業</h2>
-            <span th:text="${'(' + todayShortLabel + ')'}">(7/25)</span>
-        </div>
+    <!-- 今日の作業欄は廃止。月間カレンダーを全幅で表示します。 -->
 
-        <div class="today-work-list">
-            <button th:each="schedule : ${todaySchedules}"
-                    type="button"
-                    class="today-work-card schedule-card"
-                    th:classappend="${schedule.status == '完了'} ? ' status-complete' : (${schedule.status == '進行中'} ? ' status-progress' : ' status-pending')"
-                    th:attr="data-id=${schedule.id},data-worker=${schedule.userName},data-crop=${schedule.cropName},data-work-type=${schedule.workType},data-status=${schedule.status}">
-                <span class="today-work-title-row">
-                    <strong th:text="${#strings.isEmpty(schedule.schedule) ? (#strings.isEmpty(schedule.workType) ? '作業内容未設定' : schedule.workType) : schedule.schedule}">じゃがいもの収穫</strong>
-                    <em th:text="${#strings.isEmpty(schedule.status) ? '未着手' : schedule.status}">完了</em>
-                </span>
-                <span class="today-work-location">📍 <b th:text="${#strings.isEmpty(schedule.fieldName) ? '圃場未設定' : schedule.fieldName}">A圃場</b>・<b th:text="${#strings.isEmpty(schedule.userName) ? '担当者未設定' : schedule.userName}">担当者</b></span>
-                <span class="today-work-time" th:text="${(#strings.isEmpty(schedule.startTime) ? '--:--' : schedule.startTime) + ' - ' + (#strings.isEmpty(schedule.endTime) ? '--:--' : schedule.endTime)}">08:00 - 10:00</span>
-            </button>
-
-            <div class="today-work-empty" th:if="${#lists.isEmpty(todaySchedules)}">
-                <span aria-hidden="true">✓</span>
-                <p>今日の作業はまだありません。</p>
-            </div>
-        </div>
-
-        <a class="work-history-link" th:href="@{/work-history}" href="/work-history">すべての今日の作業を見る</a>
-    </aside>
     </div>
 
 

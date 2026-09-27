@@ -9,6 +9,7 @@ import com.example.demo.entity.Schedule;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByOwnerEmailAndDateOrderByStartTimeAsc(String ownerEmail, String date);
+    List<Schedule> findByOwnerEmailAndDateBetweenOrderByDateAscStartTimeAsc(String ownerEmail, String startDate, String endDate);
     List<Schedule> findByOwnerEmailAndDateAndUserNameOrderByStartTimeAsc(String ownerEmail, String date, String userName);
     List<Schedule> findAllByOwnerEmailOrderByDateDescStartTimeDesc(String ownerEmail);
     List<Schedule> findAllByOwnerEmail(String ownerEmail);

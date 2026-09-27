@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <title>ログイン | 農業管理システム</title>
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
     <meta name="theme-color" content="#1B5E20">
@@ -12,6 +14,7 @@
     <link rel="manifest" th:href="@{/manifest.json(v='20260927-android-install-2')}" href="/manifest.json?v=20260927-android-install-2">
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
+    <script defer th:src="@{/js/auth.js(v='20260927-mobile-login-csrf-1')}" src="/js/auth.js?v=20260927-mobile-login-csrf-1"></script>
     <script defer th:src="@{/js/pwa.js(v='20260927-android-install-2')}" src="/js/pwa.js?v=20260927-android-install-2"></script>
 </head>
 <body class="login-page">
@@ -20,12 +23,13 @@
     <h1>農業管理システム</h1>
     <p class="login-intro">メンバーごとに自分のユーザー名・パスワードでログインし、同じ農場のデータを共有できます。</p>
     <p class="login-message error" role="alert" th:if="${param.banned != null}">このアカウントは農場の管理者により利用停止されています。</p>
+    <p class="login-message error" role="alert" th:if="${param.expired != null}">ログイン画面を更新しました。もう一度ログインしてください。</p>
     <p class="login-message error" role="alert" th:if="${param.error != null and param.banned == null}">ユーザー名またはパスワードが正しくありません。</p>
     <p class="login-message" role="status" th:if="${param.logout != null}">ログアウトしました。</p>
     <p class="login-message success" role="status" th:if="${param.registered != null}">農場と管理者アカウントを作成しました。ログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.joined != null}">農場への参加登録が完了しました。自分のユーザー名とパスワードでログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.passwordReset != null}">パスワードを変更しました。新しいパスワードでログインしてください。</p>
-    <form th:action="@{/login}" method="post">
+    <form id="loginForm" th:action="@{/login}" method="post" data-refresh-csrf>
         <label for="username">ユーザー名</label>
         <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
         <label for="password">パスワード</label>

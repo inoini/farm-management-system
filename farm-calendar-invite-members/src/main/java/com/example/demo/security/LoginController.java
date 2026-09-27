@@ -3,6 +3,7 @@ package com.example.demo.security;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,6 +79,15 @@ public class LoginController {
             model.addAttribute("email", clean(email));
             return "join";
         }
+    }
+
+    @GetMapping("/auth/csrf")
+    @ResponseBody
+    public Map<String, String> csrf(CsrfToken csrfToken) {
+        return Map.of(
+                "parameterName", csrfToken.getParameterName(),
+                "headerName", csrfToken.getHeaderName(),
+                "token", csrfToken.getToken());
     }
 
     @GetMapping("/health")

@@ -52,6 +52,11 @@ public class ScheduleService {
         return scheduleRepository.findByOwnerEmailAndDateOrderByStartTimeAsc(currentUser.email(), date);
     }
 
+    public List<Schedule> findBetween(String startDate, String endDate) {
+        return scheduleRepository.findByOwnerEmailAndDateBetweenOrderByDateAscStartTimeAsc(
+                currentUser.email(), startDate, endDate);
+    }
+
     public List<Schedule> findByDateAndUserName(String date, String userName) {
         return scheduleRepository.findByOwnerEmailAndDateAndUserNameOrderByStartTimeAsc(
                 currentUser.email(), date, userName);

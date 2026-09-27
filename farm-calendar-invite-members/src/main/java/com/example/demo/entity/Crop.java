@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Crop {
@@ -26,6 +27,15 @@ public class Crop {
     private Double expectedHarvestKg;
 
     private String status;
+
+    // 天候を反映した収穫目安（登録済み収穫予定日は残したまま別保存）
+    private LocalDate weatherAdjustedHarvestDate;
+
+    @Column(length = 2500)
+    private String weatherAdvice;
+
+    private LocalDateTime weatherAnalyzedAt;
+
 
     public Crop() {
     }
@@ -100,6 +110,31 @@ public class Crop {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+
+    public LocalDate getWeatherAdjustedHarvestDate() {
+        return weatherAdjustedHarvestDate;
+    }
+
+    public void setWeatherAdjustedHarvestDate(LocalDate weatherAdjustedHarvestDate) {
+        this.weatherAdjustedHarvestDate = weatherAdjustedHarvestDate;
+    }
+
+    public String getWeatherAdvice() {
+        return weatherAdvice;
+    }
+
+    public void setWeatherAdvice(String weatherAdvice) {
+        this.weatherAdvice = weatherAdvice;
+    }
+
+    public LocalDateTime getWeatherAnalyzedAt() {
+        return weatherAnalyzedAt;
+    }
+
+    public void setWeatherAnalyzedAt(LocalDateTime weatherAnalyzedAt) {
+        this.weatherAnalyzedAt = weatherAnalyzedAt;
     }
 
     /** Login e-mail that owns this record. Null values are legacy pre-multi-user data. */

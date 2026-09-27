@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -73,49 +75,49 @@ public class CalendarController {
         List<CalendarDay> calendarDays = new ArrayList<>();
         LocalDate firstDay = ym.atDay(1);
         int firstWeek = firstDay.getDayOfWeek().getValue() % 7;
-        YearMonth prevMonth = ym.minusMonths(1);
-        int prevLastDay = prevMonth.lengthOfMonth();
+        LocalDate calendarStart = firstDay.minusDays(firstWeek);
+        LocalDate calendarEnd = calendarStart.plusDays(41);
 
-        for (int i = firstWeek - 1; i >= 0; i--) {
-            LocalDate date = prevMonth.atDay(prevLastDay - i);
-            calendarDays.add(new CalendarDay(date.getDayOfMonth(), date.toString(), false,
-                    scheduleService.findByDate(date.toString())));
-        }
-        for (int day = 1; day <= ym.lengthOfMonth(); day++) {
-            LocalDate date = ym.atDay(day);
-            calendarDays.add(new CalendarDay(day, date.toString(), true,
-                    scheduleService.findByDate(date.toString())));
-        }
-        int nextDay = 1;
-        while (calendarDays.size() < 42) {
-            LocalDate date = next.atDay(nextDay);
-            calendarDays.add(new CalendarDay(nextDay, date.toString(), false,
-                    scheduleService.findByDate(date.toString())));
-            nextDay++;
+        // 42日分を日ごとに42回問い合わせず、1回でまとめて取得する。
+        // Render + 外部DB環境でトップへ戻る際の待ち時間を大きく減らす。
+        List<Schedule> displayedSchedules = scheduleService.findBetween(
+                calendarStart.toString(), calendarEnd.toString());
+        Map<String, List<Schedule>> schedulesByDate = new HashMap<>();
+        displayedSchedules.forEach(schedule ->
+                schedulesByDate.computeIfAbsent(schedule.getDate(), key -> new ArrayList<>()).add(schedule));
+
+        for (int i = 0; i < 42; i++) {
+            LocalDate date = calendarStart.plusDays(i);
+            calendarDays.add(new CalendarDay(
+                    date.getDayOfMonth(),
+                    date.toString(),
+                    YearMonth.from(date).equals(ym),
+                    schedulesByDate.getOrDefault(date.toString(), List.of())));
         }
         model.addAttribute("calendarDays", calendarDays);
 
         LocalDate today = LocalDate.now();
-        List<Schedule> todaySchedules = scheduleService.findByDate(today.toString());
-        long completedCount = todaySchedules.stream().filter(s -> "完了".equals(s.getStatus())).count();
+        List<Schedule> todaySchedules;
+        if (!today.isBefore(calendarStart) && !today.isAfter(calendarEnd)) {
+            todaySchedules = schedulesByDate.getOrDefault(today.toString(), List.of());
+        } else {
+            todaySchedules = scheduleService.findByDate(today.toString());
+        }
+        long completedCount = todaySchedules.stream().filter(item -> "完了".equals(item.getStatus())).count();
 
-        List<Crop> crops = cropRepository.findAllByOwnerEmailOrderByIdDesc(owner);
-        long activeCropCount = crops.stream().filter(c -> !"収穫済".equals(c.getStatus())).count();
-        double monthlyHarvestKg = crops.stream()
-                .filter(c -> c.getHarvestDate() != null && YearMonth.from(c.getHarvestDate()).equals(ym))
-                .map(Crop::getExpectedHarvestKg).filter(v -> v != null && v > 0)
-                .mapToDouble(Double::doubleValue).sum();
-        AppSetting setting = settingRepository.findFirstByOwnerEmail(owner).orElse(new AppSetting());
-        double harvestTargetKg = setting.getMonthlyHarvestTargetKg() == null ? 1000.0 : setting.getMonthlyHarvestTargetKg();
-        if (harvestTargetKg <= 0) harvestTargetKg = 1000.0;
-        int harvestProgress = (int) Math.min(100, Math.round((monthlyHarvestKg / harvestTargetKg) * 100));
-
-        List<Schedule> allSchedules = scheduleService.findAll();
         String searchQuery = q.strip();
         String searchScope = "month".equals(scope) ? "month" : "all";
+        List<Schedule> searchSource;
+        if (searchQuery.isBlank()) {
+            searchSource = List.of();
+        } else if ("month".equals(searchScope)) {
+            searchSource = displayedSchedules;
+        } else {
+            searchSource = scheduleService.findAll();
+        }
         model.addAttribute("searchQuery", searchQuery);
         model.addAttribute("searchScope", searchScope);
-        model.addAttribute("searchResults", ScheduleSearch.find(allSchedules, searchQuery,
+        model.addAttribute("searchResults", ScheduleSearch.find(searchSource, searchQuery,
                 "month".equals(searchScope) ? ym : null));
 
         Set<String> workers = new LinkedHashSet<>();
@@ -124,24 +126,15 @@ public class CalendarController {
         workerRepository.findAllByOwnerEmailOrderByNameAsc(owner).stream()
                 .filter(worker -> !Boolean.FALSE.equals(worker.getActive()))
                 .forEach(worker -> addIfPresent(workers, worker.getName()));
-        allSchedules.forEach(schedule -> {
+        displayedSchedules.forEach(schedule -> {
             addIfPresent(workers, schedule.getUserName());
             addIfPresent(cropNames, schedule.getCropName());
             addIfPresent(workTypes, schedule.getWorkType());
         });
 
         model.addAttribute("todayLabel", today.format(DateTimeFormatter.ofPattern("yyyy年M月d日（E）", Locale.JAPANESE)));
-        model.addAttribute("todayShortLabel", today.format(DateTimeFormatter.ofPattern("M/d")));
         model.addAttribute("todayIso", today.toString());
-        model.addAttribute("todaySchedules", todaySchedules);
-        model.addAttribute("todayScheduleCount", todaySchedules.size());
-        model.addAttribute("completedCount", completedCount);
         model.addAttribute("unfinishedCount", todaySchedules.size() - completedCount);
-        model.addAttribute("fieldCount", fieldRepository.countByOwnerEmail(owner));
-        model.addAttribute("activeCropCount", activeCropCount);
-        model.addAttribute("monthlyHarvestKg", monthlyHarvestKg);
-        model.addAttribute("harvestTargetKg", harvestTargetKg);
-        model.addAttribute("harvestProgress", harvestProgress);
         model.addAttribute("workers", workers);
         model.addAttribute("cropNames", cropNames);
         model.addAttribute("workTypes", workTypes);

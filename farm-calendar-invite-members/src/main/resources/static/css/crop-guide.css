@@ -1,0 +1,112 @@
+.crop-guide-card {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid #cfe1d5;
+    border-radius: 14px;
+    background: #f4fbf6;
+    color: #23382b;
+}
+.crop-guide-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.crop-guide-heading h3 {
+    margin: 0;
+    font-size: 18px;
+}
+.crop-guide-heading span {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #dff2e5;
+    color: #176b36;
+    font-size: 12px;
+    font-weight: 800;
+}
+.crop-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.crop-guide-item {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #dce9e0;
+    border-radius: 10px;
+    background: #fff;
+}
+.crop-guide-item strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #176b36;
+    font-size: 13px;
+}
+.crop-guide-item span,
+.crop-guide-item p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.65;
+}
+.crop-guide-item-wide { grid-column: 1 / -1; }
+.crop-guide-notice {
+    margin: 10px 0 0;
+    color: #66756c;
+    font-size: 12px;
+    line-height: 1.6;
+}
+.crop-field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #6a776f;
+    font-size: 12px;
+}
+@media (max-width: 700px) {
+    .crop-guide-card { padding: 13px; }
+    .crop-guide-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+    .crop-guide-grid { grid-template-columns: 1fr; }
+    .crop-guide-item-wide { grid-column: auto; }
+}
+
+.weather-guide-item {
+    border-color: #c9dceb;
+    background: #f7fbff;
+}
+.weather-guide-item strong,
+.weather-guide-summary strong {
+    color: #245b78;
+}
+.weather-guide-summary {
+    border-color: #c9dceb;
+    background: #f7fbff;
+}
+.weather-guide-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.weather-refresh-button {
+    border: 1px solid #2f6f8f;
+    border-radius: 9px;
+    padding: 8px 12px;
+    background: #ffffff;
+    color: #245b78;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.weather-refresh-button:hover {
+    background: #eaf5fb;
+}
+.weather-refresh-button:disabled {
+    opacity: .55;
+    cursor: wait;
+}
+.weather-guide-status {
+    color: #5a6f7a;
+    font-size: 12px;
+}

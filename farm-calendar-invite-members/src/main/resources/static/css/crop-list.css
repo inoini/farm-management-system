@@ -527,3 +527,13 @@ a.crop-register-button:hover {
     color: var(--discord-text, #ffffff) !important;
     transform: translateY(-1px);
 }
+.crop-weather-date {
+    margin-top: 4px;
+    color: #245b78;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.crop-harvest-date-main {
+    font-weight: 700;
+}

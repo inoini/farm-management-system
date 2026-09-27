@@ -19,7 +19,8 @@
     <div class="login-mark" aria-hidden="true">🌱</div>
     <h1>農業管理システム</h1>
     <p class="login-intro">メンバーごとに自分のユーザー名・パスワードでログインし、同じ農場のデータを共有できます。</p>
-    <p class="login-message error" role="alert" th:if="${param.error != null}">ユーザー名またはパスワードが正しくありません。</p>
+    <p class="login-message error" role="alert" th:if="${param.banned != null}">このアカウントは農場の管理者により利用停止されています。</p>
+    <p class="login-message error" role="alert" th:if="${param.error != null and param.banned == null}">ユーザー名またはパスワードが正しくありません。</p>
     <p class="login-message" role="status" th:if="${param.logout != null}">ログアウトしました。</p>
     <p class="login-message success" role="status" th:if="${param.registered != null}">農場と管理者アカウントを作成しました。ログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.joined != null}">農場への参加登録が完了しました。自分のユーザー名とパスワードでログインしてください。</p>

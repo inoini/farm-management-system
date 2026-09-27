@@ -191,3 +191,39 @@
     font-size: 0.9rem;
     line-height: 1.5;
 }
+
+/* 2026-09-27: farm member BAN controls */
+.member-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.member-status.is-active { background: #e7f6ec; color: #17633a; }
+.member-status.is-banned { background: #fde9e9; color: #a12d2d; }
+.member-banned { background: #fff8f8; }
+.member-action-note { color: #6e7b72; font-size: 12px; font-weight: 700; }
+.member-ban-button,
+.member-unban-button {
+    appearance: none;
+    min-height: 34px;
+    padding: 7px 11px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.member-ban-button { border: 1px solid #d86b6b; background: #fff; color: #a12d2d; }
+.member-unban-button { border: 1px solid #70a77d; background: #eef8f0; color: #25633a; }
+.member-table td form { margin: 0; }
+
+@media (max-width: 700px) {
+    .member-table td[data-label="操作"] { align-items: center; }
+    .member-table td[data-label="操作"] form,
+    .member-table td[data-label="操作"] button { width: 100%; }
+}

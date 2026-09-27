@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     
    	<link rel="stylesheet"
-      th:href="@{/css/calendar-dashboard.css(v='20260922-1')}"
-      href="/css/calendar-dashboard.css?v=20260922-1">
+      th:href="@{/css/calendar-dashboard.css(v='20260927-mobile-square-1')}"
+      href="/css/calendar-dashboard.css?v=20260927-mobile-square-1">
     	<script defer
         th:src="@{/js/script.js(v='20260925-3')}"
         src="/js/script.js?v=20260925-3"></script>
@@ -80,7 +80,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260925-4')}" href="/css/calendar-home.css?v=20260925-4">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-mobile-search-1')}" href="/css/calendar-home.css?v=20260927-mobile-search-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -226,7 +226,7 @@
             <div class="calendar-search-input">
                 <label for="scheduleSearch">キーワード</label>
                 <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
-                       placeholder="例：収穫、さつまいも、A圃場、担当者名" aria-describedby="searchHelp">
+                       placeholder="予定を検索">
             </div>
             <div>
                 <label for="searchScope">検索範囲</label>
@@ -236,9 +236,8 @@
                 </select>
             </div>
             <button type="submit" class="new-work-button">検索</button>
-            <a th:href="@{/calendar(year=${year},month=${month})}">検索を解除</a>
+            <a class="calendar-search-reset" th:if="${!#strings.isEmpty(searchQuery)}" th:href="@{/calendar(year=${year},month=${month})}">解除</a>
         </form>
-        <p id="searchHelp">作業内容・作物・圃場・担当者・作業種類・状態・メモ・日付を検索。スペースで区切ると、すべての語を含む予定を探せます。</p>
         <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">
             <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
             <p>検索結果はこの欄に表示します。下の月間カレンダーの表示は変わりません。</p>

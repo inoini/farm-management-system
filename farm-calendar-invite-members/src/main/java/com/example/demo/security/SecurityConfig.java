@@ -6,9 +6,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 
 import com.example.demo.repository.UserAccountRepository;
 import com.example.demo.service.CurrentUserService;
@@ -38,6 +40,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             UserDetailsService userDetailsService,
+            AccountEnabledFilter accountEnabledFilter,
             @org.springframework.beans.factory.annotation.Value("${app.security.remember-me-key}") String rememberMeKey)
             throws Exception {
         http
@@ -56,7 +59,12 @@ public class SecurityConfig {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error")
+                .failureHandler((request, response, exception) -> {
+                    boolean disabled = exception instanceof DisabledException
+                            || exception.getCause() instanceof DisabledException;
+                    String destination = disabled ? "/login?banned" : "/login?error";
+                    response.sendRedirect(request.getContextPath() + destination);
+                })
                 .permitAll()
             )
             .rememberMe(remember -> remember
@@ -67,6 +75,7 @@ public class SecurityConfig {
                 .alwaysRemember(true)
                 .useSecureCookie(true)
             )
+            .addFilterAfter(accountEnabledFilter, RememberMeAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>農場メンバー | 農業管理システム</title>
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-member-ban-1')}" href="/css/auth.css?v=20260927-member-ban-1">
     <meta name="theme-color" content="#1B5E20">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -56,13 +56,30 @@
         <h2>現在のメンバー</h2>
         <div class="member-table-wrap">
             <table class="member-table">
-                <thead><tr><th>表示名</th><th>ユーザー名</th><th>メール</th><th>権限</th></tr></thead>
+                <thead><tr><th>表示名</th><th>ユーザー名</th><th>メール</th><th>権限</th><th>状態</th><th th:if="${farmOwner}">操作</th></tr></thead>
                 <tbody>
-                <tr th:each="member : ${members}">
+                <tr th:each="member : ${members}" th:classappend="${member.enabled == false} ? ' member-banned' : ''">
                     <td data-label="表示名" th:text="${member.displayName}">名前</td>
                     <td data-label="ユーザー名" th:text="${member.username}">username</td>
                     <td data-label="メール" th:text="${member.email}">mail@example.com</td>
                     <td data-label="権限" th:text="${member.farmRole == 'OWNER' ? '管理者' : 'メンバー'}">メンバー</td>
+                    <td data-label="状態">
+                        <span class="member-status" th:classappend="${member.enabled == false} ? ' is-banned' : ' is-active'"
+                              th:text="${member.enabled == false ? 'BAN中' : '利用中'}">利用中</span>
+                    </td>
+                    <td data-label="操作" th:if="${farmOwner}">
+                        <span th:if="${member.farmRole == 'OWNER'}" class="member-action-note">管理者</span>
+                        <form th:if="${member.farmRole != 'OWNER' and member.enabled != false}"
+                              th:action="@{/farm/members/{id}/ban(id=${member.id})}" method="post"
+                              onsubmit="return confirm('このメンバーをBANしますか？ BAN中はログインできません。');">
+                            <button class="member-ban-button" type="submit">BAN</button>
+                        </form>
+                        <form th:if="${member.farmRole != 'OWNER' and member.enabled == false}"
+                              th:action="@{/farm/members/{id}/unban(id=${member.id})}" method="post"
+                              onsubmit="return confirm('このメンバーのBANを解除しますか？');">
+                            <button class="member-unban-button" type="submit">BAN解除</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>

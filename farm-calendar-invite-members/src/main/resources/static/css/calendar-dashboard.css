@@ -826,19 +826,28 @@
         scrollbar-gutter: auto;
     }
 
-    /* 7列の幅をそろえる */
+    /* スマホでは7列を各100pxに固定し、日付セルを正方形にする。 */
     .calendar-screen .calendar-table {
-        width: 100%;
-        min-width: 700px;
+        width: 700px !important;
+        min-width: 700px !important;
         table-layout: fixed;
         border-collapse: separate;
         border-spacing: 0;
     }
 
-    /* 日付枠と中身の高さをそろえる */
+    .calendar-screen .calendar-table col,
+    .calendar-screen .calendar-table th,
+    .calendar-screen .calendar-table tbody td {
+        width: 100px;
+        min-width: 100px;
+        max-width: 100px;
+    }
+
     .calendar-screen .calendar-table tbody tr,
     .calendar-screen .calendar-table tbody td {
-        height: 180px;
+        height: 100px !important;
+        min-height: 100px;
+        max-height: 100px;
     }
 
     .calendar-screen .calendar-table tbody td {
@@ -849,10 +858,27 @@
     .calendar-screen .calendar-table .day-box {
         position: relative;
         inset: auto;
-        width: 100%;
-        height: 180px;
-        min-height: 0;
+        width: 100px;
+        height: 100px !important;
+        min-height: 100px;
+        max-height: 100px;
+        padding: 5px;
         box-sizing: border-box;
+    }
+
+    .calendar-screen .calendar-month-panel .schedule-card {
+        min-height: 38px;
+        padding: 4px 5px;
+        font-size: 11px;
+    }
+
+    .calendar-screen .calendar-event-title {
+        font-size: 11px;
+        -webkit-line-clamp: 1;
+    }
+
+    .calendar-screen .calendar-event-worker {
+        font-size: 10px;
     }
 
     /* 日付内の作業一覧は縦スクロール */

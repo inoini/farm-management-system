@@ -774,7 +774,7 @@
     }
 
     .calendar-month-panel {
-        max-height: 70vh;
+        max-height: none;
     }
 
     .calendar-screen .sidebar-close-control {
@@ -816,13 +816,38 @@
 /* スマホ：カレンダー表示とメニューの影を修正 */
 @media screen and (max-width: 768px) {
 
-    /* カレンダーを縦・横の両方向にスクロール */
+
+    /* 正方形サイズは維持し、周辺の余白だけ詰めて縦移動を減らす */
+    .calendar-screen .calendar-page {
+        padding-top: 8px;
+        padding-bottom: 12px;
+    }
+
+    .calendar-screen .calendar-header {
+        margin-bottom: 8px;
+    }
+
+    .calendar-screen .calendar-toolbar {
+        margin-bottom: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .calendar-screen .calendar-workspace {
+        gap: 10px;
+    }
+
+    /* カレンダーは横方向のみスクロール。日付セルは100px正方形のまま。 */
     .dashboard-body.calendar-screen .calendar-month-panel {
         min-width: 0;
         max-width: 100%;
-        overflow: auto !important;
-        touch-action: auto;
-        overscroll-behavior: auto;
+        max-height: none !important;
+        height: auto;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        touch-action: pan-x pan-y;
+        overscroll-behavior-x: contain;
+        overscroll-behavior-y: auto;
         scrollbar-gutter: auto;
     }
 

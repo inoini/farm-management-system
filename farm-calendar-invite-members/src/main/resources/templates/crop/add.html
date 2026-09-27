@@ -24,7 +24,7 @@
 <body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
 <header class="top-header">
-    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップページへ戻る">
+    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップへ戻る">
         <div class="logo-icon" aria-hidden="true">🌱</div>
         <div>
             <h1>農業管理システム</h1>
@@ -44,9 +44,9 @@
             <a th:href="@{/}"
                href="/"
                class="crop-home-button"
-               aria-label="トップページへ戻る">
+               aria-label="トップへ戻る">
                 <span aria-hidden="true">🏠</span>
-                <span>トップページに戻る</span>
+                <span>トップへ戻る</span>
             </a>
         </div>
     </section>

@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     
    	<link rel="stylesheet"
-      th:href="@{/css/calendar-dashboard.css(v='20260927-mobile-square-1')}"
-      href="/css/calendar-dashboard.css?v=20260927-mobile-square-1">
+      th:href="@{/css/calendar-dashboard.css(v='20260927-compact-2')}"
+      href="/css/calendar-dashboard.css?v=20260927-compact-2">
     	<script defer
         th:src="@{/js/script.js(v='20260925-3')}"
         src="/js/script.js?v=20260925-3"></script>
@@ -80,7 +80,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-mobile-search-1')}" href="/css/calendar-home.css?v=20260927-mobile-search-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-compact-2')}" href="/css/calendar-home.css?v=20260927-compact-2">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -240,7 +240,6 @@
         </form>
         <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">
             <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
-            <p>検索結果はこの欄に表示します。下の月間カレンダーの表示は変わりません。</p>
             <p th:if="${#lists.isEmpty(searchResults)}">該当する予定はありません。キーワードや検索範囲を変更してください。</p>
             <div class="search-result-list">
                 <button type="button" class="schedule-card search-result-card"
@@ -249,7 +248,6 @@
                     <strong th:text="${#strings.isEmpty(result.schedule) ? '作業内容未設定' : result.schedule}"></strong>
                     <span>作物：<span th:text="${result.cropName}"></span> ／ 圃場：<span th:text="${result.fieldName}"></span></span>
                     <span>担当：<span th:text="${result.userName}"></span> ／ <span th:text="${result.status}"></span></span>
-                    <small>押すと予定を確認・編集</small>
                 </button>
             </div>
         </div>
@@ -366,24 +364,7 @@
     </aside>
     </div>
 
-    <section class="calendar-kpi-grid" aria-label="作業状況の集計">
-        <article class="calendar-kpi-card kpi-green">
-            <span class="kpi-icon" aria-hidden="true">▣</span>
-            <div><span>今日の作業</span><strong th:text="${todayScheduleCount}">0</strong><small>予定 <b th:text="${todayScheduleCount}">0</b>件 / 完了 <b th:text="${completedCount}">0</b>件</small></div>
-        </article>
-        <article class="calendar-kpi-card kpi-orange">
-            <span class="kpi-icon" aria-hidden="true">◷</span>
-            <div><span>未完了の作業</span><strong th:text="${unfinishedCount}">0</strong><small>本日の未完了 <b th:text="${unfinishedCount}">0</b>件</small></div>
-        </article>
-        <article class="calendar-kpi-card kpi-emerald">
-            <span class="kpi-icon" aria-hidden="true">▦</span>
-            <div><span>登録圃場数</span><strong th:text="${fieldCount}">0</strong><small>作付中 <b th:text="${activeCropCount}">0</b>件</small></div>
-        </article>
-        <article class="calendar-kpi-card kpi-purple">
-            <span class="kpi-icon" aria-hidden="true">▰</span>
-            <div><span>今月の収穫予定</span><strong><b th:text="${#numbers.formatDecimal(monthlyHarvestKg, 0, 1)}">0</b><em>kg</em></strong><small>目標 <b th:text="${#numbers.formatDecimal(harvestTargetKg, 0, 0)}">1000</b>kg / 達成 <b th:text="${harvestProgress}">0</b>%</small></div>
-        </article>
-    </section>
+
 
     <div id="modal"
          class="modal"

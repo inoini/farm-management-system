@@ -28,7 +28,7 @@
 <body class="form-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
 <header class="top-header">
-    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップページへ戻る">
+    <a th:href="@{/}" href="/" class="logo-area" aria-label="トップへ戻る">
         <div class="logo-icon" aria-hidden="true">🌱</div>
         <div>
             <h1>農業管理システム</h1>
@@ -44,7 +44,7 @@
             <h1>📅 作業予定を登録</h1>
             <p>日時・担当者・圃場・作物・使用資材をまとめて記録します。</p>
         </div>
-        <a class="app-back-button" th:href="@{/calendar}" href="/calendar">← カレンダーへ戻る</a>
+        <a class="app-back-button" th:href="@{/calendar}" href="/calendar">← トップへ戻る</a>
     </header>
 
     <section class="app-panel" aria-labelledby="schedule-form-title">

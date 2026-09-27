@@ -1046,48 +1046,24 @@ html.calendar-mouse-dragging body {
 }
 
 
-/* 2026-09-27: カレンダー上の縦スクロール復旧
-   外側パネルは縦スクロールを捕まえず、ページ本体へ渡す。
-   横幅700pxのスマホ用カレンダーは内側だけ横スクロール可能にする。 */
-.dashboard-body.calendar-screen .calendar-month-panel,
-.dashboard-body.calendar-screen .calendar-wrapper.calendar-month-panel {
-    overflow: visible !important;
-    max-height: none !important;
-    height: auto !important;
-    overscroll-behavior: auto !important;
-    touch-action: pan-y pinch-zoom !important;
-}
-
-.calendar-screen .calendar-horizontal-scroll {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: clip;
-    overscroll-behavior-x: contain;
-    overscroll-behavior-y: auto;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y pinch-zoom;
-}
-
-.calendar-screen .calendar-horizontal-scroll .calendar-table,
-.calendar-screen .calendar-horizontal-scroll .calendar-table tbody,
-.calendar-screen .calendar-horizontal-scroll .calendar-table tr,
-.calendar-screen .calendar-horizontal-scroll .calendar-table td,
-.calendar-screen .calendar-horizontal-scroll .day-box,
-.calendar-screen .calendar-horizontal-scroll .schedule-list,
-.calendar-screen .calendar-horizontal-scroll .schedule-card {
-    touch-action: pan-y pinch-zoom !important;
-}
-
+/* 2026-09-27: 以前のレイアウトを維持したまま、カレンダー上の縦スクロールを許可する。 */
 @media screen and (max-width: 768px) {
     .dashboard-body.calendar-screen .calendar-month-panel {
-        overflow: visible !important;
-        touch-action: pan-y pinch-zoom !important;
+        /* HTML構造は変えず、横方向だけをカレンダー自身のスクロール領域にする。 */
+        overflow-x: auto !important;
+        overflow-y: clip !important;
+        overscroll-behavior-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y pinch-zoom !important;
     }
 
-    .calendar-screen .calendar-horizontal-scroll {
-        overflow-x: auto;
-        overflow-y: clip;
-        touch-action: pan-y pinch-zoom !important;
+    .calendar-screen .calendar-table,
+    .calendar-screen .calendar-table tbody,
+    .calendar-screen .calendar-table tr,
+    .calendar-screen .calendar-table td,
+    .calendar-screen .day-box,
+    .calendar-screen .schedule-list,
+    .calendar-screen .schedule-card {
+        touch-action: pan-x pan-y pinch-zoom !important;
     }
 }

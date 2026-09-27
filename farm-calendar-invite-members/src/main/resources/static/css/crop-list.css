@@ -537,3 +537,17 @@ a.crop-register-button:hover {
 .crop-harvest-date-main {
     font-weight: 700;
 }
+
+/* 2026-09-27: 保存した追肥目安を一覧でも確認 */
+.crop-col-topdressing { min-width: 190px; }
+.crop-topdressing-cell {
+    min-width: 190px;
+    max-width: 280px;
+    white-space: normal;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+@media (max-width: 768px) {
+    .crop-col-topdressing,
+    .crop-topdressing-cell { min-width: 180px; }
+}

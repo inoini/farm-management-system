@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>農業管理システム | 作物登録</title>
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260927-weather-1')}" href="/css/crop-guide.css?v=20260927-weather-1">
+    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260927-swipe-topdress-1')}" href="/css/crop-guide.css?v=20260927-swipe-topdress-1">
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -56,9 +56,11 @@
         <form th:action="@{/crop/save}"
               th:object="${crop}"
               method="post"
+              id="cropForm"
               class="crop-form">
 
             <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{topdressingGuide}">
             <input type="hidden" th:field="*{weatherAdjustedHarvestDate}">
             <input type="hidden" th:field="*{weatherAdvice}">
             <input type="hidden" th:field="*{weatherAnalyzedAt}">
@@ -103,12 +105,14 @@
 
                 <div class="crop-form-group">
                     <label for="plantingDate">植付日</label>
-                    <input type="date" th:field="*{plantingDate}">
+                    <input type="date" id="plantingDate" name="plantingDate"
+                           th:value="${crop.plantingDate != null ? #temporals.format(crop.plantingDate, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="crop-form-group">
                     <label for="harvestDate">収穫予定日</label>
-                    <input type="date" th:field="*{harvestDate}">
+                    <input type="date" id="harvestDate" name="harvestDate"
+                           th:value="${crop.harvestDate != null ? #temporals.format(crop.harvestDate, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="crop-form-group">
@@ -203,6 +207,6 @@
         </form>
     </section>
 </main>
-    <script defer th:src="@{/js/crop-guide.js(v='20260927-weather-1')}" src="/js/crop-guide.js?v=20260927-weather-1"></script>
+    <script defer th:src="@{/js/crop-guide.js(v='20260927-edit-weather-1')}" src="/js/crop-guide.js?v=20260927-edit-weather-1"></script>
 </body>
 </html>

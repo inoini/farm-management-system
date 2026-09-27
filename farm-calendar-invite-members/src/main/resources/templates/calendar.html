@@ -9,11 +9,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     
    	<link rel="stylesheet"
-      th:href="@{/css/calendar-dashboard.css(v='20260927-crop-calendar-1')}"
-      href="/css/calendar-dashboard.css?v=20260927-crop-calendar-1">
+      th:href="@{/css/calendar-dashboard.css(v='20260927-drag-scroll-1')}"
+      href="/css/calendar-dashboard.css?v=20260927-drag-scroll-1">
     	<script defer
         th:src="@{/js/script.js(v='20260925-3')}"
         src="/js/script.js?v=20260925-3"></script>
+    <script defer
+        th:src="@{/js/calendar-drag-scroll.js(v='20260927-drag-scroll-1')}"
+        src="/js/calendar-drag-scroll.js?v=20260927-drag-scroll-1"></script>
 
     <style>
         /* 作業カレンダー見出しとトップページボタン */
@@ -80,7 +83,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-crop-calendar-1')}" href="/css/calendar-home.css?v=20260927-crop-calendar-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-vertical-swipe-1')}" href="/css/calendar-home.css?v=20260927-vertical-swipe-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -495,6 +498,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    // PWA復帰時などに古いモーダル状態が残ってページスクロールを止めないようにする。
+    document.body.classList.remove("modal-open");
     const modal = document.getElementById("modal");
     const modalContent = modal ? modal.querySelector(".modal-content") : null;
     const form = document.getElementById("scheduleForm");
@@ -550,7 +555,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelectorAll(".day-box").forEach(function (dayBox) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchMoved = false;
+
+        dayBox.addEventListener("touchstart", function (event) {
+            const touch = event.touches && event.touches[0];
+            if (!touch) return;
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchMoved = false;
+        }, { passive: true });
+
+        dayBox.addEventListener("touchmove", function (event) {
+            const touch = event.touches && event.touches[0];
+            if (!touch) return;
+            const dx = Math.abs(touch.clientX - touchStartX);
+            const dy = Math.abs(touch.clientY - touchStartY);
+            if (dy > 8 || dx > 12) {
+                touchMoved = true;
+            }
+            // preventDefault は呼ばない。縦方向のページスクロールをブラウザに任せる。
+        }, { passive: true });
+
         dayBox.addEventListener("click", function (event) {
+            if (touchMoved) {
+                touchMoved = false;
+                return;
+            }
             if (event.target.closest(".schedule-card")) {
                 return;
             }

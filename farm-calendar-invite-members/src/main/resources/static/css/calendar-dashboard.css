@@ -984,3 +984,42 @@
         padding: 3px 5px;
     }
 }
+
+/* 2026-09-27: スマホでカレンダー上からページを上下スワイプできるようにする。
+   日付セル100px正方形は変更しない。内部の縦スクロールは作らない。 */
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        touch-action: pan-y pinch-zoom !important;
+        overscroll-behavior-y: auto !important;
+        -webkit-overflow-scrolling: auto;
+    }
+
+    .calendar-screen .calendar-table,
+    .calendar-screen .calendar-table tbody,
+    .calendar-screen .calendar-table tr,
+    .calendar-screen .calendar-table td,
+    .calendar-screen .day-box,
+    .calendar-screen .day-box .schedule-list,
+    .calendar-screen .day-box .schedule-card {
+        touch-action: pan-y pinch-zoom !important;
+    }
+}
+
+
+/* 2026-09-27: カレンダー上で指の縦スワイプ／マウスドラッグでもページを上下移動できるようにする。 */
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled {
+    cursor: grab;
+}
+
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled.is-drag-scrolling {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled,
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled .calendar-table,
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled .day-box,
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled .schedule-list,
+.calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled .schedule-card {
+    touch-action: pan-y pinch-zoom !important;
+}

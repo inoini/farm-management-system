@@ -12,8 +12,8 @@
           href="/css/style.css?v=20260922-1">
 
     <link rel="stylesheet"
-          th:href="@{/css/crop-list.css(v='20260927-weather-1')}"
-          href="/css/crop-list.css?v=20260927-weather-1">
+          th:href="@{/css/crop-list.css(v='20260927-swipe-topdress-1')}"
+          href="/css/crop-list.css?v=20260927-swipe-topdress-1">
     
 <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
@@ -96,6 +96,7 @@
                     <th scope="col" class="crop-col-field">圃場</th>
                     <th scope="col" class="crop-col-date">植付日</th>
                     <th scope="col" class="crop-col-date">収穫予定日</th>
+                    <th scope="col" class="crop-col-topdressing">追肥の目安</th>
                     <th scope="col" class="crop-col-area">面積（a）</th>
                     <th scope="col" class="crop-col-area">収穫予定（kg）</th>
                     <th scope="col" class="crop-col-status">状態</th>
@@ -114,7 +115,7 @@
 
                 <!-- 作物が登録されていない場合 -->
                 <tr th:if="${#lists.isEmpty(crops)}">
-                    <td colspan="10"
+                    <td colspan="11"
                         class="crop-list-empty">
                         登録されている作物はありません。
                     </td>
@@ -150,6 +151,11 @@
                              th:title="${crop.weatherAdvice}">
                             🌦 天候補正：<span th:text="${crop.weatherAdjustedHarvestDate}">2026-10-18</span>
                         </div>
+                    </td>
+
+                    <td class="crop-topdressing-cell"
+                        th:text="${#strings.isEmpty(crop.topdressingGuide) ? '未設定' : crop.topdressingGuide}">
+                        1回目：9月25日〜10月5日
                     </td>
 
                     <td th:text="${crop.area != null ? crop.area : 0}">

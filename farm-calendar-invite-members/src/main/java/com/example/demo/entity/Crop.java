@@ -28,6 +28,10 @@ public class Crop {
 
     private String status;
 
+    // 作物名・品種・植付日から自動補完した追肥時期の目安。保存後も一覧で確認する。
+    @Column(length = 1000)
+    private String topdressingGuide;
+
     // 天候を反映した収穫目安（登録済み収穫予定日は残したまま別保存）
     private LocalDate weatherAdjustedHarvestDate;
 
@@ -112,6 +116,13 @@ public class Crop {
         this.status = status;
     }
 
+    public String getTopdressingGuide() {
+        return topdressingGuide;
+    }
+
+    public void setTopdressingGuide(String topdressingGuide) {
+        this.topdressingGuide = topdressingGuide;
+    }
 
     public LocalDate getWeatherAdjustedHarvestDate() {
         return weatherAdjustedHarvestDate;

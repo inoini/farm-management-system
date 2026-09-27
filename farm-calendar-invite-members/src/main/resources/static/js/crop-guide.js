@@ -7,6 +7,8 @@
     const harvestDate = document.getElementById("harvestDate");
     const fieldName = document.getElementById("fieldName");
     const panel = document.getElementById("cropGuidePanel");
+    const cropForm = document.getElementById("cropForm");
+    const cropIdInput = document.getElementById("id");
 
     if (!cropName || !plantingDate || !harvestDate || !panel) return;
 
@@ -20,6 +22,7 @@
     const weatherSummary = document.getElementById("cropWeatherSummary");
     const weatherStatus = document.getElementById("cropWeatherStatus");
     const refreshWeatherButton = document.getElementById("refreshWeatherAdvice");
+    const topdressingGuideInput = document.getElementById("topdressingGuide");
     const weatherAdjustedInput = document.getElementById("weatherAdjustedHarvestDate");
     const weatherAdviceInput = document.getElementById("weatherAdvice");
     const weatherAnalyzedAtInput = document.getElementById("weatherAnalyzedAt");
@@ -163,6 +166,7 @@
                 ? "この作物の自動補完データはまだ登録されていません。収穫予定日は手動で入力できます。"
                 : "作物名だけでも補完できます。品種は任意です。";
             topdressing.textContent = "作物名を入力すると表示されます";
+            if (topdressingGuideInput) topdressingGuideInput.value = "";
             harvest.textContent = "作物名を入力すると表示されます";
             care.textContent = "地域・作型・土壌によって適期は変わるため、表示内容は栽培計画の目安として使用してください。";
             return;
@@ -179,9 +183,11 @@
             ? "入力した品種に近い目安を自動表示しています。"
             : "品種未入力でも、作物名から一般的な目安を自動表示しています。";
 
-        topdressing.textContent = (data.top || []).map(function (range, index) {
+        const topdressingText = (data.top || []).map(function (range, index) {
             return (index + 1) + "回目：" + rangeText(base, range);
         }).join(" ／ ") || "基本は元肥中心。生育を見て調整してください。";
+        topdressing.textContent = topdressingText;
+        if (topdressingGuideInput) topdressingGuideInput.value = topdressingText;
 
         harvest.textContent = rangeText(base, data.harvest);
         care.textContent = data.care || profile.care || "生育状況を確認しながら管理してください。";
@@ -239,6 +245,32 @@
         return parts.length ? parts.join(" ／ ") : "気温・降水量を反映しました";
     }
 
+    async function persistWeatherAdjustedHarvest(data) {
+        if (!cropForm || !cropIdInput || !cropIdInput.value || !data || !data.adjustedHarvestDate) {
+            return false;
+        }
+
+        harvestDate.value = data.adjustedHarvestDate;
+        autoHarvestValue = data.adjustedHarvestDate;
+        harvestWasManuallyEdited = false;
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content || "";
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || "X-CSRF-TOKEN";
+        const formData = new FormData(cropForm);
+        const headers = { "X-Requested-With": "XMLHttpRequest" };
+        if (csrfToken) headers[csrfHeader] = csrfToken;
+
+        const response = await fetch(cropForm.action, {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin",
+            headers: headers
+        });
+
+        if (!response.ok) throw new Error("crop save http " + response.status);
+        return true;
+    }
+
     async function fetchWeatherAdvice(force) {
         if (!weatherReady()) {
             scheduleWeatherAdvice();
@@ -285,7 +317,14 @@
             if (weatherAdjustedInput) weatherAdjustedInput.value = data.adjustedHarvestDate || "";
             if (weatherAdviceInput) weatherAdviceInput.value = data.summary || "";
             if (weatherAnalyzedAtInput) weatherAnalyzedAtInput.value = data.analyzedAt || "";
-            if (weatherStatus) weatherStatus.textContent = "天候補正を更新しました";
+
+            if (force && cropIdInput && cropIdInput.value && data.adjustedHarvestDate) {
+                if (weatherStatus) weatherStatus.textContent = "収穫日を更新して保存しています…";
+                await persistWeatherAdjustedHarvest(data);
+                if (weatherStatus) weatherStatus.textContent = "収穫日を更新し、一覧にも保存しました";
+            } else {
+                if (weatherStatus) weatherStatus.textContent = "天候補正を更新しました";
+            }
         } catch (error) {
             if (error && error.name === "AbortError") return;
             if (weatherStatus) weatherStatus.textContent = "天気を取得できませんでした。一般的な目安は利用できます。";

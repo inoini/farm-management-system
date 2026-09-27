@@ -564,7 +564,7 @@
     max-height: 520px;
     overflow-x: hidden !important;
     overflow-y: auto !important;
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
     scrollbar-gutter: stable;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
@@ -1064,6 +1064,48 @@ html.calendar-mouse-dragging body {
     .calendar-screen .day-box,
     .calendar-screen .schedule-list,
     .calendar-screen .schedule-card {
+        touch-action: pan-x pan-y pinch-zoom !important;
+    }
+}
+
+
+/* 2026-09-27: 最終スクロール修正
+   PCでは月間カレンダーを縦スクロール領域にしない。
+   wheel / touchpad の縦操作は必ずページへ伝播させる。 */
+@media screen and (min-width: 769px) {
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        overflow: visible !important;
+        max-height: none !important;
+        overscroll-behavior: auto !important;
+        touch-action: auto !important;
+        scrollbar-gutter: auto !important;
+    }
+
+    .dashboard-body.calendar-screen .calendar-month-panel .calendar-table,
+    .dashboard-body.calendar-screen .calendar-month-panel .day-box,
+    .dashboard-body.calendar-screen .calendar-month-panel .schedule-list,
+    .dashboard-body.calendar-screen .calendar-month-panel .schedule-card {
+        overscroll-behavior: auto !important;
+        touch-action: auto !important;
+    }
+}
+
+/* スマホでは横方向だけカレンダー自身で移動し、縦方向はページへ流す。 */
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        overscroll-behavior-x: contain !important;
+        overscroll-behavior-y: auto !important;
+        touch-action: pan-x pan-y pinch-zoom !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dashboard-body.calendar-screen .calendar-month-panel .calendar-table,
+    .dashboard-body.calendar-screen .calendar-month-panel .day-box,
+    .dashboard-body.calendar-screen .calendar-month-panel .schedule-list,
+    .dashboard-body.calendar-screen .calendar-month-panel .schedule-card {
+        overscroll-behavior-y: auto !important;
         touch-action: pan-x pan-y pinch-zoom !important;
     }
 }

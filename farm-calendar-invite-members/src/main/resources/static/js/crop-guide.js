@@ -6,6 +6,8 @@
     const plantingDate = document.getElementById("plantingDate");
     const harvestDate = document.getElementById("harvestDate");
     const fieldName = document.getElementById("fieldName");
+    const area = document.getElementById("area");
+    const expectedHarvestKg = document.getElementById("expectedHarvestKg");
     const panel = document.getElementById("cropGuidePanel");
     const cropForm = document.getElementById("cropForm");
     const cropIdInput = document.getElementById("id");
@@ -76,6 +78,7 @@
         }},
         { key: "にんじん", aliases: ["にんじん", "人参"], harvest: [100, 120], top: [[30, 40], [55, 65]], care: "本葉2〜3枚、本葉5〜6枚を目安に間引き。最終株間を確保し、根肩が出たら軽く土寄せします。" },
         { key: "だいこん", aliases: ["だいこん", "大根"], harvest: [60, 90], top: [[20, 30], [40, 50]], care: "本葉の生育に合わせて2〜3回間引き、追肥後に株元へ軽く土寄せします。" },
+        { key: "ラディッシュ", aliases: ["らでぃっしゅ", "ラディッシュ", "はつかだいこん", "二十日大根"], harvest: [25, 35], top: [[12, 18]], care: "生育が早いため、込み合ったら早めに間引き、肥大を確認して取り遅れないよう収穫します。" },
         { key: "かぶ", aliases: ["かぶ", "蕪"], harvest: [40, 70], top: [[20, 30]], care: "混み合わないよう段階的に間引き、根が太り始める前に株間を確保します。" },
         { key: "とうもろこし", aliases: ["とうもろこし", "玉蜀黍", "コーン"], harvest: [80, 100], top: [[30, 40], [50, 60]], care: "草丈30〜40cm頃と雄穂が見え始める頃が追肥の目安。倒伏防止に土寄せします。" },
         { key: "トマト", aliases: ["とまと", "トマト"], harvest: [60, 90], top: [[20, 30], [45, 60]], care: "わき芽かきと誘引を継続。着果後は草勢を見ながら少量ずつ追肥し、過繁茂を避けます。" },
@@ -102,6 +105,33 @@
         { key: "さといも", aliases: ["さといも", "里芋"], harvest: [150, 210], top: [[45, 60], [80, 100]], care: "追肥にあわせて土寄せ。乾燥に弱いため夏場は土の水分を保ちます。" },
         { key: "しょうが", aliases: ["しょうが", "生姜"], harvest: [180, 240], top: [[60, 80], [100, 120]], care: "生育期に追肥・土寄せ。乾燥と強い直射による地温上昇を防ぐため敷きわら等が有効です。" }
     ];
+
+    const yieldKgPerAre = {
+        "さつまいも": 250, "じゃがいも": 250, "にんじん": 300, "だいこん": 400,
+        "ラディッシュ": 180, "かぶ": 250, "とうもろこし": 110, "トマト": 550, "ミニトマト": 420,
+        "なす": 450, "きゅうり": 500, "ピーマン": 260, "かぼちゃ": 220,
+        "ズッキーニ": 300, "オクラ": 150, "すいか": 300, "メロン": 250,
+        "えだまめ": 100, "落花生": 100, "キャベツ": 450, "はくさい": 500,
+        "ブロッコリー": 180, "レタス": 300, "ほうれんそう": 150, "こまつな": 180,
+        "ねぎ": 250, "たまねぎ": 450, "にんにく": 120, "さといも": 250, "しょうが": 200
+    };
+
+    function compactTopdressing(ranges) {
+        if (!ranges || !ranges.length) return "生育を見て調整";
+        const days = ranges.map(function (range) {
+            return Math.round((range[0] + range[1]) / 2);
+        });
+        return "植付から" + days.map(function (day) { return "約" + day + "日後"; }).join("・");
+    }
+
+    function updateYieldEstimate(profile) {
+        if (!area || !expectedHarvestKg || !profile) return;
+        const areaValue = Number(area.value);
+        const rate = yieldKgPerAre[profile.key];
+        if (!Number.isFinite(areaValue) || areaValue <= 0 || !rate) return;
+        const estimate = Math.round(areaValue * rate * 10) / 10;
+        expectedHarvestKg.value = String(estimate);
+    }
 
     const prepared = profiles.map(function (profile) {
         profile._aliases = [profile.key].concat(profile.aliases || []).map(normalize);
@@ -183,11 +213,10 @@
             ? "入力した品種に近い目安を自動表示しています。"
             : "品種未入力でも、作物名から一般的な目安を自動表示しています。";
 
-        const topdressingText = (data.top || []).map(function (range, index) {
-            return (index + 1) + "回目：" + rangeText(base, range);
-        }).join(" ／ ") || "基本は元肥中心。生育を見て調整してください。";
+        const topdressingText = compactTopdressing(data.top || []);
         topdressing.textContent = topdressingText;
         if (topdressingGuideInput) topdressingGuideInput.value = topdressingText;
+        updateYieldEstimate(profile);
 
         harvest.textContent = rangeText(base, data.harvest);
         care.textContent = data.care || profile.care || "生育状況を確認しながら管理してください。";
@@ -213,7 +242,7 @@
     }
 
     function weatherReady() {
-        return Boolean(cropName.value.trim() && plantingDate.value && harvestDate.value
+        return Boolean(cropName.value.trim() && plantingDate.value
             && fieldName && fieldName.value.trim());
     }
 
@@ -222,7 +251,7 @@
         if (weatherTimer) window.clearTimeout(weatherTimer);
 
         if (!weatherReady()) {
-            if (weatherStatus) weatherStatus.textContent = "圃場・植付日・収穫予定日を入力すると天候補正します。";
+            if (weatherStatus) weatherStatus.textContent = "圃場・植付日を入力すると天候補正します。";
             return;
         }
 
@@ -284,9 +313,10 @@
             cropName: cropName.value.trim(),
             variety: variety ? variety.value.trim() : "",
             plantingDate: plantingDate.value,
-            harvestDate: harvestDate.value,
             fieldName: fieldName.value.trim()
         });
+        if (harvestDate.value) params.set("harvestDate", harvestDate.value);
+        if (area && area.value) params.set("area", area.value);
         if (force) params.set("refresh", String(Date.now()));
 
         if (weatherStatus) weatherStatus.textContent = "天気を確認しています…";
@@ -317,6 +347,13 @@
             if (weatherAdjustedInput) weatherAdjustedInput.value = data.adjustedHarvestDate || "";
             if (weatherAdviceInput) weatherAdviceInput.value = data.summary || "";
             if (weatherAnalyzedAtInput) weatherAnalyzedAtInput.value = data.analyzedAt || "";
+            if (data.topdressingGuide && topdressingGuideInput) {
+                topdressingGuideInput.value = data.topdressingGuide;
+                topdressing.textContent = data.topdressingGuide;
+            }
+            if (typeof data.expectedHarvestKg === "number" && expectedHarvestKg) {
+                expectedHarvestKg.value = String(data.expectedHarvestKg);
+            }
 
             if (force && cropIdInput && cropIdInput.value && data.adjustedHarvestDate) {
                 if (weatherStatus) weatherStatus.textContent = "収穫日を更新して保存しています…";
@@ -347,6 +384,10 @@
     }
     harvestDate.addEventListener("change", scheduleWeatherAdvice);
     harvestDate.addEventListener("input", scheduleWeatherAdvice);
+    if (area) {
+        area.addEventListener("input", updateGuide);
+        area.addEventListener("change", updateGuide);
+    }
     if (refreshWeatherButton) {
         refreshWeatherButton.addEventListener("click", function () { fetchWeatherAdvice(true); });
     }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>農業管理システム | 作物登録</title>
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260927-swipe-topdress-1')}" href="/css/crop-guide.css?v=20260927-swipe-topdress-1">
+    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260927-area-weather-1')}" href="/css/crop-guide.css?v=20260927-area-weather-1">
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -105,34 +105,36 @@
 
                 <div class="crop-form-group">
                     <label for="plantingDate">植付日</label>
-                    <input type="date" id="plantingDate" name="plantingDate"
-                           th:value="${crop.plantingDate != null ? #temporals.format(crop.plantingDate, 'yyyy-MM-dd') : ''}">
+                    <input type="date"
+                           th:field="*{plantingDate}">
                 </div>
 
                 <div class="crop-form-group">
                     <label for="harvestDate">収穫予定日</label>
-                    <input type="date" id="harvestDate" name="harvestDate"
-                           th:value="${crop.harvestDate != null ? #temporals.format(crop.harvestDate, 'yyyy-MM-dd') : ''}">
+                    <input type="date"
+                           th:field="*{harvestDate}">
                 </div>
 
                 <div class="crop-form-group">
-                    <label for="area">面積（a）</label>
+                    <label for="area">敷地面積（a）</label>
                     <input type="number"
                            th:field="*{area}"
                            min="0"
                            step="0.1"
                            inputmode="decimal"
                            placeholder="例：30.0">
+                    <small class="crop-field-hint">1a＝100㎡。作物名と面積から収穫予想量を自動計算します。</small>
                 </div>
 
                 <div class="crop-form-group">
-                    <label for="expectedHarvestKg">収穫予定量（kg）</label>
+                    <label for="expectedHarvestKg">収穫予想量（kg）</label>
                     <input type="number"
                            th:field="*{expectedHarvestKg}"
                            min="0"
                            step="0.1"
                            inputmode="decimal"
-                           placeholder="例：560">
+                           placeholder="作物名と面積から自動計算">
+                    <small class="crop-field-hint">一般的な収量を使った概算です。実際の収量は栽培条件で変わります。</small>
                 </div>
 
                 <div class="crop-form-group">
@@ -169,8 +171,8 @@
                     <div class="crop-guide-item weather-guide-item">
                         <strong>🌦 天候補正の収穫目安</strong>
                         <span id="cropWeatherHarvest"
-                              th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '圃場・植付日・収穫予定日を入力すると計算します'}">
-                            圃場・植付日・収穫予定日を入力すると計算します
+                              th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '圃場・植付日を入力すると計算します'}">
+                            圃場・植付日を入力すると計算します
                         </span>
                     </div>
                     <div class="crop-guide-item weather-guide-item">
@@ -180,11 +182,11 @@
                     <div class="crop-guide-item crop-guide-item-wide weather-guide-summary">
                         <strong>天候補正の説明</strong>
                         <p id="cropWeatherSummary"
-                           th:text="${#strings.isEmpty(crop.weatherAdvice) ? '登録済み圃場を選ぶと自動計算します。' : crop.weatherAdvice}">
-                            登録済み圃場を選ぶと自動計算します。
+                           th:text="${#strings.isEmpty(crop.weatherAdvice) ? '登録済み圃場と植付日があれば天気予報を反映して計算します。' : crop.weatherAdvice}">
+                            登録済み圃場と植付日があれば天気予報を反映して計算します。
                         </p>
                         <div class="weather-guide-actions">
-                            <button type="button" id="refreshWeatherAdvice" class="weather-refresh-button">天気を再取得して計算</button>
+                            <button type="button" id="refreshWeatherAdvice" class="weather-refresh-button">天気を取得して計算</button>
                             <span id="cropWeatherStatus" class="weather-guide-status" aria-live="polite"></span>
                         </div>
                     </div>
@@ -207,6 +209,6 @@
         </form>
     </section>
 </main>
-    <script defer th:src="@{/js/crop-guide.js(v='20260927-edit-weather-1')}" src="/js/crop-guide.js?v=20260927-edit-weather-1"></script>
+    <script defer th:src="@{/js/crop-guide.js(v='20260927-area-weather-1')}" src="/js/crop-guide.js?v=20260927-area-weather-1"></script>
 </body>
 </html>

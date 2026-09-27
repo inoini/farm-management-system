@@ -36,7 +36,7 @@
 }
 
 .crop-list-page {
-    width: min(1440px, calc(100% - 40px));
+    width: min(1600px, calc(100% - 32px));
     margin: 0 auto;
     padding: 28px 0 56px;
 }
@@ -150,33 +150,21 @@
 
 .crop-list-table {
     width: 100%;
-    min-width: 1100px;
+    min-width: 1240px;
     border-collapse: collapse;
     table-layout: fixed;
     background: var(--discord-surface, #ffffff);
 }
 
-.crop-list-table .crop-col-name,
-.crop-list-table .crop-col-variety,
-.crop-list-table .crop-col-field {
-    width: 13%;
-}
-
-.crop-list-table .crop-col-date {
-    width: 12%;
-}
-
-.crop-list-table .crop-col-area {
-    width: 8%;
-}
-
-.crop-list-table .crop-col-status {
-    width: 11%;
-}
-
-.crop-list-table .crop-col-action {
-    width: 7%;
-}
+.crop-list-table .crop-col-name { width: 120px; }
+.crop-list-table .crop-col-variety { width: 100px; }
+.crop-list-table .crop-col-field { width: 110px; }
+.crop-list-table .crop-col-date { width: 118px; }
+.crop-list-table .crop-col-topdressing { width: 190px; }
+.crop-list-table .crop-col-area { width: 95px; }
+.crop-list-table .crop-col-yield { width: 110px; }
+.crop-list-table .crop-col-status { width: 90px; }
+.crop-list-table .crop-col-action { width: 78px; }
 
 .crop-list-table thead tr,
 .crop-list-table tbody tr {
@@ -221,6 +209,15 @@
     white-space: nowrap;
 }
 
+.crop-topdressing-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    font-size: 13px;
+}
+
 .crop-action-heading,
 .crop-action-cell {
     text-align: center;
@@ -234,10 +231,25 @@
     font-size: 13px;
 }
 
+.crop-update-button,
 .crop-edit-button {
     background: var(--discord-accent, #2e7d32);
 }
 
+.crop-update-button {
+    border: 0;
+    min-width: 56px;
+    min-height: 36px;
+    padding: 8px 11px;
+    border-radius: 7px;
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.crop-update-button:hover,
 .crop-edit-button:hover {
     background: var(--discord-accent, #1b5e20);
     color: var(--discord-text, #ffffff);
@@ -538,16 +550,41 @@ a.crop-register-button:hover {
     font-weight: 700;
 }
 
-/* 2026-09-27: 保存した追肥目安を一覧でも確認 */
+/* 2026-09-27: 追肥目安は「植付から約○日後」の短い表記でレイアウトを崩さない */
 .crop-col-topdressing { min-width: 190px; }
 .crop-topdressing-cell {
     min-width: 190px;
-    max-width: 280px;
-    white-space: normal;
+    max-width: 190px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+    word-break: keep-all;
     line-height: 1.45;
-    overflow-wrap: anywhere;
 }
 @media (max-width: 768px) {
     .crop-col-topdressing,
-    .crop-topdressing-cell { min-width: 180px; }
+    .crop-topdressing-cell { min-width: 190px; max-width: 190px; }
+}
+
+/* 一覧の操作ボタンを同じサイズに揃える */
+.crop-update-button,
+.crop-edit-button,
+.crop-delete-button {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 7px;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
 }

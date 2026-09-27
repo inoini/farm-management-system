@@ -121,7 +121,7 @@
         const days = ranges.map(function (range) {
             return Math.round((range[0] + range[1]) / 2);
         });
-        return "植付から" + days.map(function (day) { return "約" + day + "日後"; }).join("・");
+        return days.map(function (day) { return day + "日後"; }).join("・");
     }
 
     function updateYieldEstimate(profile) {

@@ -43,10 +43,10 @@ public class CropPlanningService {
         if (days == null || days.length == 0) {
             return "生育を見て調整";
         }
-        StringBuilder text = new StringBuilder("植付から");
+        StringBuilder text = new StringBuilder();
         for (int i = 0; i < days.length; i++) {
             if (i > 0) text.append("・");
-            text.append("約").append(days[i]).append("日後");
+            text.append(days[i]).append("日後");
         }
         return text.toString();
     }

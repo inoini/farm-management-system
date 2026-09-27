@@ -12,8 +12,8 @@
           href="/css/style.css?v=20260922-1">
 
     <link rel="stylesheet"
-          th:href="@{/css/crop-list.css(v='20260927-area-weather-1')}"
-          href="/css/crop-list.css?v=20260927-area-weather-1">
+          th:href="@{/css/crop-list.css(v='20260927-short-guide-1')}"
+          href="/css/crop-list.css?v=20260927-short-guide-1">
     
 <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
@@ -160,14 +160,14 @@
                     <td class="crop-topdressing-cell"
                         th:title="${crop.topdressingGuide}"
                         th:text="${#strings.isEmpty(crop.topdressingGuide) ? '未設定' : crop.topdressingGuide}">
-                        植付から約30日後
+                        30日後
                     </td>
 
                     <td th:text="${crop.area != null ? crop.area : 0}">
                         30.0
                     </td>
 
-                    <td th:text="${crop.expectedHarvestKg != null ? crop.expectedHarvestKg : 0}">
+                    <td th:text="${@quantityFormatter.formatKg(crop.expectedHarvestKg)}">
                         560
                     </td>
 

@@ -550,7 +550,7 @@ a.crop-register-button:hover {
     font-weight: 700;
 }
 
-/* 2026-09-27: 追肥目安は「植付から約○日後」の短い表記でレイアウトを崩さない */
+/* 2026-09-27: 追肥目安は「○日後」の短い表記でレイアウトを崩さない */
 .crop-col-topdressing { min-width: 190px; }
 .crop-topdressing-cell {
     min-width: 190px;

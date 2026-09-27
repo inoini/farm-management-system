@@ -1023,3 +1023,24 @@
 .calendar-screen .calendar-month-panel.calendar-drag-scroll-enabled .schedule-card {
     touch-action: pan-y pinch-zoom !important;
 }
+
+
+/* 2026-09-27: calendar native scroll performance */
+/* このCSSは作業カレンダーでのみ読み込む。プログラムスクロールの遅延を避ける。 */
+html {
+    scroll-behavior: auto !important;
+}
+
+.dashboard-body.calendar-screen .calendar-month-panel,
+.dashboard-body.calendar-screen .calendar-month-panel .calendar-table,
+.dashboard-body.calendar-screen .calendar-month-panel .day-box,
+.dashboard-body.calendar-screen .calendar-month-panel .schedule-list,
+.dashboard-body.calendar-screen .calendar-month-panel .schedule-card {
+    touch-action: pan-x pan-y pinch-zoom !important;
+}
+
+html.calendar-mouse-dragging,
+html.calendar-mouse-dragging body {
+    scroll-behavior: auto !important;
+    user-select: none;
+}

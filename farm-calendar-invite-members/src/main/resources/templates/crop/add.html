@@ -106,13 +106,17 @@
                 <div class="crop-form-group">
                     <label for="plantingDate">植付日</label>
                     <input type="date"
-                           th:field="*{plantingDate}">
+                           id="plantingDate"
+                           name="plantingDate"
+                           th:value="${crop.plantingDate != null ? #temporals.format(crop.plantingDate, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="crop-form-group">
                     <label for="harvestDate">収穫予定日</label>
                     <input type="date"
-                           th:field="*{harvestDate}">
+                           id="harvestDate"
+                           name="harvestDate"
+                           th:value="${crop.harvestDate != null ? #temporals.format(crop.harvestDate, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="crop-form-group">
@@ -209,6 +213,6 @@
         </form>
     </section>
 </main>
-    <script defer th:src="@{/js/crop-guide.js(v='20260927-short-guide-1')}" src="/js/crop-guide.js?v=20260927-short-guide-1"></script>
+    <script defer th:src="@{/js/crop-guide.js(v='20260927-edit-date-2')}" src="/js/crop-guide.js?v=20260927-edit-date-2"></script>
 </body>
 </html>

@@ -9,14 +9,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     
    	<link rel="stylesheet"
-      th:href="@{/css/calendar-dashboard.css(v='20260927-native-scroll-2')}"
-      href="/css/calendar-dashboard.css?v=20260927-native-scroll-2">
+      th:href="@{/css/calendar-dashboard.css(v='20260927-scroll-repair-1')}"
+      href="/css/calendar-dashboard.css?v=20260927-scroll-repair-1">
     	<script defer
         th:src="@{/js/script.js(v='20260925-3')}"
         src="/js/script.js?v=20260925-3"></script>
     <script defer
-        th:src="@{/js/calendar-drag-scroll.js(v='20260927-native-scroll-2')}"
-        src="/js/calendar-drag-scroll.js?v=20260927-native-scroll-2"></script>
+        th:src="@{/js/calendar-drag-scroll.js(v='20260927-scroll-repair-1')}"
+        src="/js/calendar-drag-scroll.js?v=20260927-scroll-repair-1"></script>
 
     <style>
         /* 作業カレンダー見出しとトップページボタン */
@@ -279,6 +279,7 @@
 
     <div class="calendar-workspace">
     <section class="calendar-wrapper calendar-month-panel" aria-label="月間作業予定">
+        <div class="calendar-horizontal-scroll">
         <table class="calendar-table">
             <thead>
             <tr>
@@ -339,6 +340,7 @@
             </tr>
             </tbody>
         </table>
+        </div>
     </section>
 
     <!-- 今日の作業欄は廃止。月間カレンダーを全幅で表示します。 -->

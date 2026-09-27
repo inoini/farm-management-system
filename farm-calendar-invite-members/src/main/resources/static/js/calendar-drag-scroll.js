@@ -7,8 +7,8 @@
 
         panel.classList.add("calendar-drag-scroll-enabled");
 
-        // 指・タッチパッド・ホイールはブラウザ標準スクロールに任せる。
-        // JavaScript で wheel/touchmove を横取りしないことで、スクロールを軽くする。
+        // 指・ホイール・タッチパッドはブラウザ標準の縦スクロールに任せる。
+        // マウス左ドラッグだけ、ページ本体を軽量に上下移動する。
         let mouseDown = false;
         let dragging = false;
         let startX = 0;
@@ -18,12 +18,12 @@
         let frame = 0;
         let pendingDeltaY = 0;
         const threshold = 6;
+        const scrollRoot = document.scrollingElement || document.documentElement;
 
         function applyMouseScroll() {
             frame = 0;
             if (!pendingDeltaY) return;
-            const y = window.pageYOffset || document.documentElement.scrollTop || 0;
-            window.scrollTo(0, Math.max(0, y - pendingDeltaY));
+            scrollRoot.scrollTop = Math.max(0, scrollRoot.scrollTop - pendingDeltaY);
             pendingDeltaY = 0;
         }
 
@@ -66,7 +66,6 @@
 
         panel.addEventListener("mousedown", function (event) {
             if (event.button !== 0) return;
-            // フォーム部品やリンクの通常操作は奪わない。
             if (event.target.closest("button, a, input, select, textarea, label")) return;
 
             mouseDown = true;

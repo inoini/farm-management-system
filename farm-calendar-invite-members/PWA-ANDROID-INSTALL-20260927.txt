@@ -1,0 +1,15 @@
+Androidスマホ PWAインストール修正 2026-09-27
+
+変更点:
+- Service Worker登録を pwa.js の1か所に統一
+- manifest start_url を認証不要の /app-start.html に変更
+- /app-start.html をSecurity permitAllに追加
+- Service Workerは公開PWAシェルとアイコンだけを安全にキャッシュ
+- Androidではインストールボタンを表示し、beforeinstallpromptが利用できれば直接プロンプト表示
+- PWA診断に start_url の200応答確認を追加
+
+Render反映後:
+1. https://...onrender.com/pwa-check.html をスマホChromeで開く
+2. HTTPS / manifest / start_url / 192 / 512 / Service Worker がすべて✓になることを確認
+3. Chromeを一度閉じて再度サイトを開く
+4. 画面の「アプリをインストール」またはChromeメニューからインストール

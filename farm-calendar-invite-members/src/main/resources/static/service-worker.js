@@ -1,26 +1,45 @@
-const CACHE_PREFIX = "farm-system-";
-const CACHE_NAME = "farm-system-20260927-install-fix-1";
+const CACHE_NAME = "farm-pwa-shell-20260927-android-install-2";
+const APP_SHELL = [
+  "/app-start.html",
+  "/manifest.json",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/icons/maskable-192.png",
+  "/icons/maskable-512.png"
+];
 
 self.addEventListener("install", (event) => {
-    self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => Promise.allSettled(APP_SHELL.map((url) => cache.add(url))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (event) => {
-    event.waitUntil(
-        caches.keys()
-            .then((keys) => Promise.all(
-                keys
-                    .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
-                    .map((key) => caches.delete(key))
-            ))
-            .then(() => self.clients.claim())
-    );
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((key) => key.startsWith("farm-pwa-shell-") && key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim())
+  );
 });
 
-// Network-first passthrough. Keeping a fetch handler makes this compatible
-// with older Chromium PWA installability checks without caching login pages.
 self.addEventListener("fetch", (event) => {
-    const request = event.request;
-    if (request.method !== "GET") return;
-    event.respondWith(fetch(request));
+  const request = event.request;
+  if (request.method !== "GET") return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (url.pathname === "/app-start.html" || url.pathname === "/manifest.json" || url.pathname.startsWith("/icons/")) {
+    event.respondWith(
+      caches.match(request, {ignoreSearch:true}).then((cached) => cached || fetch(request).then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      }))
+    );
+  }
 });

@@ -794,30 +794,6 @@ document.addEventListener("click", function(e){
 });
 
 // ==========================
-// PWA Service Worker
-// ==========================
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener("load", function(){
-
-		navigator.serviceWorker.register("/service-worker.js?v=20260927-green-icon-2")
-        .then(function(registration){
-
-            console.log("PWA Ready");
-            registration.update();
-
-        })
-        .catch(function(error){
-
-            console.log("PWA Error:", error);
-
-        });
-
-    });
-
-}
-// ==========================
 // スマホ サイドバー開閉
 // ==========================
 

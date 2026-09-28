@@ -83,7 +83,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260927-vertical-swipe-1')}" href="/css/calendar-home.css?v=20260927-vertical-swipe-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-search-row-1')}" href="/css/calendar-home.css?v=20260928-search-row-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -228,17 +228,19 @@
             <input type="hidden" name="month" th:value="${month}">
             <div class="calendar-search-input">
                 <label for="scheduleSearch">キーワード</label>
-                <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
-                       placeholder="予定を検索">
+                <div class="calendar-search-input-row">
+                    <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
+                           placeholder="予定を検索">
+                    <button type="submit" class="new-work-button calendar-search-button">検索</button>
+                </div>
             </div>
-            <div>
+            <div class="calendar-search-scope">
                 <label for="searchScope">検索範囲</label>
                 <select id="searchScope" name="scope">
                     <option value="all" th:selected="${searchScope == 'all'}">すべての期間</option>
                     <option value="month" th:selected="${searchScope == 'month'}">表示中の月</option>
                 </select>
             </div>
-            <button type="submit" class="new-work-button">検索</button>
             <a class="calendar-search-reset" th:if="${!#strings.isEmpty(searchQuery)}" th:href="@{/calendar(year=${year},month=${month})}">解除</a>
         </form>
         <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">

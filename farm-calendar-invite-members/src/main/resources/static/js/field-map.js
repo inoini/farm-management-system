@@ -23,16 +23,41 @@
             scrollWheelZoom: true
         });
 
-        const tileLayer = window.L.tileLayer(
+        const attribution = '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">地理院タイル</a>';
+        const standardLayer = window.L.tileLayer(
             "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+            { maxZoom: 18, attribution }
+        );
+        const paleLayer = window.L.tileLayer(
+            "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+            { maxZoom: 18, attribution }
+        );
+        const photoLayer = window.L.tileLayer(
+            "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
+            { minZoom: 14, maxZoom: 18, attribution: `${attribution} / 全国最新写真（シームレス）` }
+        );
+
+        standardLayer.addTo(map);
+        window.L.control.layers(
             {
-                maxZoom: 18,
-                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener noreferrer">地理院タイル</a>'
-            }
+                "標準地図": standardLayer,
+                "淡色地図": paleLayer,
+                "全国最新写真": photoLayer
+            },
+            {},
+            { position: "topright", collapsed: false }
         ).addTo(map);
 
-        tileLayer.on("tileerror", () => {
-            showMessage(messageElement, "地図画像の一部を読み込めませんでした。");
+        map.on("baselayerchange", (event) => {
+            if (event.name === "全国最新写真" && map.getZoom() < 14) {
+                map.setZoom(14);
+            }
+        });
+
+        [standardLayer, paleLayer, photoLayer].forEach((layer) => {
+            layer.on("tileerror", () => {
+                showMessage(messageElement, "地図画像の一部を読み込めませんでした。");
+            });
         });
 
         const markerButtons = Array.from(document.querySelectorAll("[data-field-marker]"));
@@ -83,7 +108,7 @@
         } else {
             showMessage(
                 messageElement,
-                "地図に表示できる圃場がありません。住所を詳しく入力して保存し直してください。"
+                "地図に表示できる圃場がありません。住所から位置を再取得しましたが見つからない場合は、番地まで入力して保存し直してください。"
             );
         }
 

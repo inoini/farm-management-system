@@ -8,10 +8,10 @@
     <title>圃場マップ | 農業管理システム</title>
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" th:href="@{/css/field-management.css(v='20260922-1')}" href="/css/field-management.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/field-management.css(v='20260928-map-refresh-1')}" href="/css/field-management.css?v=20260928-map-refresh-1">
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script th:src="@{/js/field-map.js(v='20260822-2')}" src="/js/field-map.js?v=20260822-2" defer></script>
+    <script th:src="@{/js/field-map.js(v='20260928-map-refresh-1')}" src="/js/field-map.js?v=20260928-map-refresh-1" defer></script>
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
     <meta name="_csrf" th:content="${_csrf.token}">
@@ -36,7 +36,7 @@
             <div>
                 <p class="field-page-eyebrow">FIELD MAP</p>
                 <h1>圃場マップ</h1>
-                <p>目印を選択すると、圃場名・住所・作物情報を確認できます。</p>
+                <p>目印を選択すると、圃場名・住所・作物情報を確認できます。右上から標準地図・淡色地図・全国最新写真を切り替えられます。</p>
             </div>
 
             <div class="field-map-header-actions">
@@ -101,10 +101,10 @@
                 </div>
 
                 <p class="field-map-attribution-note">
-                    地図：<a href="https://maps.gsi.go.jp/development/ichiran.html"
+                    地図・最新写真：<a href="https://maps.gsi.go.jp/development/ichiran.html"
                             target="_blank"
                             rel="noopener noreferrer">国土地理院</a><br>
-                    位置検索：<a href="https://www.openstreetmap.org/copyright"
+                    住所の位置検索：国土地理院 / <a href="https://www.openstreetmap.org/copyright"
                                target="_blank"
                                rel="noopener noreferrer">© OpenStreetMap contributors</a>
                 </p>

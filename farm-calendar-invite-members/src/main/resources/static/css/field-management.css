@@ -696,3 +696,28 @@
         transition: none;
     }
 }
+
+/* 2026-09-28: 圃場マップの地図切替をPC/スマホで見やすくする */
+.field-map-canvas .leaflet-control-layers {
+    border: 1px solid var(--discord-border, #cbd8ce);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    font-family: "Yu Gothic", "Meiryo", sans-serif;
+}
+.field-map-canvas .leaflet-control-layers-expanded {
+    padding: 8px 10px;
+}
+.field-map-canvas .leaflet-control-layers label {
+    margin: 3px 0;
+    font-size: 12px;
+    font-weight: 700;
+}
+@media screen and (max-width: 700px) {
+    .field-map-canvas .leaflet-control-layers-expanded {
+        max-width: 150px;
+        padding: 6px 8px;
+    }
+    .field-map-canvas .leaflet-control-layers label {
+        font-size: 11px;
+    }
+}

@@ -122,11 +122,40 @@ public class FieldController {
     @GetMapping("/map")
     public String map(Model model) {
         List<Field> fields = findAllFields();
+
+        // 以前の登録時に位置取得へ失敗した圃場も、マップ表示時に自動で再取得します。
+        refreshMissingCoordinates(fields);
+
         long markerCount = fields.stream()
                 .filter(field -> field.getLatitude() != null && field.getLongitude() != null).count();
         model.addAttribute("fields", fields);
         model.addAttribute("mapMarkerCount", markerCount);
         return "field_map";
+    }
+
+    private void refreshMissingCoordinates(List<Field> fields) {
+        int attempted = 0;
+        for (Field field : fields) {
+            if (field.getLatitude() != null && field.getLongitude() != null) {
+                continue;
+            }
+            if (field.getLocation() == null || field.getLocation().isBlank()) {
+                continue;
+            }
+            if (attempted >= 5) {
+                break;
+            }
+            attempted++;
+
+            Optional<Coordinates> coordinates = geocodingService.geocode(field.getLocation());
+            if (coordinates.isEmpty()) {
+                continue;
+            }
+
+            field.setLatitude(coordinates.get().latitude());
+            field.setLongitude(coordinates.get().longitude());
+            fieldRepository.save(field);
+        }
     }
 
     private List<Field> findAllFields() {

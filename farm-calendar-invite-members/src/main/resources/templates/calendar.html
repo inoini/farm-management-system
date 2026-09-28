@@ -83,7 +83,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-layout2-1')}" href="/css/calendar-home.css?v=20260928-layout2-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-layout12-2')}" href="/css/calendar-home.css?v=20260928-layout12-2">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -100,6 +100,7 @@
 <body class="dashboard-body calendar-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
 <button id="menuBtn"
+        th:if="${layoutMode != 'calendar2'}"
         class="menu-btn"
         type="button"
         aria-label="メニューを開閉"
@@ -109,7 +110,7 @@
 </button>
 
 <div class="app-layout">
-    <aside id="mainSidebar" class="sidebar">
+    <aside id="mainSidebar" class="sidebar" th:if="${layoutMode != 'calendar2'}">
         <div class="sidebar-header">
             <div class="logo-circle" aria-hidden="true">🌾</div>
             <h2 th:text="${farmName}">農業管理システム</h2>

@@ -270,3 +270,150 @@
         text-decoration: none;
     }
 }
+
+/* =========================================================
+   2026-09-28 レイアウト1/2 位置調整 v2
+   layout1: 検索と月選択を中央へ
+   layout2: 左サイドバーを描画せず、カレンダーを全幅へ
+========================================================= */
+@media screen and (min-width: 769px) {
+    /* ----- レイアウト1（sidebar） ----- */
+    .calendar-screen.layout-sidebar .calendar-search-panel {
+        text-align: center;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-area {
+        width: min(100%, 760px);
+        margin-inline: auto;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-panel h2 {
+        text-align: center;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-form {
+        justify-content: center;
+        align-items: end;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-input {
+        flex: 0 1 470px;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-input-row {
+        align-items: stretch;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-form input[type="search"],
+    .calendar-screen.layout-sidebar .calendar-search-form select,
+    .calendar-screen.layout-sidebar .calendar-search-form .calendar-search-button {
+        height: 44px !important;
+        min-height: 44px !important;
+        box-sizing: border-box;
+        margin: 0 !important;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-form .calendar-search-button {
+        display: inline-flex;
+        min-width: 80px;
+        padding: 0 15px;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    /* 日付（月）選択部分をカレンダー中央へ。フィルタは右側に残す。 */
+    .calendar-screen.layout-sidebar .calendar-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-month-controls {
+        grid-column: 2;
+        justify-self: center;
+        align-items: center;
+        min-height: 36px;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-filters {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    .calendar-screen.layout-sidebar .month-picker-label {
+        display: inline-flex;
+        height: 36px;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+
+    .calendar-screen.layout-sidebar .month-picker-label input,
+    .calendar-screen.layout-sidebar .icon-control,
+    .calendar-screen.layout-sidebar .today-control {
+        height: 36px !important;
+        min-height: 36px !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+        vertical-align: middle;
+    }
+
+    .calendar-screen.layout-sidebar .month-picker-label input {
+        display: block;
+        width: 148px;
+        padding: 0 10px;
+        line-height: 34px;
+        font-size: 13px;
+    }
+
+    /* ----- レイアウト2 ----- */
+    /* sidebar/menuBtn はThymeleaf側で描画しない。メインを本当に全幅にする。 */
+    .dashboard-body.calendar-screen.layout-calendar2 .calendar-main-content,
+    .dashboard-body.calendar-screen.layout-calendar2 .main-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+    }
+
+    .dashboard-body.calendar-screen.layout-calendar2 .calendar-page {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding-left: 18px;
+        padding-right: 18px;
+        box-sizing: border-box;
+    }
+
+    /* 左メニューが無い分、月間カレンダーも横幅いっぱいに使う。 */
+    .dashboard-body.calendar-screen.layout-calendar2 .calendar-month-panel {
+        width: 100% !important;
+        max-width: none !important;
+        margin-inline: 0 !important;
+        overflow: visible !important;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+@media screen and (max-width: 1280px) and (min-width: 769px) {
+    .calendar-screen.layout-sidebar .calendar-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-month-controls,
+    .calendar-screen.layout-sidebar .calendar-filters {
+        grid-column: 1;
+        justify-self: center;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-filters {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

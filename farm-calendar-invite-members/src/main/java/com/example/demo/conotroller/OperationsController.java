@@ -325,8 +325,16 @@ public class OperationsController {
         setting.setMonthlyHarvestTargetKg(input.getMonthlyHarvestTargetKg());
         setting.setNotificationsEnabled(notificationsEnabled);
         setting.setUiTheme(validTheme(input.getUiTheme()));
-        setting.setLayoutMode(validLayout(input.getLayoutMode()));
+        String savedLayoutMode = validLayout(input.getLayoutMode());
+        setting.setLayoutMode(savedLayoutMode);
         settingRepository.save(setting);
+
+        // レイアウト2は保存した直後に作業カレンダーへ切り替えて、
+        // 左メニューなし・全幅カレンダーの表示をその場で反映する。
+        if ("calendar2".equals(savedLayoutMode)) {
+            return "redirect:/calendar?layoutUpdated=1";
+        }
+
         return "redirect:/settings?saved";
     }
 

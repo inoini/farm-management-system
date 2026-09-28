@@ -88,7 +88,7 @@ public class CropController {
 
         crop.setOwnerEmail(owner);
         applyPlanning(crop);
-        // 保存時は登録済み収穫日を残しつつ、天候補正日を計算して表示用に保存する。
+        // 収穫予定日は入力させず、作物・植付日から算出し、天候補正日も表示用に保存する。
         applyWeatherPrediction(crop, false, false);
         cropRepository.save(crop);
         return "redirect:/crop";
@@ -104,7 +104,7 @@ public class CropController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         applyPlanning(crop);
-        applyWeatherPrediction(crop, true, true);
+        applyWeatherPrediction(crop, true, false);
         cropRepository.save(crop);
         return "redirect:/crop";
     }
@@ -159,11 +159,9 @@ public class CropController {
         if (plan.topdressingGuide() != null && !plan.topdressingGuide().isBlank()) {
             crop.setTopdressingGuide(plan.topdressingGuide());
         }
-        if (plan.suggestedHarvestDate() != null
-                && (crop.getHarvestDate() == null
-                    || (crop.getPlantingDate() != null && crop.getHarvestDate().isBefore(crop.getPlantingDate())))) {
-            crop.setHarvestDate(plan.suggestedHarvestDate());
-        }
+        // 収穫予定日は手入力ではなく、作物・品種・植付日から毎回算出する。
+        // 対応データがない場合は古い予測値を残さず未設定にする。
+        crop.setHarvestDate(plan.suggestedHarvestDate());
         if (plan.expectedHarvestKg() != null) {
             crop.setExpectedHarvestKg(plan.expectedHarvestKg());
         }

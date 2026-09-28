@@ -2,6 +2,7 @@ package com.example.demo.conotroller;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ import com.example.demo.util.ScheduleSearch;
 @Controller
 public class CalendarController {
 
+    private static final ZoneId JAPAN = ZoneId.of("Asia/Tokyo");
+
     private final ScheduleService scheduleService;
     private final CropRepository cropRepository;
     private final FieldRepository fieldRepository;
@@ -60,7 +63,7 @@ public class CalendarController {
             Model model) {
 
         String owner = currentUser.email();
-        YearMonth ym = (year == null || month == null) ? YearMonth.now() : YearMonth.of(year, month);
+        YearMonth ym = (year == null || month == null) ? YearMonth.now(JAPAN) : YearMonth.of(year, month);
         model.addAttribute("year", ym.getYear());
         model.addAttribute("month", ym.getMonthValue());
         model.addAttribute("monthValue", ym.toString());
@@ -73,6 +76,8 @@ public class CalendarController {
         model.addAttribute("nextMonth", next.getMonthValue());
 
         List<CalendarDay> calendarDays = new ArrayList<>();
+        // Render のサーバー時刻（UTC）ではなく、日本時間の日付を基準にする。
+        LocalDate today = LocalDate.now(JAPAN);
         LocalDate firstDay = ym.atDay(1);
         int firstWeek = firstDay.getDayOfWeek().getValue() % 7;
         LocalDate calendarStart = firstDay.minusDays(firstWeek);
@@ -92,11 +97,11 @@ public class CalendarController {
                     date.getDayOfMonth(),
                     date.toString(),
                     YearMonth.from(date).equals(ym),
+                    date.equals(today),
                     schedulesByDate.getOrDefault(date.toString(), List.of())));
         }
         model.addAttribute("calendarDays", calendarDays);
 
-        LocalDate today = LocalDate.now();
         List<Schedule> todaySchedules;
         if (!today.isBefore(calendarStart) && !today.isAfter(calendarEnd)) {
             todaySchedules = schedulesByDate.getOrDefault(today.toString(), List.of());

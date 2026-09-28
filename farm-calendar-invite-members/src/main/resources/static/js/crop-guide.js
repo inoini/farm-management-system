@@ -192,9 +192,12 @@
         if (!profile) {
             panel.hidden = false;
             cropLabel.textContent = cropName.value.trim() ? cropName.value.trim() : "作物名を入力してください";
-            status.textContent = cropName.value.trim()
-                ? "この作物の自動補完データはまだ登録されていません。収穫予定日は手動で入力できます。"
-                : "作物名だけでも補完できます。品種は任意です。";
+            if (status) {
+                status.hidden = !cropName.value.trim();
+                status.textContent = cropName.value.trim()
+                    ? "この作物の栽培予測データはまだ登録されていません。"
+                    : "";
+            }
             topdressing.textContent = "作物名を入力すると表示されます";
             if (topdressingGuideInput) topdressingGuideInput.value = "";
             harvest.textContent = "作物名を入力すると表示されます";
@@ -209,9 +212,10 @@
         cropLabel.textContent = resolved.varietyLabel
             ? profile.key + "（" + resolved.varietyLabel + "）"
             : profile.key + "（一般的な目安）";
-        status.textContent = resolved.varietyLabel
-            ? "入力した品種に近い目安を自動表示しています。"
-            : "品種未入力でも、作物名から一般的な目安を自動表示しています。";
+        if (status) {
+            status.hidden = true;
+            status.textContent = "";
+        }
 
         const topdressingText = compactTopdressing(data.top || []);
         topdressing.textContent = topdressingText;

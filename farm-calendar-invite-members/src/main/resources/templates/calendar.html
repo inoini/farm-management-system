@@ -12,8 +12,8 @@
       th:href="@{/css/calendar-dashboard.css(v='20260927-scroll-final-1')}"
       href="/css/calendar-dashboard.css?v=20260927-scroll-final-1">
     	<script defer
-        th:src="@{/js/script.js(v='20260925-3')}"
-        src="/js/script.js?v=20260925-3"></script>
+        th:src="@{/js/script.js(v='20260929-date-rollover-1')}"
+        src="/js/script.js?v=20260929-date-rollover-1"></script>
     <script defer
         th:src="@{/js/calendar-drag-scroll.js(v='20260927-layout-restore-1')}"
         src="/js/calendar-drag-scroll.js?v=20260927-layout-restore-1"></script>
@@ -97,7 +97,9 @@
     <script defer th:src="@{/js/pwa.js(v='20260927-android-install-2')}" src="/js/pwa.js?v=20260927-android-install-2"></script>
 </head>
 
-<body class="dashboard-body calendar-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
+<body class="dashboard-body calendar-screen"
+      th:classappend="|theme-${uiTheme} layout-${layoutMode}|"
+      th:attr="data-server-today=${todayIso}">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
 <button id="menuBtn"
         th:if="${layoutMode != 'calendar2'}"

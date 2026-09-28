@@ -18,9 +18,64 @@ window.addEventListener("DOMContentLoaded", function () {
     setInterval(updateClock, 1000);
 
     cardAnimation();
+    watchCalendarDateChange();
 
 });
 
+
+
+// ==========================
+// 日付変更（日本時間）を検知してカレンダーを更新
+// ==========================
+function japanIsoDate(){
+    try {
+        const parts = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Tokyo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).formatToParts(new Date());
+        const values = {};
+        parts.forEach(function(part){
+            if(part.type !== "literal") values[part.type] = part.value;
+        });
+        return values.year + "-" + values.month + "-" + values.day;
+    } catch(e) {
+        const now = new Date();
+        return now.getFullYear() + "-"
+            + String(now.getMonth() + 1).padStart(2, "0") + "-"
+            + String(now.getDate()).padStart(2, "0");
+    }
+}
+
+function watchCalendarDateChange(){
+    if(!document.body || !document.body.classList.contains("calendar-screen")){
+        return;
+    }
+
+    const renderedDate = document.body.dataset.serverToday;
+    if(!renderedDate){
+        return;
+    }
+
+    function checkDate(){
+        const currentJapanDate = japanIsoDate();
+        if(currentJapanDate === document.body.dataset.serverToday){
+            return;
+        }
+
+        // 古いHTMLが残った場合でも無限再読込にならないよう、同じ日付では1回だけ更新する。
+        const reloadKey = "calendar-date-reload-" + currentJapanDate;
+        if(sessionStorage.getItem(reloadKey) === "1"){
+            return;
+        }
+        sessionStorage.setItem(reloadKey, "1");
+        window.location.reload();
+    }
+
+    checkDate();
+    window.setInterval(checkDate, 60000);
+}
 
 // ==========================
 // 開始・終了時間作成

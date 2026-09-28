@@ -1,6 +1,5 @@
 package com.example.demo.model;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.example.demo.entity.Schedule;
@@ -23,15 +22,14 @@ public class CalendarDay {
             int day,
             String date,
             boolean currentMonth,
+            boolean today,
             List<Schedule> scheduleList){
 
         this.day = day;
         this.date = date;
         this.currentMonth = currentMonth;
         this.scheduleList = scheduleList;
-
-        this.today =
-                LocalDate.now().toString().equals(date);
+        this.today = today;
     }
 
     public int getDay() {

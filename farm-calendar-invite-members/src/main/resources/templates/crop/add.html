@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>農業管理システム | 作物登録</title>
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}" href="/css/style.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260927-short-guide-1')}" href="/css/crop-guide.css?v=20260927-short-guide-1">
+    <link rel="stylesheet" th:href="@{/css/crop-guide.css(v='20260929-prediction-1')}" href="/css/crop-guide.css?v=20260929-prediction-1">
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -39,7 +39,7 @@
         <div class="crop-page-header-row">
             <div class="crop-page-header-text">
                 <h2 id="crop-page-title">🌱 作物登録</h2>
-                <p>栽培する作物・圃場・日程を登録します</p>
+                <p>作物・圃場・植付情報を登録し、収穫時期を予測します</p>
             </div>
 
             <a th:href="@{/}"
@@ -60,6 +60,7 @@
               class="crop-form">
 
             <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{harvestDate}">
             <input type="hidden" th:field="*{topdressingGuide}">
             <input type="hidden" th:field="*{weatherAdjustedHarvestDate}">
             <input type="hidden" th:field="*{weatherAdvice}">
@@ -84,7 +85,6 @@
                            th:field="*{variety}"
                            maxlength="100"
                            placeholder="例：紅はるか">
-                    <small class="crop-field-hint">品種は任意です。未入力でも作物名から一般的な栽培目安を補完します。</small>
                 </div>
 
                 <div class="crop-form-group crop-form-group-wide">
@@ -109,14 +109,6 @@
                            id="plantingDate"
                            name="plantingDate"
                            th:value="${crop.plantingDate != null ? #temporals.format(crop.plantingDate, 'yyyy-MM-dd') : ''}">
-                </div>
-
-                <div class="crop-form-group">
-                    <label for="harvestDate">収穫予定日</label>
-                    <input type="date"
-                           id="harvestDate"
-                           name="harvestDate"
-                           th:value="${crop.harvestDate != null ? #temporals.format(crop.harvestDate, 'yyyy-MM-dd') : ''}">
                 </div>
 
                 <div class="crop-form-group">
@@ -156,7 +148,7 @@
 
             <section id="cropGuidePanel" class="crop-guide-card" aria-live="polite">
                 <div class="crop-guide-heading">
-                    <h3>🌿 栽培スケジュール自動補完</h3>
+                    <h3>🌿 栽培・収穫予測</h3>
                     <span id="cropGuideCrop">作物名を入力してください</span>
                 </div>
                 <div class="crop-guide-grid">
@@ -195,7 +187,7 @@
                         </div>
                     </div>
                 </div>
-                <p id="cropGuideStatus" class="crop-guide-notice">作物名だけでも補完できます。品種は任意です。</p>
+                <p id="cropGuideStatus" class="crop-guide-notice" hidden></p>
                 <p class="crop-guide-notice">※ 天候補正は植付後の実績気温・降水量と最大16日先までの予報を使用します。それより先は標準的な積算温度ペースで補間するため、成熟状態を確認して最終判断してください。</p>
             </section>
 
@@ -213,6 +205,6 @@
         </form>
     </section>
 </main>
-    <script defer th:src="@{/js/crop-guide.js(v='20260927-edit-date-2')}" src="/js/crop-guide.js?v=20260927-edit-date-2"></script>
+    <script defer th:src="@{/js/crop-guide.js(v='20260929-prediction-1')}" src="/js/crop-guide.js?v=20260929-prediction-1"></script>
 </body>
 </html>

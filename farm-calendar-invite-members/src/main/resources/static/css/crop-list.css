@@ -650,3 +650,57 @@ a.crop-register-button:hover {
         font-size: 12px;
     }
 }
+
+
+/* 2026-09-29: 収穫予定日の自動予測説明 */
+.crop-list-toolbar {
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.crop-prediction-note {
+    display: flex;
+    min-width: 0;
+    max-width: 720px;
+    align-items: flex-start;
+    gap: 10px;
+    margin-left: auto;
+    padding: 11px 14px;
+    border: 1px solid #c9dceb;
+    border-radius: 10px;
+    background: #f7fbff;
+    color: #355769;
+}
+
+.crop-prediction-note-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+    line-height: 1.35;
+}
+
+.crop-prediction-note p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.crop-prediction-note strong {
+    color: #245b78;
+}
+
+.crop-weather-applied { color: #245b78; }
+.crop-weather-standard { color: #6a776f; }
+
+@media screen and (max-width: 900px) {
+    .crop-list-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .crop-prediction-note {
+        width: 100%;
+        max-width: none;
+        margin-left: 0;
+        box-sizing: border-box;
+    }
+}

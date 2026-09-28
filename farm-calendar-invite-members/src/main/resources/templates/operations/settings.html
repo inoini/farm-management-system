@@ -102,8 +102,13 @@
                     <div class="settings-choice-grid">
                         <label class="settings-choice layout-choice">
                             <input type="radio" th:field="*{layoutMode}" value="sidebar" required>
-                            <strong>カレンダー中心・左メニュー型（標準）</strong>
-                            <small>左：機能メニュー ／ 中央：カレンダー ／ 下：今日の作業</small>
+                            <strong>カレンダー中心・レイアウト1（標準）</strong>
+                            <small>左メニュー＋中央の作業カレンダーを基本にした標準配置</small>
+                        </label>
+                        <label class="settings-choice layout-choice">
+                            <input type="radio" th:field="*{layoutMode}" value="calendar2">
+                            <strong>カレンダー中心・レイアウト2</strong>
+                            <small>予定検索の右側に項目メニューを2行配置し、正方形の日付セルを大きく表示</small>
                         </label>
                         <label class="settings-choice layout-choice">
                             <input type="radio" th:field="*{layoutMode}" value="compact">

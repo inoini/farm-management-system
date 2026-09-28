@@ -83,3 +83,190 @@
     }
     .calendar-search-results { margin-top: 8px; }
 }
+
+/* 2026-09-28 layout 2 final */
+/* レイアウト1・コンパクト・ワイドでは、検索右側の追加メニューを表示しない。 */
+.calendar-screen:not(.layout-calendar2) .calendar-quick-menu {
+    display: none !important;
+}
+
+@media screen and (min-width: 769px) {
+    .calendar-screen:not(.layout-calendar2) .calendar-search-layout {
+        display: block !important;
+    }
+
+    /* レイアウト2：検索欄の右側に10項目を5列×2行で配置 */
+    .calendar-screen.layout-calendar2 .calendar-search-layout {
+        display: grid;
+        grid-template-columns: minmax(430px, 0.92fr) minmax(560px, 1.18fr);
+        gap: 18px;
+        align-items: end;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-rows: repeat(2, 46px);
+        gap: 8px;
+        align-self: end;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu a {
+        display: flex;
+        min-width: 0;
+        height: 46px;
+        padding: 0 8px;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid var(--discord-border, #d9e0dc);
+        border-radius: 8px;
+        background: var(--discord-surface-raised, #f7faf8);
+        color: var(--discord-text, #263d32);
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-align: center;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu a:hover {
+        border-color: var(--discord-accent, #2e7d32);
+        background: var(--discord-surface, #eef8f1);
+        transform: translateY(-1px);
+    }
+
+    /* 検索欄と検索ボタンを同じ高さに揃える */
+    .calendar-screen.layout-calendar2 .calendar-search-form input[type="search"],
+    .calendar-screen.layout-calendar2 .calendar-search-form select,
+    .calendar-screen.layout-calendar2 .calendar-search-form .calendar-search-button {
+        height: 46px !important;
+        min-height: 46px !important;
+        box-sizing: border-box;
+        margin: 0;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-search-form .calendar-search-button {
+        display: inline-flex;
+        min-width: 82px;
+        padding: 0 15px;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+
+    /* 月変更ボタン群を画面中央に固定し、絞り込みは右側に置く */
+    .calendar-screen.layout-calendar2 .calendar-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-month-controls {
+        grid-column: 2;
+        justify-self: center;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-filters {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    /* レイアウト2のカレンダーは中央配置。1日セルを正方形のまま大きくする。 */
+    .dashboard-body.calendar-screen.layout-calendar2 .calendar-page {
+        max-width: 1720px;
+        margin-inline: auto;
+    }
+
+    .dashboard-body.calendar-screen.layout-calendar2 .calendar-month-panel {
+        width: min(100%, 1120px);
+        max-width: 1120px;
+        margin-inline: auto;
+        overflow: visible !important;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table {
+        width: 100% !important;
+        min-width: 0 !important;
+        table-layout: fixed;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table tbody td {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 0;
+        vertical-align: top;
+        position: relative;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table .day-box {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        aspect-ratio: 1 / 1;
+        box-sizing: border-box;
+        padding: 8px;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table th {
+        height: 46px;
+    }
+}
+
+/* 画面が少し狭いPC/タブレットでは、レイアウト2の検索とメニューを上下にして崩れを防ぐ。 */
+@media screen and (min-width: 769px) and (max-width: 1280px) {
+    .calendar-screen.layout-calendar2 .calendar-search-layout {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-month-controls,
+    .calendar-screen.layout-calendar2 .calendar-filters {
+        grid-column: 1;
+        justify-self: center;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-filters {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* スマホでは従来の横スワイプ可能な100px正方形を維持し、クイックメニューは2列。 */
+@media screen and (max-width: 768px) {
+    .calendar-screen.layout-calendar2 .calendar-quick-menu {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu a {
+        display: flex;
+        min-height: 38px;
+        padding: 5px 7px;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        border: 1px solid var(--discord-border, #d9e0dc);
+        border-radius: 7px;
+        background: var(--discord-surface-raised, #f7faf8);
+        color: var(--discord-text, #263d32);
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+}

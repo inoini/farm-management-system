@@ -339,7 +339,7 @@ public class OperationsController {
 
     private String validLayout(String value) {
         return switch (value == null ? "" : value) {
-            case "compact", "wide", "sidebar" -> value;
+            case "compact", "wide", "sidebar", "calendar2" -> value;
             default -> "sidebar";
         };
     }

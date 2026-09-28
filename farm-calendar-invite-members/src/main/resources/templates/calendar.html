@@ -83,7 +83,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-search-row-1')}" href="/css/calendar-home.css?v=20260928-search-row-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-layout2-1')}" href="/css/calendar-home.css?v=20260928-layout2-1">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -222,27 +222,45 @@
     </div>
 
     <section class="calendar-search-panel" aria-labelledby="calendar-search-heading">
-        <h2 id="calendar-search-heading">予定を検索</h2>
-        <form class="calendar-search-form" method="get" th:action="@{/calendar}" action="/calendar" role="search">
-            <input type="hidden" name="year" th:value="${year}">
-            <input type="hidden" name="month" th:value="${month}">
-            <div class="calendar-search-input">
-                <label for="scheduleSearch">キーワード</label>
-                <div class="calendar-search-input-row">
-                    <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
-                           placeholder="予定を検索">
-                    <button type="submit" class="new-work-button calendar-search-button">検索</button>
-                </div>
+        <div class="calendar-search-layout">
+            <div class="calendar-search-area">
+                <h2 id="calendar-search-heading">予定を検索</h2>
+                <form class="calendar-search-form" method="get" th:action="@{/calendar}" action="/calendar" role="search">
+                    <input type="hidden" name="year" th:value="${year}">
+                    <input type="hidden" name="month" th:value="${month}">
+                    <div class="calendar-search-input">
+                        <label for="scheduleSearch">キーワード</label>
+                        <div class="calendar-search-input-row">
+                            <input id="scheduleSearch" type="search" name="q" th:value="${searchQuery}"
+                                   placeholder="予定を検索">
+                            <button type="submit" class="new-work-button calendar-search-button">検索</button>
+                        </div>
+                    </div>
+                    <div class="calendar-search-scope">
+                        <label for="searchScope">検索範囲</label>
+                        <select id="searchScope" name="scope">
+                            <option value="all" th:selected="${searchScope == 'all'}">すべての期間</option>
+                            <option value="month" th:selected="${searchScope == 'month'}">表示中の月</option>
+                        </select>
+                    </div>
+                    <a class="calendar-search-reset" th:if="${!#strings.isEmpty(searchQuery)}" th:href="@{/calendar(year=${year},month=${month})}">解除</a>
+                </form>
             </div>
-            <div class="calendar-search-scope">
-                <label for="searchScope">検索範囲</label>
-                <select id="searchScope" name="scope">
-                    <option value="all" th:selected="${searchScope == 'all'}">すべての期間</option>
-                    <option value="month" th:selected="${searchScope == 'month'}">表示中の月</option>
-                </select>
-            </div>
-            <a class="calendar-search-reset" th:if="${!#strings.isEmpty(searchQuery)}" th:href="@{/calendar(year=${year},month=${month})}">解除</a>
-        </form>
+
+            <nav class="calendar-quick-menu" aria-label="カレンダー画面の項目メニュー">
+                <a th:href="@{/crop}" href="/crop"><span aria-hidden="true">🌱</span><span>作物管理</span></a>
+                <a th:href="@{/field}" href="/field"><span aria-hidden="true">🚜</span><span>圃場管理</span></a>
+                <a th:href="@{/work-history}" href="/work-history"><span aria-hidden="true">◷</span><span>作業履歴</span></a>
+                <a th:href="@{/management}" href="/management"><span aria-hidden="true">💰</span><span>経営管理</span></a>
+                <a th:href="@{/stock}" href="/stock"><span aria-hidden="true">📦</span><span>在庫管理</span></a>
+                <a th:href="@{/workers}" href="/workers"><span aria-hidden="true">👥</span><span>作業者管理</span></a>
+                <a th:href="@{/harvests}" href="/harvests"><span aria-hidden="true">🚚</span><span>収穫・出荷</span></a>
+                <a th:href="@{/reports}" href="/reports"><span aria-hidden="true">📊</span><span>分析・レポート</span></a>
+                <a th:href="@{/farm/members}" href="/farm/members"><span aria-hidden="true">👤</span><span>農場メンバー</span></a>
+                <a th:href="@{/settings}" href="/settings"><span aria-hidden="true">⚙</span><span>設定</span></a>
+            </nav>
+        </div>
+
         <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">
             <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
             <p th:if="${#lists.isEmpty(searchResults)}">該当する予定はありません。キーワードや検索範囲を変更してください。</p>

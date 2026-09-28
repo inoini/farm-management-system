@@ -83,7 +83,7 @@
     
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}" href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
-    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-widefont-3')}" href="/css/calendar-home.css?v=20260928-widefont-3">
+    <link rel="stylesheet" th:href="@{/css/calendar-home.css(v='20260928-laptop-oval-4')}" href="/css/calendar-home.css?v=20260928-laptop-oval-4">
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
@@ -290,10 +290,7 @@
             <a class="today-control" th:href="@{/calendar}">今日</a>
         </div>
 
-        <div class="calendar-filters">
-            <select id="workerFilter" aria-label="作業者で絞り込み"><option value="">すべての作業者</option><option th:each="worker : ${workers}" th:value="${worker}" th:text="${worker}"></option></select>
-            <select id="cropFilter" aria-label="作物で絞り込み"><option value="">すべての作物</option><option th:each="crop : ${cropNames}" th:value="${crop}" th:text="${crop}"></option></select>
-            <select id="workTypeFilter" aria-label="作業種類で絞り込み"><option value="">すべての作業種類</option><option th:each="type : ${workTypes}" th:value="${type}" th:text="${type}"></option></select>
+        <div class="calendar-filters calendar-toolbar-actions">
             <button id="openTodaySchedule" class="new-work-button" type="button" th:attr="data-date=${todayIso}">＋ 作業登録</button>
         </div>
     </section>

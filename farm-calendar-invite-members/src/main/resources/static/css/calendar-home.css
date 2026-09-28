@@ -615,3 +615,182 @@
         padding-right: 4px !important;
     }
 }
+
+/* =========================================================
+   2026-09-28 楕円表示・絞り込み除去・ノートPC調整 v4
+   - 今日の日付マークを横長の楕円ではなく丸に戻す
+   - 3つの絞り込みを除去した後もツールバーを安定配置
+   - 1024〜1440px程度のノートPCで検索・月移動・カレンダーが崩れないよう調整
+========================================================= */
+
+/* 「今日」の緑背景は行全体ではなく日付数字だけに付ける。 */
+.calendar-screen .calendar-table .today .day-number {
+    background: transparent !important;
+    border-radius: 0 !important;
+    color: inherit !important;
+}
+
+.calendar-screen .calendar-table .today .day-number > span {
+    display: inline-flex !important;
+    width: 26px !important;
+    height: 26px !important;
+    flex: 0 0 26px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: #4caf50 !important;
+    color: #ffffff !important;
+    line-height: 1 !important;
+}
+
+/* 絞り込み3項目を外した後は「作業登録」だけを右側に固定する。 */
+.calendar-screen .calendar-toolbar-actions {
+    display: flex;
+    min-width: max-content;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+@media screen and (min-width: 981px) {
+    /* ノートPCでも月移動を中央、作業登録を右に保つ。 */
+    .calendar-screen.layout-sidebar .calendar-toolbar,
+    .calendar-screen.layout-calendar2 .calendar-toolbar {
+        display: grid !important;
+        grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr) !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-month-controls,
+    .calendar-screen.layout-calendar2 .calendar-month-controls {
+        grid-column: 2 !important;
+        justify-self: center !important;
+        white-space: nowrap;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-toolbar-actions,
+    .calendar-screen.layout-calendar2 .calendar-toolbar-actions {
+        grid-column: 3 !important;
+        justify-self: end !important;
+    }
+}
+
+/* 13〜14インチ級ノートPCを想定した中間幅。 */
+@media screen and (min-width: 981px) and (max-width: 1440px) {
+    .dashboard-body.calendar-screen .calendar-page {
+        min-width: 0;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .dashboard-body.calendar-screen .calendar-main-content,
+    .dashboard-body.calendar-screen .main-content,
+    .dashboard-body.calendar-screen .calendar-workspace,
+    .dashboard-body.calendar-screen .calendar-month-panel {
+        min-width: 0 !important;
+    }
+
+    .calendar-screen .calendar-search-panel {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-area {
+        width: min(100%, 700px);
+    }
+
+    .calendar-screen.layout-sidebar .calendar-search-input {
+        flex-basis: 430px;
+    }
+
+    /* 1366px前後でも検索欄＋10項目メニューが横にはみ出さない。 */
+    .calendar-screen.layout-calendar2 .calendar-search-layout {
+        grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.1fr);
+        gap: 12px;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu {
+        gap: 6px;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu a {
+        min-width: 0;
+        padding-inline: 5px;
+        font-size: 12px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-table th,
+    .calendar-screen.layout-calendar2 .calendar-table th {
+        font-size: 15px !important;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-table .day-number,
+    .calendar-screen.layout-calendar2 .calendar-table .day-number {
+        font-size: 15px !important;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-event-title,
+    .calendar-screen.layout-calendar2 .calendar-event-title {
+        font-size: 12px !important;
+    }
+
+    /* レイアウト2はノートPCで1日セルが縦に巨大化しないよう高さを抑える。 */
+    .calendar-screen.layout-calendar2 .calendar-table tbody td {
+        height: 126px !important;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-table .day-box {
+        height: 126px !important;
+        min-height: 126px !important;
+        max-height: 126px !important;
+        aspect-ratio: auto !important;
+    }
+}
+
+/* 769〜980pxでは無理に1列へ押し込まず、月移動と作業登録を2段で中央配置。 */
+@media screen and (min-width: 769px) and (max-width: 980px) {
+    .calendar-screen.layout-sidebar .calendar-toolbar,
+    .calendar-screen.layout-calendar2 .calendar-toolbar {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .calendar-screen.layout-sidebar .calendar-month-controls,
+    .calendar-screen.layout-calendar2 .calendar-month-controls,
+    .calendar-screen.layout-sidebar .calendar-toolbar-actions,
+    .calendar-screen.layout-calendar2 .calendar-toolbar-actions {
+        grid-column: 1 !important;
+        justify-self: center !important;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-search-layout {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .calendar-screen.layout-calendar2 .calendar-quick-menu {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .calendar-screen .calendar-table .today .day-number > span {
+        width: 24px !important;
+        height: 24px !important;
+        flex-basis: 24px !important;
+        font-size: 12px !important;
+    }
+
+    .calendar-screen .calendar-toolbar-actions {
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+    }
+
+    .calendar-screen .calendar-toolbar-actions .new-work-button {
+        width: min(100%, 220px);
+        flex: 0 1 220px;
+    }
+}

@@ -29,7 +29,7 @@
         <div>
             <p class="app-eyebrow">BUSINESS MANAGEMENT / EXPENSES</p>
             <h1>経費を編集</h1>
-            <p>登録済みの支払日・費目・金額・メモを変更します。</p>
+            <p>登録済みの支払日・費目・作物・金額・メモを変更します。</p>
         </div>
         <a class="app-back-button" th:href="@{/expenses}" href="/expenses">← 経費管理へ戻る</a>
     </header>
@@ -65,6 +65,15 @@
                     <option value="機械">機械</option>
                     <option value="その他">その他</option>
                 </select>
+            </div>
+
+            <div class="app-field">
+                <label for="expenseCrop">作物 <span class="optional-badge">任意</span></label>
+                <input id="expenseCrop" type="text" th:field="*{crop}" list="expenseCropOptions"
+                       maxlength="100" placeholder="未指定は共通経費">
+                <datalist id="expenseCropOptions">
+                    <option th:each="cropName : ${cropNames}" th:value="${cropName}"></option>
+                </datalist>
             </div>
 
             <div class="app-field">

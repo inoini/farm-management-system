@@ -19,6 +19,8 @@ public class Expense {
 
     private String category;
 
+    // 作物別収支に使用する任意の作物名。空欄は共通経費として扱う。
+    private String crop;
 
     private Double amount;
 
@@ -54,6 +56,13 @@ public class Expense {
         this.category = category;
     }
 
+    public String getCrop() {
+        return crop;
+    }
+
+    public void setCrop(String crop) {
+        this.crop = crop;
+    }
 
     public Double getAmount() {
         return amount;

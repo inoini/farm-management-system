@@ -587,6 +587,22 @@
                 </div>
 
                 <div class="field">
+                    <label for="expense-crop">
+                        作物
+                        <span class="optional">任意</span>
+                    </label>
+                    <input id="expense-crop"
+                           type="text"
+                           th:field="*{crop}"
+                           list="expense-crop-options"
+                           maxlength="100"
+                           placeholder="例：さつまいも（未指定は共通経費）">
+                    <datalist id="expense-crop-options">
+                        <option th:each="cropName : ${cropNames}" th:value="${cropName}"></option>
+                    </datalist>
+                </div>
+
+                <div class="field">
                     <label for="expense-amount">
                         金額
                         <span class="required">必須</span>
@@ -645,6 +661,7 @@
                     <tr>
                         <th scope="col">日付</th>
                         <th scope="col">項目</th>
+                        <th scope="col">作物</th>
                         <th scope="col">金額</th>
                         <th scope="col">メモ</th>
                         <th scope="col">操作</th>
@@ -665,8 +682,10 @@
                             </span>
                         </td>
 
+                        <td data-label="作物" th:text="${#strings.isEmpty(expense.crop) ? '共通経費' : expense.crop}">共通経費</td>
+
                         <td data-label="金額" class="money">
-                            <span th:text="${expense.amount != null ? expense.amount : 0}">0</span>円
+                            <span th:text="${#numbers.formatInteger(expense.amount != null ? expense.amount : 0, 1, 'COMMA')}">0</span>円
                         </td>
 
                         <td data-label="メモ"
@@ -692,7 +711,7 @@
 
                     <tr class="empty"
                         th:if="${expenses == null or #lists.isEmpty(expenses)}">
-                        <td colspan="5">
+                        <td colspan="6">
                             登録されている経費はありません。
                         </td>
                     </tr>

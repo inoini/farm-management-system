@@ -57,6 +57,16 @@ public class CropController {
             if (compact != null && !compact.isBlank()) {
                 crop.setTopdressingGuide(compact);
             }
+
+            // 更新前でも、登録済みの植付日から一般的な収穫目安日を表示する。
+            // 既存データで収穫日が空でも一覧上では空欄にしない。
+            if (crop.getHarvestDate() == null && crop.getPlantingDate() != null) {
+                Plan plan = cropPlanningService.plan(
+                        crop.getCropName(), crop.getVariety(), crop.getPlantingDate(), crop.getArea());
+                if (plan.suggestedHarvestDate() != null) {
+                    crop.setHarvestDate(plan.suggestedHarvestDate());
+                }
+            }
         });
         model.addAttribute("crops", crops);
         model.addAttribute("crop", new Crop());

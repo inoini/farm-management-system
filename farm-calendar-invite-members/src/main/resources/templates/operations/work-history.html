@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}">
     
     <link rel="stylesheet" th:href="@{/css/calendar-dashboard.css(v='20260922-1')}">
-    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260929-history-columns-2')}">
+    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260929-history-layout-3')}">
     <script defer th:src="@{/js/script.js(v='20260925-3')}"></script>
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -31,8 +31,7 @@
         <div class="operations-page">
             <header class="operations-heading">
                 <div><h1>作業履歴</h1><p>登録した作業の実施状況を確認し、進捗を更新できます。</p></div>
-                <a class="operation-button primary" th:href="@{/calendar}">＋ 作業を登録</a>
-            <a class="operation-button" th:href="@{/calendar}">閉じる</a>
+                <a class="operation-button primary history-home-button" th:href="@{/}" href="/">🏠 トップへ戻る</a>
             </header>
             <p class="history-notice" role="status" th:if="${message != null}" th:text="${message}"></p>
             <p class="history-error" role="alert" th:if="${error != null and editWork == null}" th:text="${error}"></p>

@@ -177,25 +177,6 @@
                 <span th:text="${todayLabel}">2026年7月25日（土）</span>
             </div>
 
-            <div class="calendar-user-tools">
-                <details class="calendar-top-menu notification-menu">
-                    <summary class="notification-button" aria-label="通知">
-                        🔔<span class="notification-dot" th:if="${notificationsEnabled and unfinishedCount > 0}" aria-hidden="true"></span>
-                    </summary>
-                    <div class="calendar-top-popover">
-                        <strong>作業通知</strong>
-                        <p>本日の未完了作業は <b th:text="${unfinishedCount}">0</b>件です。</p>
-                        <a th:href="@{/work-history}">作業履歴を確認</a>
-                    </div>
-                </details>
-                <details class="calendar-top-menu user-menu">
-                    <summary><span class="user-avatar" aria-hidden="true">●</span><span>管理者</span><span aria-hidden="true">⌄</span></summary>
-                    <div class="calendar-top-popover">
-                        <a th:href="@{/workers}">作業者管理</a>
-                        <a th:href="@{/settings}">システム設定</a>
-                    </div>
-                </details>
-            </div>
         </header>
 
         <div class="calendar-page">

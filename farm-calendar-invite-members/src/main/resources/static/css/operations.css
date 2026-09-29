@@ -574,45 +574,67 @@
     }
 }
 
+/* 2026-09-29: 作業履歴レイアウト復元 + 進捗/操作の重なり防止 */
+.history-home-button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
 
-/* 2026-09-29: 作業履歴の進捗/操作の重なり防止 + スマホ横スライド */
-.history-table th:nth-child(7),
-.history-table td:nth-child(7) {
+.operations-screen .operations-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+.history-table {
+    width: 100%;
+    min-width: 980px;
+    table-layout: auto;
+}
+
+.history-table .history-work-cell {
+    min-width: 240px;
+    max-width: 420px;
+}
+
+.history-table .history-status-cell {
+    width: 145px;
+    min-width: 145px;
+}
+
+.history-table .history-actions-cell {
     width: 150px;
     min-width: 150px;
 }
-.history-table th:nth-child(8),
-.history-table td:nth-child(8) {
-    width: 160px;
-    min-width: 160px;
-}
-.history-table .history-status-cell,
-.history-table .history-actions-cell {
-    overflow: hidden;
-}
+
 .history-table .inline-status {
     width: 100%;
     min-width: 0;
-    max-width: 100%;
     margin: 0;
 }
+
 .history-table .inline-status select {
     width: 100%;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
 }
+
 .history-row-actions {
     width: 100%;
     min-width: 0;
     flex-wrap: nowrap;
     gap: 6px;
 }
+
 .history-row-actions > a,
 .history-row-actions > form {
     flex: 1 1 0;
     min-width: 0;
 }
+
 .history-row-actions .operation-button {
     width: 100%;
     min-width: 0;
@@ -622,35 +644,21 @@
 }
 
 @media (max-width: 700px) {
-    .operations-screen .operations-table-wrap {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-        overflow-y: visible;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-x pan-y;
+    .operations-screen .operations-page {
+        width: calc(100% - 16px);
+    }
+
+    .operations-screen .operations-panel {
+        padding: 14px;
     }
 
     .history-table {
-        width: 1050px;
-        min-width: 1050px;
-    }
-
-    .history-table th,
-    .history-table td {
-        white-space: nowrap;
-    }
-
-    .history-work-cell,
-    .history-person-cell,
-    .history-field-cell,
-    .history-crop-cell {
-        white-space: nowrap;
-        overflow: hidden;
+        width: 980px;
+        min-width: 980px;
     }
 
     .history-long-text {
-        max-width: 100%;
+        max-width: 300px;
         max-height: none;
         overflow-x: auto;
         overflow-y: hidden;
@@ -658,5 +666,15 @@
         word-break: normal;
         overflow-wrap: normal;
         -webkit-overflow-scrolling: touch;
+    }
+
+    .history-editor {
+        width: 100%;
+        max-height: calc(100dvh - 16px);
+    }
+
+    .history-overlay {
+        padding: 8px;
+        align-items: flex-start;
     }
 }

@@ -12,8 +12,8 @@
           href="/css/style.css?v=20260922-1">
 
     <link rel="stylesheet"
-          th:href="@{/css/crop-list.css(v='20260929-harvest-prediction-2')}"
-          href="/css/crop-list.css?v=20260929-harvest-prediction-2">
+          th:href="@{/css/crop-list.css(v='20260929-harvest-prediction-3')}"
+          href="/css/crop-list.css?v=20260929-harvest-prediction-3">
     
 <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
@@ -82,7 +82,7 @@
 
             <div class="crop-prediction-note" role="note">
                 <span class="crop-prediction-note-icon" aria-hidden="true">🌦</span>
-                <p><strong>収穫予定日は天気を使って予測します。</strong><br>各作物の「更新」ボタンで最新の天気を取得し、作物・品種・植付日・圃場の気象情報から収穫予定日を予測します。</p>
+                <p><strong>登録直後は、植付日から一般的な収穫目安日を表示します。</strong><br>「更新」ボタンを押すと最新の天気を反映し、収穫予測日を更新します。</p>
             </div>
         </div>
     </section>
@@ -152,8 +152,8 @@
 
                     <td class="crop-date-cell" th:title="${crop.weatherAdvice}">
                         <div class="crop-harvest-date-main"
-                             th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '更新で予測'}">
-                            更新で予測
+                             th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : (crop.harvestDate != null ? crop.harvestDate : '未設定')}">
+                            2026-12-28
                         </div>
                     </td>
 
@@ -183,7 +183,7 @@
                     <td class="crop-action-cell">
                         <form th:action="@{/crop/refresh/{id}(id=${crop.id})}" method="post">
                             <button type="submit" class="crop-update-button"
-                                    title="最新の天気予報・植付日・敷地面積から再計算">更新</button>
+                                    title="最新の天気・植付日・敷地面積から収穫予測日を再計算">更新</button>
                         </form>
                     </td>
 

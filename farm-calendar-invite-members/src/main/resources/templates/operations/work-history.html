@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css(v='20260922-1')}">
     
     <link rel="stylesheet" th:href="@{/css/calendar-dashboard.css(v='20260922-1')}">
-    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260922-1')}">
+    <link rel="stylesheet" th:href="@{/css/operations.css(v='20260929-longtext-1')}">
     <script defer th:src="@{/js/script.js(v='20260925-3')}"></script>
 <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20260922-1')}">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -43,17 +43,23 @@
             <section class="operations-panel">
                 <h2>作業一覧</h2>
                 <div class="operations-table-wrap">
-                    <table class="operations-table">
+                    <table class="operations-table history-table">
                         <thead><tr><th>日付</th><th>時間</th><th>作業</th><th>担当者</th><th>圃場</th><th>作物</th><th>進捗</th><th>操作</th></tr></thead>
                         <tbody>
                         <tr th:each="schedule : ${schedules}">
-                            <td th:text="${schedule.date}">2026-09-08</td>
-                            <td th:text="${schedule.startTime + '～' + schedule.endTime}">08:00～10:00</td>
-                            <td><strong th:text="${#strings.isEmpty(schedule.workType) ? schedule.schedule : schedule.workType}">除草</strong><br><small th:text="${schedule.schedule}"></small></td>
-                            <td th:text="${#strings.isEmpty(schedule.userName) ? '未設定' : schedule.userName}">担当者</td>
-                            <td th:text="${#strings.isEmpty(schedule.fieldName) ? '未設定' : schedule.fieldName}">圃場</td>
-                            <td th:text="${#strings.isEmpty(schedule.cropName) ? '未設定' : schedule.cropName}">作物</td>
-                            <td>
+                            <td class="history-date-cell" th:text="${schedule.date}">2026-09-08</td>
+                            <td class="history-time-cell" th:text="${schedule.startTime + '～' + schedule.endTime}">08:00～10:00</td>
+                            <td class="history-work-cell">
+                                <strong class="history-work-type" th:text="${#strings.isEmpty(schedule.workType) ? schedule.schedule : schedule.workType}">除草</strong>
+                                <div class="history-long-text" th:if="${!#strings.isEmpty(schedule.schedule)}" th:text="${schedule.schedule}"></div>
+                                <div class="history-long-text history-memo-text" th:if="${!#strings.isEmpty(schedule.memo)}">
+                                    <span class="history-text-label">メモ：</span><span th:text="${schedule.memo}"></span>
+                                </div>
+                            </td>
+                            <td class="history-person-cell" th:text="${#strings.isEmpty(schedule.userName) ? '未設定' : schedule.userName}">担当者</td>
+                            <td class="history-field-cell" th:text="${#strings.isEmpty(schedule.fieldName) ? '未設定' : schedule.fieldName}">圃場</td>
+                            <td class="history-crop-cell" th:text="${#strings.isEmpty(schedule.cropName) ? '未設定' : schedule.cropName}">作物</td>
+                            <td class="history-status-cell">
                                 <form class="inline-status" th:action="@{/work-history/status/{id}(id=${schedule.id})}" method="post">
                                     <select name="status" aria-label="進捗状態">
                                         <option value="未着手" th:selected="${schedule.status == null or schedule.status == '未着手'}">未着手</option>
@@ -63,7 +69,7 @@
                                     
                                 </form>
                             </td>
-                            <td><div class="operations-actions history-row-actions">
+                            <td class="history-actions-cell"><div class="operations-actions history-row-actions">
                                 <a class="operation-button primary" th:href="@{/work-history/edit/{id}(id=${schedule.id})}">編集</a>
                                 <form th:action="@{/work-history/delete/{id}(id=${schedule.id})}" method="post" onsubmit="return confirm('この作業を消去しますか？カレンダーからも削除されます。');">
                                     <button class="operation-button danger" type="submit">消去</button>

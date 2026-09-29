@@ -1109,3 +1109,66 @@ html.calendar-mouse-dragging body {
         touch-action: pan-x pan-y pinch-zoom !important;
     }
 }
+
+/* 2026-09-29: keep calendar top tools clear of the login account bar */
+@media screen and (min-width: 769px) {
+    .calendar-screen > .account-bar {
+        max-width: 340px;
+    }
+
+    .calendar-screen > .account-bar .account-user {
+        max-width: 205px;
+    }
+
+    .calendar-screen .calendar-user-tools {
+        margin-left: auto;
+        margin-right: 360px;
+        flex: 0 0 auto;
+    }
+
+    .calendar-screen .calendar-top-menu > summary {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+/* Mobile: keep both icon menus and their popovers fully inside the viewport. */
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .calendar-app-header {
+        padding-top: 54px;
+    }
+
+    .calendar-screen .calendar-user-tools {
+        width: auto;
+        max-width: 100%;
+        margin-left: auto;
+        align-self: flex-end;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .calendar-screen .calendar-top-popover {
+        position: fixed;
+        top: 104px;
+        right: 12px;
+        left: auto;
+        width: min(300px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
+        box-sizing: border-box;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .calendar-screen .notification-button,
+    .calendar-screen .user-avatar {
+        flex: 0 0 auto;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .calendar-screen .calendar-top-popover {
+        right: 8px;
+        width: calc(100vw - 16px);
+        max-width: calc(100vw - 16px);
+    }
+}

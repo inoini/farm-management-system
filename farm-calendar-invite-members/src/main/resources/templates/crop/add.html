@@ -39,7 +39,7 @@
         <div class="crop-page-header-row">
             <div class="crop-page-header-text">
                 <h2 id="crop-page-title">🌱 作物登録</h2>
-                <p>作物・圃場・植付情報を登録し、収穫時期を予測します</p>
+                <p>作物・圃場・植付情報を登録します</p>
             </div>
 
             <a th:href="@{/}"
@@ -146,51 +146,6 @@
                 </div>
             </div>
 
-            <section id="cropGuidePanel" class="crop-guide-card" aria-live="polite">
-                <div class="crop-guide-heading">
-                    <h3>🌿 栽培・収穫予測</h3>
-                    <span id="cropGuideCrop">作物名を入力してください</span>
-                </div>
-                <div class="crop-guide-grid">
-                    <div class="crop-guide-item">
-                        <strong>追肥の目安</strong>
-                        <span id="cropGuideTopdressing">作物名を入力すると表示されます</span>
-                    </div>
-                    <div class="crop-guide-item">
-                        <strong>収穫の目安</strong>
-                        <span id="cropGuideHarvest">作物名を入力すると表示されます</span>
-                    </div>
-                    <div class="crop-guide-item crop-guide-item-wide">
-                        <strong>主な管理作業</strong>
-                        <p id="cropGuideCare">作物名を入力すると表示されます</p>
-                    </div>
-                    <div class="crop-guide-item weather-guide-item">
-                        <strong>🌦 天候補正の収穫目安</strong>
-                        <span id="cropWeatherHarvest"
-                              th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '圃場・植付日を入力すると計算します'}">
-                            圃場・植付日を入力すると計算します
-                        </span>
-                    </div>
-                    <div class="crop-guide-item weather-guide-item">
-                        <strong>気象データ</strong>
-                        <span id="cropWeatherStats">実績気温・降水量と短期予報を反映します</span>
-                    </div>
-                    <div class="crop-guide-item crop-guide-item-wide weather-guide-summary">
-                        <strong>天候補正の説明</strong>
-                        <p id="cropWeatherSummary"
-                           th:text="${#strings.isEmpty(crop.weatherAdvice) ? '登録済み圃場と植付日があれば天気予報を反映して計算します。' : crop.weatherAdvice}">
-                            登録済み圃場と植付日があれば天気予報を反映して計算します。
-                        </p>
-                        <div class="weather-guide-actions">
-                            <button type="button" id="refreshWeatherAdvice" class="weather-refresh-button">天気を取得して計算</button>
-                            <span id="cropWeatherStatus" class="weather-guide-status" aria-live="polite"></span>
-                        </div>
-                    </div>
-                </div>
-                <p id="cropGuideStatus" class="crop-guide-notice" hidden></p>
-                <p class="crop-guide-notice">※ 天候補正は植付後の実績気温・降水量と最大16日先までの予報を使用します。それより先は標準的な積算温度ペースで補間するため、成熟状態を確認して最終判断してください。</p>
-            </section>
-
             <div class="crop-form-actions">
                 <button type="submit" id="saveBtn" class="crop-save-button">
                     保存する
@@ -205,6 +160,5 @@
         </form>
     </section>
 </main>
-    <script defer th:src="@{/js/crop-guide.js(v='20260929-prediction-1')}" src="/js/crop-guide.js?v=20260929-prediction-1"></script>
 </body>
 </html>

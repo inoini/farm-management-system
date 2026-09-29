@@ -82,7 +82,7 @@
 
             <div class="crop-prediction-note" role="note">
                 <span class="crop-prediction-note-icon" aria-hidden="true">🌦</span>
-                <p><strong>収穫予定日は自動予測です。</strong><br>各作物の「更新」ボタンで最新の天気を取得し、作物・品種・植付日・圃場の気象情報から収穫予定日を予測します。</p>
+                <p><strong>収穫予定日は天気を使って予測します。</strong><br>各作物の「更新」ボタンで最新の天気を取得し、作物・品種・植付日・圃場の気象情報から収穫予定日を予測します。</p>
             </div>
         </div>
     </section>
@@ -100,7 +100,7 @@
                     <th scope="col" class="crop-col-variety">品種</th>
                     <th scope="col" class="crop-col-field">圃場</th>
                     <th scope="col" class="crop-col-date">植付日</th>
-                    <th scope="col" class="crop-col-date">収穫予定日（予測）</th>
+                    <th scope="col" class="crop-col-date">収穫予定日（天気予測）</th>
                     <th scope="col" class="crop-col-topdressing">追肥の目安</th>
                     <th scope="col" class="crop-col-area">敷地面積（a）</th>
                     <th scope="col" class="crop-col-yield">収穫予想（kg）</th>
@@ -152,16 +152,12 @@
 
                     <td class="crop-date-cell" th:title="${crop.weatherAdvice}">
                         <div class="crop-harvest-date-main"
-                             th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : (crop.harvestDate != null ? crop.harvestDate : '予測不可')}">
-                            2026-10-18
+                             th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '更新で予測'}">
+                            更新で予測
                         </div>
                         <div class="crop-weather-date crop-weather-applied"
                              th:if="${crop.weatherAdjustedHarvestDate != null}">
                             🌦 天候反映済み
-                        </div>
-                        <div class="crop-weather-date crop-weather-standard"
-                             th:if="${crop.weatherAdjustedHarvestDate == null and crop.harvestDate != null}">
-                            標準日数から予測
                         </div>
                     </td>
 

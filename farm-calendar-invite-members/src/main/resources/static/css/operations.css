@@ -459,3 +459,117 @@
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* 2026-09-29: keep work-history layout stable with long work/memo text */
+.operations-screen .operations-page,
+.operations-screen .operations-panel,
+.operations-screen .operations-table-wrap {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.operations-screen .operations-table-wrap {
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+.history-table {
+    width: 100%;
+    min-width: 920px;
+    table-layout: fixed;
+}
+
+.history-table th:nth-child(1), .history-table td:nth-child(1) { width: 92px; }
+.history-table th:nth-child(2), .history-table td:nth-child(2) { width: 112px; }
+.history-table th:nth-child(4), .history-table td:nth-child(4) { width: 100px; }
+.history-table th:nth-child(5), .history-table td:nth-child(5) { width: 105px; }
+.history-table th:nth-child(6), .history-table td:nth-child(6) { width: 95px; }
+.history-table th:nth-child(7), .history-table td:nth-child(7) { width: 132px; }
+.history-table th:nth-child(8), .history-table td:nth-child(8) { width: 132px; }
+
+.history-table td,
+.history-table td *,
+.history-editor,
+.history-editor * {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.history-work-cell,
+.history-person-cell,
+.history-field-cell,
+.history-crop-cell {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.history-work-type {
+    display: block;
+    margin-bottom: 5px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.history-long-text {
+    max-height: 7.2em;
+    overflow: auto;
+    padding-right: 4px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.55;
+    color: var(--discord-text-muted, #5d6861);
+}
+
+.history-memo-text {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--discord-border, #dce5df);
+}
+
+.history-text-label {
+    font-weight: 800;
+}
+
+.history-editor .operations-form-grid > div {
+    min-width: 0;
+}
+
+.history-editor textarea,
+.history-editor input {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.history-editor textarea {
+    resize: vertical;
+    white-space: pre-wrap;
+}
+
+@media (max-width: 700px) {
+    .operations-screen .operations-page {
+        width: calc(100% - 16px);
+    }
+
+    .operations-screen .operations-panel {
+        padding: 14px;
+    }
+
+    .history-table {
+        min-width: 820px;
+    }
+
+    .history-editor {
+        width: 100%;
+        max-height: calc(100dvh - 16px);
+    }
+
+    .history-overlay {
+        padding: 8px;
+        align-items: flex-start;
+    }
+}

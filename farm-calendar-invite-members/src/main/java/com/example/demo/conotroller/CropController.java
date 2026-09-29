@@ -23,6 +23,7 @@ import com.example.demo.repository.FieldRepository;
 import com.example.demo.service.CropPlanningService;
 import com.example.demo.service.CropPlanningService.Plan;
 import com.example.demo.service.CurrentUserService;
+import com.example.demo.service.GeocodingService;
 import com.example.demo.service.WeatherCropAdviceService;
 import com.example.demo.service.WeatherCropAdviceService.Advice;
 
@@ -34,15 +35,17 @@ public class CropController {
     private final CurrentUserService currentUser;
     private final WeatherCropAdviceService weatherAdviceService;
     private final CropPlanningService cropPlanningService;
+    private final GeocodingService geocodingService;
 
     public CropController(CropRepository cropRepository, FieldRepository fieldRepository,
             CurrentUserService currentUser, WeatherCropAdviceService weatherAdviceService,
-            CropPlanningService cropPlanningService) {
+            CropPlanningService cropPlanningService, GeocodingService geocodingService) {
         this.cropRepository = cropRepository;
         this.fieldRepository = fieldRepository;
         this.currentUser = currentUser;
         this.weatherAdviceService = weatherAdviceService;
         this.cropPlanningService = cropPlanningService;
+        this.geocodingService = geocodingService;
     }
 
     @GetMapping("/crop")
@@ -104,7 +107,7 @@ public class CropController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         applyPlanning(crop);
-        applyWeatherPrediction(crop, true, false);
+        applyWeatherPrediction(crop, true, true);
         cropRepository.save(crop);
         return "redirect:/crop";
     }
@@ -175,7 +178,11 @@ public class CropController {
         }
 
         Field field = findField(crop.getFieldName());
-        if (field == null || field.getLatitude() == null || field.getLongitude() == null) {
+        if (field == null) {
+            return;
+        }
+        ensureFieldCoordinates(field);
+        if (field.getLatitude() == null || field.getLongitude() == null) {
             return;
         }
 
@@ -225,6 +232,25 @@ public class CropController {
                 .filter(field -> field.getName() != null && field.getName().strip().equalsIgnoreCase(normalized))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * 以前の登録で緯度経度が未取得でも、「更新」時に住所から再取得して
+     * 収穫予測を止めないようにする。
+     */
+    private void ensureFieldCoordinates(Field field) {
+        if (field == null || (field.getLatitude() != null && field.getLongitude() != null)) {
+            return;
+        }
+        if (field.getLocation() == null || field.getLocation().isBlank()) {
+            return;
+        }
+
+        geocodingService.geocode(field.getLocation()).ifPresent(coordinates -> {
+            field.setLatitude(coordinates.latitude());
+            field.setLongitude(coordinates.longitude());
+            fieldRepository.save(field);
+        });
     }
 
     private void addFields(Model model) {

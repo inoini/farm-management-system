@@ -12,8 +12,8 @@
           href="/css/style.css?v=20260922-1">
 
     <link rel="stylesheet"
-          th:href="@{/css/crop-list.css(v='20260929-harvest-prediction-1')}"
-          href="/css/crop-list.css?v=20260929-harvest-prediction-1">
+          th:href="@{/css/crop-list.css(v='20260929-harvest-prediction-2')}"
+          href="/css/crop-list.css?v=20260929-harvest-prediction-2">
     
 <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
@@ -100,7 +100,7 @@
                     <th scope="col" class="crop-col-variety">品種</th>
                     <th scope="col" class="crop-col-field">圃場</th>
                     <th scope="col" class="crop-col-date">植付日</th>
-                    <th scope="col" class="crop-col-date">収穫予定日（天気予測）</th>
+                    <th scope="col" class="crop-col-date crop-col-harvest-prediction">収穫予測日</th>
                     <th scope="col" class="crop-col-topdressing">追肥の目安</th>
                     <th scope="col" class="crop-col-area">敷地面積（a）</th>
                     <th scope="col" class="crop-col-yield">収穫予想（kg）</th>
@@ -154,10 +154,6 @@
                         <div class="crop-harvest-date-main"
                              th:text="${crop.weatherAdjustedHarvestDate != null ? crop.weatherAdjustedHarvestDate : '更新で予測'}">
                             更新で予測
-                        </div>
-                        <div class="crop-weather-date crop-weather-applied"
-                             th:if="${crop.weatherAdjustedHarvestDate != null}">
-                            🌦 天候反映済み
                         </div>
                     </td>
 

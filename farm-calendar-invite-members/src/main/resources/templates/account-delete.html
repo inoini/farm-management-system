@@ -3,43 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <title>アカウント削除 | 農業管理システム</title>
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20261001-account-delete-1')}" href="/css/auth.css?v=20261001-account-delete-1">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20261001-account-delete-2')}" href="/css/auth.css?v=20261001-account-delete-2">
     <meta name="theme-color" content="#1B5E20">
     <style>
-        .delete-card{width:min(620px,calc(100% - 32px));margin:40px auto;background:#fff;border-radius:22px;padding:28px;box-shadow:0 14px 38px rgba(0,0,0,.12)}
-        .delete-card h1{margin-top:0}.danger-box{background:#fff3f3;border:1px solid #e7a4a4;border-radius:14px;padding:16px;margin:18px 0;color:#6d2222}
-        .info-box{background:#f2f8f2;border:1px solid #a7c9ad;border-radius:14px;padding:16px;margin:18px 0}
-        .delete-card label{display:block;font-weight:700;margin:14px 0 6px}.delete-card input,.delete-card select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #b8c4ba;border-radius:10px;font:inherit}
-        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.danger-button{border:0;border-radius:10px;padding:12px 18px;background:#b42318;color:#fff;font-weight:700;cursor:pointer}.back-button{display:inline-flex;align-items:center;padding:12px 18px;border-radius:10px;background:#edf2ed;color:#173a22;text-decoration:none;font-weight:700}.forgot-link{display:inline-block;margin-top:8px}.error-message{background:#fff1f0;color:#8c1d18;border:1px solid #f0aaa5;padding:12px;border-radius:10px}
-        .account-summary{font-size:.95rem;color:#4d5d51}.account-summary strong{color:#173a22}
+        .account-delete-card{width:min(100%,560px)}
+        .account-summary{margin:0 0 16px;color:#c4c8cf;font-size:14px;overflow-wrap:anywhere}
+        .account-summary strong{color:#f2f3f5}
+        .danger-box{margin:18px 0;padding:14px 16px;border:1px solid #80414d;border-radius:7px;background:#542d36;color:#ffd3d7}
+        .danger-box strong{color:#fff}.danger-box p{margin:8px 0 0}
+        .info-box{margin:16px 0;padding:12px 14px;border-radius:7px;background:#383b43;color:#d4d7dc}
+        .account-delete-card select{width:100%;min-height:48px;padding:10px 12px;border:1px solid #676a75;border-radius:7px;background:#1e1f22;color:#f2f3f5;font:inherit}
+        .forgot-link{display:inline-block;margin-top:9px;color:#c8ccff;font-weight:700;text-decoration:none}.forgot-link:hover{text-decoration:underline}
+        .danger-submit{width:100%;min-height:48px;margin-top:24px;border:0;border-radius:7px;background:#b42318;color:#fff;font:inherit;font-weight:800;cursor:pointer}.danger-submit:hover{background:#941c14}
+        .delete-back{display:block;margin-top:14px;text-align:center;color:#c8ccff;font-weight:700;text-decoration:none}.delete-back:hover{text-decoration:underline}
     </style>
 </head>
-<body>
-<main class="delete-card">
+<body class="login-page">
+<main class="login-card account-delete-card">
+    <div class="login-mark" aria-hidden="true">🌱</div>
     <h1>アカウント削除</h1>
-    <p class="account-summary">ログイン中: <strong th:text="${account.displayName}">ユーザー</strong> / <span th:text="${account.email}">mail@example.com</span></p>
+    <p class="login-intro">登録内容を確認してアカウントを削除します。</p>
+    <p class="account-summary">対象アカウント: <strong th:text="${account.displayName}">ユーザー</strong> / <span th:text="${account.email}">mail@example.com</span></p>
 
     <div class="danger-box">
         <strong>この操作は元に戻せません。</strong>
-        <p th:if="${!farmOwner}">メンバーのアカウントを削除すると、そのアカウントではログインできなくなります。農場の共有データは残ります。</p>
+        <p th:if="${!farmOwner}">このアカウントではログインできなくなります。農場の共有データは残ります。</p>
         <p th:if="${farmOwner and !hasOtherMembers}">あなたが最後の管理者・メンバーです。削除すると、この農場の作物・圃場・予定・在庫・売上・経費などのデータも削除されます。</p>
-        <p th:if="${farmOwner and hasOtherMembers}">あなたは農場の管理者です。退会前に、同じ農場に登録されている農業メンバーから次の管理者を1人選び、管理者権限を引き継ぎます。農場データは残ります。</p>
+        <p th:if="${farmOwner and hasOtherMembers}">退会前に、同じ農場の農業メンバーから次の管理者を1人選び、管理者権限を引き継ぎます。農場データは残ります。</p>
     </div>
 
-    <div class="error-message" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-
+    <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></p>
     <div class="info-box" th:if="${farmOwner and hasOtherMembers and #lists.isEmpty(successorCandidates)}">
-        現在、管理者権限を引き継げる農業メンバーがいません。利用停止中のメンバーがいる場合は、先に「農場メンバー」画面でBANを解除してください。
+        現在、管理者権限を引き継げる農業メンバーがいません。利用停止中のメンバーがいる場合は、先にBANを解除してください。
     </div>
 
-    <form th:action="@{/account/delete}" method="post">
+    <form th:action="${deleteAfterLogout} ? @{/account/delete-after-logout} : @{/account/delete}" method="post">
         <div th:if="${farmOwner and hasOtherMembers}">
             <label for="successorMemberId">次の管理者（農業メンバーから選択）</label>
             <select id="successorMemberId" name="successorMemberId" required>
                 <option value="">選択してください</option>
-                <option th:each="member : ${successorCandidates}"
-                        th:value="${member.id}"
+                <option th:each="member : ${successorCandidates}" th:value="${member.id}"
                         th:text="|${member.displayName}（${member.email}）|">メンバー</option>
             </select>
         </div>
@@ -50,13 +55,12 @@
 
         <label for="password">農業管理システムのパスワード</label>
         <input id="password" name="password" type="password" autocomplete="current-password" required>
-        <a class="forgot-link" th:href="@{/forgot-password}" href="/forgot-password">パスワードを忘れた場合は、登録Gmail・メールで再設定</a>
+        <a class="forgot-link" th:href="@{/forgot-password}" href="/forgot-password">パスワードを忘れた場合は登録メールで再設定</a>
 
-        <div class="actions">
-            <button class="danger-button" type="submit"
-                    onclick="return confirm('本当にアカウントを削除しますか？この操作は元に戻せません。');">アカウントを削除する</button>
-            <a class="back-button" th:href="@{/settings}" href="/settings">設定へ戻る</a>
-        </div>
+        <button class="danger-submit" type="submit"
+                onclick="return confirm('本当にアカウントを削除しますか？この操作は元に戻せません。');">アカウントを削除する</button>
+        <a class="delete-back" th:if="${deleteAfterLogout}" th:href="@{/login(logout=1)}" href="/login?logout">ログイン画面へ戻る</a>
+        <a class="delete-back" th:unless="${deleteAfterLogout}" th:href="@{/calendar}" href="/calendar">カレンダーへ戻る</a>
     </form>
 </main>
 </body>

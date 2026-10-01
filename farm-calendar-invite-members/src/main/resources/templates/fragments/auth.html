@@ -3,7 +3,6 @@
 <body>
 <div th:fragment="accountBar" class="account-bar" aria-label="ログイン情報">
     <span class="account-user">👤 <strong th:text="${loginUserName}">ユーザー</strong><small th:text="${loginUserEmail}">mail@example.com</small></span>
-    <a th:href="@{/account/delete}" href="/account/delete" class="account-logout">アカウント削除</a>
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="account-logout">ログアウト</button>
     </form>

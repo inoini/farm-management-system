@@ -13,13 +13,14 @@
         .logout-delete-action{margin:14px 0 4px;text-align:center}
         .logout-delete-button{display:inline-block;padding:11px 18px;border-radius:7px;background:#b42318;color:#fff;text-decoration:none;font-weight:700}
         .logout-delete-note{margin:8px 0 0;font-size:.88rem;color:#aeb3bc}
-        .home-return-button{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:18px;border:1px solid #676a75;border-radius:7px;background:#383a40;color:#f2f3f5;text-decoration:none;font-weight:700}
+        .home-return-button{display:flex;align-items:center;justify-content:center;min-height:46px;margin:14px 0 4px;border:1px solid #676a75;border-radius:7px;background:#383a40;color:#f2f3f5;text-decoration:none;font-weight:700}
         .home-return-button:hover{background:#45474f;text-decoration:none}
     </style>
 </head>
 <body class="login-page"><main class="login-card">
     <div class="login-mark" aria-hidden="true">🌱</div><h1>農業管理システム</h1>
     <p class="login-intro">メンバーごとに自分のユーザー名・パスワードでログインし、同じ農場のデータを共有できます。</p>
+    <a class="home-return-button" th:href="@{/}" href="/">← ホームページに戻る</a>
     <p class="login-message error" th:if="${param.banned != null}">このアカウントは農場の管理者により利用停止されています。</p>
     <p class="login-message error" th:if="${param.error != null and param.banned == null}">ユーザー名またはパスワードが正しくありません。</p>
     <p class="login-message" th:if="${param.logout != null}">ログアウトしました。</p>
@@ -39,5 +40,4 @@
     </form>
     <div class="recovery-links"><a th:href="@{/forgot-username}">ユーザー名を忘れた</a><a th:href="@{/forgot-password}">パスワードを忘れた</a></div>
     <div class="auth-switch auth-switch-column"><span>初めて利用する方</span><a th:href="@{/register}">新しい農場を作成</a><a th:href="@{/join}">招待コードで農場に参加</a></div>
-    <a class="home-return-button" th:href="@{/}" href="/">← ホームページに戻る</a>
 </main></body></html>

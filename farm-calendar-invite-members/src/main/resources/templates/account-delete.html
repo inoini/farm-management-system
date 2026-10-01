@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>アカウント削除 | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20261001-account-delete-1')}" href="/css/auth.css?v=20261001-account-delete-1">
+    <meta name="theme-color" content="#1B5E20">
+    <style>
+        .delete-card{width:min(620px,calc(100% - 32px));margin:40px auto;background:#fff;border-radius:22px;padding:28px;box-shadow:0 14px 38px rgba(0,0,0,.12)}
+        .delete-card h1{margin-top:0}.danger-box{background:#fff3f3;border:1px solid #e7a4a4;border-radius:14px;padding:16px;margin:18px 0;color:#6d2222}
+        .info-box{background:#f2f8f2;border:1px solid #a7c9ad;border-radius:14px;padding:16px;margin:18px 0}
+        .delete-card label{display:block;font-weight:700;margin:14px 0 6px}.delete-card input,.delete-card select{width:100%;box-sizing:border-box;padding:12px;border:1px solid #b8c4ba;border-radius:10px;font:inherit}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.danger-button{border:0;border-radius:10px;padding:12px 18px;background:#b42318;color:#fff;font-weight:700;cursor:pointer}.back-button{display:inline-flex;align-items:center;padding:12px 18px;border-radius:10px;background:#edf2ed;color:#173a22;text-decoration:none;font-weight:700}.forgot-link{display:inline-block;margin-top:8px}.error-message{background:#fff1f0;color:#8c1d18;border:1px solid #f0aaa5;padding:12px;border-radius:10px}
+        .account-summary{font-size:.95rem;color:#4d5d51}.account-summary strong{color:#173a22}
+    </style>
+</head>
+<body>
+<main class="delete-card">
+    <h1>アカウント削除</h1>
+    <p class="account-summary">ログイン中: <strong th:text="${account.displayName}">ユーザー</strong> / <span th:text="${account.email}">mail@example.com</span></p>
+
+    <div class="danger-box">
+        <strong>この操作は元に戻せません。</strong>
+        <p th:if="${!farmOwner}">メンバーのアカウントを削除すると、そのアカウントではログインできなくなります。農場の共有データは残ります。</p>
+        <p th:if="${farmOwner and !hasOtherMembers}">あなたが最後の管理者・メンバーです。削除すると、この農場の作物・圃場・予定・在庫・売上・経費などのデータも削除されます。</p>
+        <p th:if="${farmOwner and hasOtherMembers}">あなたは農場の管理者です。退会前に、下のメンバーから次の管理者を1人選び、管理者権限を引き継ぎます。農場データは残ります。</p>
+    </div>
+
+    <div class="error-message" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <div class="info-box" th:if="${farmOwner and hasOtherMembers and #lists.isEmpty(successorCandidates)}">
+        他のメンバーは現在利用停止中です。管理者権限を引き継ぐには、先に「農場メンバー」画面でBANを解除してください。
+    </div>
+
+    <form th:action="@{/account/delete}" method="post">
+        <div th:if="${farmOwner and hasOtherMembers}">
+            <label for="successorMemberId">次の管理者</label>
+            <select id="successorMemberId" name="successorMemberId" required>
+                <option value="">選択してください</option>
+                <option th:each="member : ${successorCandidates}"
+                        th:value="${member.id}"
+                        th:text="|${member.displayName}（${member.email}）|">メンバー</option>
+            </select>
+        </div>
+
+        <label for="email">登録しているGmail・メールアドレス</label>
+        <input id="email" name="email" type="email" autocomplete="email"
+               th:value="${enteredEmail != null ? enteredEmail : account.email}" required>
+
+        <label for="password">農業管理システムのパスワード</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <a class="forgot-link" th:href="@{/forgot-password}" href="/forgot-password">パスワードを忘れた場合は、登録Gmail・メールで再設定</a>
+
+        <div class="actions">
+            <button class="danger-button" type="submit"
+                    onclick="return confirm('本当にアカウントを削除しますか？この操作は元に戻せません。');">アカウントを削除する</button>
+            <a class="back-button" th:href="@{/settings}" href="/settings">設定へ戻る</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

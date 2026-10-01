@@ -30,7 +30,7 @@
     <div class="error-message" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <div class="info-box" th:if="${farmOwner and hasOtherMembers and #lists.isEmpty(successorCandidates)}">
-        他のメンバーは現在利用停止中です。管理者権限を引き継ぐには、先に「農場メンバー」画面でBANを解除してください。
+        現在、管理者権限を引き継げるメンバーがいません。利用停止中のメンバーは先にBANを解除してください。また、同じメールアドレスで別農場の管理者になっているメンバーには引き継げません。
     </div>
 
     <form th:action="@{/account/delete}" method="post">

@@ -1,0 +1,34 @@
+name: Apply 2026-10-01 release patch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-release-20261001.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply release patches
+        run: |
+          git apply management-controller.patch
+          git apply calendar-contact.patch
+          git apply management-template.patch
+
+      - name: Commit patched source and cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f management-controller.patch calendar-contact.patch management-template.patch release.patch.part01
+          rm -f .github/workflows/apply-release-20261001.yml
+          git add -A
+          git commit -m "Add yearly budgets and support contact"
+          git push origin HEAD:main

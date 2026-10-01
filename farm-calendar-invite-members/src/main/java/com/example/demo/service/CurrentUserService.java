@@ -55,12 +55,19 @@ public class CurrentUserService {
         return normalize(account().getEmail());
     }
 
+    /**
+     * 画面表示・ユーザー識別用のユーザー名。
+     * メールアドレスはユーザー名の代替値として使用しない。
+     */
     public String username() {
         UserAccount account = account();
-        if (account.getUsername() == null || account.getUsername().isBlank()) {
-            return account.getEmail();
+        if (account.getUsername() != null && !account.getUsername().isBlank()) {
+            return account.getUsername();
         }
-        return account.getUsername();
+        if (account.getDisplayName() != null && !account.getDisplayName().isBlank()) {
+            return account.getDisplayName();
+        }
+        return "user";
     }
 
     public boolean isFarmOwner() {

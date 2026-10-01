@@ -41,14 +41,18 @@ public class AccountRecoveryController {
     }
 
     @PostMapping("/forgot-password")
-    public String sendPasswordReset(@RequestParam String email, Model model) {
+    public String sendPasswordReset(
+            @RequestParam String username,
+            @RequestParam String email,
+            Model model) {
         try {
-            recoveryService.requestPasswordReset(email);
+            recoveryService.requestPasswordReset(username, email);
             model.addAttribute("successMessage",
-                    "入力したメールアドレスが登録されている場合、パスワード再設定メールを送信しました。");
+                    "ユーザー名とメールアドレスが登録内容と一致する場合、30分有効のパスワード再設定メールを送信しました。");
         } catch (IllegalStateException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
         }
+        model.addAttribute("username", username == null ? "" : username.strip());
         model.addAttribute("email", email == null ? "" : email.strip());
         return "forgot-password";
     }

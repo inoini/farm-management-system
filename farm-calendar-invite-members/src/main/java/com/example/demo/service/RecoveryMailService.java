@@ -38,7 +38,7 @@ public class RecoveryMailService {
         this.from = normalize(from);
         this.mailHost = normalize(mailHost);
         this.mailUsername = normalize(mailUsername);
-        this.mailPassword = mailPassword == null ? "" : mailPassword;
+        this.mailPassword = mailPassword == null ? "" : mailPassword.replaceAll("\\s+", "");
         this.baseUrl = baseUrl == null ? "http://localhost:8080" : baseUrl.strip().replaceAll("/+$", "");
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
@@ -109,6 +109,7 @@ public class RecoveryMailService {
             message.setSubject(subject);
             message.setText(body);
             mailSender.send(message);
+            log.info("Recovery mail sent successfully");
             return true;
         } catch (MailException ex) {
             log.error("Failed to send recovery mail", ex);

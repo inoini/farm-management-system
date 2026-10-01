@@ -84,8 +84,19 @@ public class AccountDeletionService {
     }
 
     @Transactional(readOnly = true)
+    public UserAccount account(Long accountId) {
+        return userRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("アカウントが見つかりません。もう一度ログインしてください。"));
+    }
+
+    @Transactional(readOnly = true)
     public List<UserAccount> successorCandidates() {
-        UserAccount actor = currentUser.account();
+        return successorCandidates(currentUser.account().getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserAccount> successorCandidates(Long accountId) {
+        UserAccount actor = account(accountId);
         if (!"OWNER".equalsIgnoreCase(actor.getFarmRole()) || actor.getFarm() == null) {
             return List.of();
         }
@@ -97,7 +108,12 @@ public class AccountDeletionService {
 
     @Transactional(readOnly = true)
     public boolean hasOtherMembers() {
-        UserAccount actor = currentUser.account();
+        return hasOtherMembers(currentUser.account().getId());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasOtherMembers(Long accountId) {
+        UserAccount actor = account(accountId);
         if (actor.getFarm() == null) return false;
         return userRepository.findAllByFarmIdOrderByCreatedAtAsc(actor.getFarm().getId()).stream()
                 .anyMatch(member -> !Objects.equals(member.getId(), actor.getId()));
@@ -105,7 +121,12 @@ public class AccountDeletionService {
 
     @Transactional
     public DeletionResult deleteCurrentAccount(String email, String password, Long successorMemberId) {
-        UserAccount actor = currentUser.account();
+        return deleteAccount(currentUser.account().getId(), email, password, successorMemberId);
+    }
+
+    @Transactional
+    public DeletionResult deleteAccount(Long accountId, String email, String password, Long successorMemberId) {
+        UserAccount actor = account(accountId);
         String normalizedInputEmail = CurrentUserService.normalize(email);
         String normalizedStoredEmail = CurrentUserService.normalize(actor.getEmail());
 

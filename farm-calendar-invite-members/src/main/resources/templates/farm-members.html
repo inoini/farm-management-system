@@ -22,7 +22,7 @@
             <h1 th:text="${sharedFarm.name}">農場名</h1>
             <p>各メンバーは自分専用のユーザー名・メール・パスワードを使い、農場データだけを共有します。</p>
         </div>
-        <a class="members-back" th:href="@{/}" href="/">トップへ戻る</a>
+        <a class="members-back" th:href="@{/calendar}" href="/calendar">トップへ戻る</a>
     </div>
 
     <p class="login-message success" role="status" th:if="${successMessage}" th:text="${successMessage}">完了しました。</p>

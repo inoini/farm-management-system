@@ -24,18 +24,18 @@
         <strong>この操作は元に戻せません。</strong>
         <p th:if="${!farmOwner}">メンバーのアカウントを削除すると、そのアカウントではログインできなくなります。農場の共有データは残ります。</p>
         <p th:if="${farmOwner and !hasOtherMembers}">あなたが最後の管理者・メンバーです。削除すると、この農場の作物・圃場・予定・在庫・売上・経費などのデータも削除されます。</p>
-        <p th:if="${farmOwner and hasOtherMembers}">あなたは農場の管理者です。退会前に、下のメンバーから次の管理者を1人選び、管理者権限を引き継ぎます。農場データは残ります。</p>
+        <p th:if="${farmOwner and hasOtherMembers}">あなたは農場の管理者です。退会前に、同じ農場に登録されている農業メンバーから次の管理者を1人選び、管理者権限を引き継ぎます。農場データは残ります。</p>
     </div>
 
     <div class="error-message" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <div class="info-box" th:if="${farmOwner and hasOtherMembers and #lists.isEmpty(successorCandidates)}">
-        現在、管理者権限を引き継げるメンバーがいません。利用停止中のメンバーは先にBANを解除してください。また、同じメールアドレスで別農場の管理者になっているメンバーには引き継げません。
+        現在、管理者権限を引き継げる農業メンバーがいません。利用停止中のメンバーがいる場合は、先に「農場メンバー」画面でBANを解除してください。
     </div>
 
     <form th:action="@{/account/delete}" method="post">
         <div th:if="${farmOwner and hasOtherMembers}">
-            <label for="successorMemberId">次の管理者</label>
+            <label for="successorMemberId">次の管理者（農業メンバーから選択）</label>
             <select id="successorMemberId" name="successorMemberId" required>
                 <option value="">選択してください</option>
                 <option th:each="member : ${successorCandidates}"

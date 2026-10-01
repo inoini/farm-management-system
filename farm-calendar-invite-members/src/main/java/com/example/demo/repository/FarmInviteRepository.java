@@ -10,4 +10,5 @@ import com.example.demo.entity.FarmInvite;
 public interface FarmInviteRepository extends JpaRepository<FarmInvite, Long> {
     Optional<FarmInvite> findByCodeHashAndRevokedFalse(String codeHash);
     List<FarmInvite> findAllByFarmIdAndRevokedFalseOrderByCreatedAtDesc(Long farmId);
+    List<FarmInvite> findAllByFarmId(Long farmId);
 }

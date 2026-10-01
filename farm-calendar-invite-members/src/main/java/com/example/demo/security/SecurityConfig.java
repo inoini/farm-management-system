@@ -57,11 +57,21 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/calendar", true)
+                .successHandler((request, response, authentication) -> {
+                    boolean accountDelete = request.getParameter("deleteAccount") != null;
+                    String destination = accountDelete ? "/account/delete" : "/calendar";
+                    response.sendRedirect(request.getContextPath() + destination);
+                })
                 .failureHandler((request, response, exception) -> {
                     boolean disabled = exception instanceof DisabledException
                             || exception.getCause() instanceof DisabledException;
-                    String destination = disabled ? "/login?banned" : "/login?error";
+                    boolean accountDelete = request.getParameter("deleteAccount") != null;
+                    String destination;
+                    if (disabled) {
+                        destination = accountDelete ? "/login?banned&deleteAccount=1" : "/login?banned";
+                    } else {
+                        destination = accountDelete ? "/login?error&deleteAccount=1" : "/login?error";
+                    }
                     response.sendRedirect(request.getContextPath() + destination);
                 })
                 .permitAll()

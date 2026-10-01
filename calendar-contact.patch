@@ -1,0 +1,23 @@
+diff --git a/farm-calendar-invite-members/src/main/resources/templates/calendar.html b/farm-calendar-invite-members/src/main/resources/templates/calendar.html
+index 2c2483e..db6896c 100644
+--- a/farm-calendar-invite-members/src/main/resources/templates/calendar.html
++++ b/farm-calendar-invite-members/src/main/resources/templates/calendar.html
+@@ -160,6 +160,10 @@
+                 <span aria-hidden="true">👤</span>
+                 <span>農場メンバー</span>
+             </a>
++            <a th:href="@{/contact}" href="/contact">
++                <span aria-hidden="true">✉</span>
++                <span>お問い合わせ</span>
++            </a>
+             <a th:href="@{/settings}" href="/settings">
+                 <span aria-hidden="true">⚙</span>
+                 <span>設定</span>
+@@ -240,6 +244,7 @@
+                 <a th:href="@{/harvests}" href="/harvests"><span aria-hidden="true">🚚</span><span>収穫・出荷</span></a>
+                 <a th:href="@{/reports}" href="/reports"><span aria-hidden="true">📊</span><span>分析・レポート</span></a>
+                 <a th:href="@{/farm/members}" href="/farm/members"><span aria-hidden="true">👤</span><span>農場メンバー</span></a>
++                <a th:href="@{/contact}" href="/contact"><span aria-hidden="true">✉</span><span>お問い合わせ</span></a>
+                 <a th:href="@{/settings}" href="/settings"><span aria-hidden="true">⚙</span><span>設定</span></a>
+             </nav>
+         </div>

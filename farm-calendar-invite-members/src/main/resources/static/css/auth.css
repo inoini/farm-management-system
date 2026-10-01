@@ -52,6 +52,21 @@
 .login-submit { width: 100%; min-height: 48px; margin-top: 24px; border: 0;
     border-radius: 7px; background: #4752c4; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .login-submit:hover { background: #3c45a5; }
+.register-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 12px;
+    border: 1px solid #57b66f;
+    border-radius: 7px;
+    background: #214f30;
+    color: #effff3;
+    font-weight: 800;
+    text-decoration: none;
+}
+.register-button:hover { background: #2a633d; text-decoration: none; }
 .login-message { padding: 12px; border-radius: 7px; background: #383b43; }
 .login-message.error { color: #ffb3ba; background: #542d36; }
 .login-page :focus-visible, .account-bar :focus-visible { outline: 3px solid #bcc2ff; outline-offset: 3px; }

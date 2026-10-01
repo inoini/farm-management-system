@@ -55,7 +55,7 @@ public class CalendarController {
         this.currentUser = currentUser;
     }
 
-    @GetMapping({"/", "/calendar"})
+    @GetMapping("/calendar")
     public String calendar(@RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month,
             @RequestParam(defaultValue = "") String q,

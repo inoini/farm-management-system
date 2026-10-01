@@ -46,6 +46,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    "/", "/robots.txt", "/sitemap.xml",
                     "/login", "/register", "/join", "/forgot-username", "/forgot-password", "/reset-password",
                     "/auth/csrf", "/health", "/error", "/favicon.ico", "/pwa-check.html", "/app-start.html",
                     "/manifest.json", "/manifest.webmanifest", "/service-worker.js",
@@ -58,7 +59,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/", true)
+                .defaultSuccessUrl("/calendar", true)
                 .failureHandler((request, response, exception) -> {
                     boolean disabled = exception instanceof DisabledException
                             || exception.getCause() instanceof DisabledException;

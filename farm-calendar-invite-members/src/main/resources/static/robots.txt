@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /calendar
+Disallow: /management
+Disallow: /crop
+Disallow: /field
+Disallow: /operations
+Disallow: /stock
+Disallow: /sales
+Disallow: /expenses
+Disallow: /contact
+Sitemap: https://farm-management-system-ezax.onrender.com/sitemap.xml

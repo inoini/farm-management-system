@@ -5,9 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class DashboardController {
+
+    @GetMapping("/")
+    public String home() {
+        return "index";
+    }
+
     // Keep old bookmarks working after retiring the dashboard.
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "redirect:/";
+        return "redirect:/calendar";
     }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "farm-pwa-shell-20260927-android-install-2";
+const CACHE_NAME = "farm-pwa-shell-20261001-calendar-launch-1";
 const APP_SHELL = [
   "/app-start.html",
   "/manifest.json",

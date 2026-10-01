@@ -1,0 +1,170 @@
+diff --git a/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ContactController.java b/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ContactController.java
+new file mode 100644
+index 0000000..4c09b10
+--- /dev/null
++++ b/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ContactController.java
+@@ -0,0 +1,84 @@
++package com.example.demo.conotroller;
++
++import java.time.LocalDateTime;
++
++import org.springframework.stereotype.Controller;
++import org.springframework.ui.Model;
++import org.springframework.web.bind.annotation.GetMapping;
++import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestParam;
++import org.springframework.web.servlet.mvc.support.RedirectAttributes;
++
++import com.example.demo.entity.ContactMessage;
++import com.example.demo.entity.UserAccount;
++import com.example.demo.repository.ContactMessageRepository;
++import com.example.demo.service.CurrentUserService;
++import com.example.demo.service.SupportMailService;
++
++@Controller
++public class ContactController {
++
++    private final CurrentUserService currentUser;
++    private final ContactMessageRepository contactRepository;
++    private final SupportMailService supportMailService;
++
++    public ContactController(CurrentUserService currentUser,
++            ContactMessageRepository contactRepository,
++            SupportMailService supportMailService) {
++        this.currentUser = currentUser;
++        this.contactRepository = contactRepository;
++        this.supportMailService = supportMailService;
++    }
++
++    @GetMapping("/contact")
++    public String contact(Model model) {
++        UserAccount account = currentUser.account();
++        model.addAttribute("contactName", safe(account.getDisplayName()));
++        model.addAttribute("contactEmail", safe(account.getEmail()));
++        return "contact";
++    }
++
++    @PostMapping("/contact")
++    public String sendContact(
++            @RequestParam String subject,
++            @RequestParam String message,
++            RedirectAttributes redirectAttributes) {
++        String cleanSubject = safe(subject);
++        String cleanMessage = safe(message);
++        if (cleanSubject.isBlank() || cleanMessage.isBlank()
++                || cleanSubject.length() > 160 || cleanMessage.length() > 4000) {
++            redirectAttributes.addFlashAttribute("contactError",
++                    "件名とお問い合わせ内容を入力してください。件名は160文字以内、内容は4000文字以内です。");
++            return "redirect:/contact";
++        }
++
++        UserAccount account = currentUser.account();
++        ContactMessage contact = new ContactMessage();
++        contact.setFarmDataKey(currentUser.email());
++        contact.setSubmitterEmail(safe(account.getEmail()));
++        contact.setSubmitterName(safe(account.getDisplayName()).isBlank()
++                ? currentUser.username() : safe(account.getDisplayName()));
++        contact.setSubject(cleanSubject);
++        contact.setMessage(cleanMessage);
++        contact.setSubmittedAt(LocalDateTime.now());
++        contact.setEmailSent(false);
++        contact = contactRepository.save(contact);
++
++        boolean sent = supportMailService.send(contact, account, account.getFarm());
++        if (sent) {
++            contact.setEmailSent(true);
++            contactRepository.save(contact);
++            redirectAttributes.addFlashAttribute("contactSuccess", "お問い合わせを送信しました。");
++        } else {
++            redirectAttributes.addFlashAttribute("contactSuccess",
++                    "お問い合わせを受け付けました。内容は保存されています。");
++            redirectAttributes.addFlashAttribute("contactNotice",
++                    "メール通知が未設定または送信できなかったため、運営側でメール設定を確認してください。");
++        }
++        return "redirect:/contact";
++    }
++
++    private String safe(String value) {
++        return value == null ? "" : value.strip();
++    }
++}
++diff --git a/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ManagementController.java b/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ManagementController.java
++index 1e4b489..61d9385 100644
++--- a/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ManagementController.java
+++++ b/farm-calendar-invite-members/src/main/java/com/example/demo/conotroller/ManagementController.java
++@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
++ import org.springframework.web.bind.annotation.GetMapping;
++ import org.springframework.web.bind.annotation.ModelAttribute;
++ import org.springframework.web.bind.annotation.PostMapping;
+++import org.springframework.web.bind.annotation.RequestParam;
++ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
++ 
++ import com.example.demo.entity.Expense;
++@@ -29,6 +30,8 @@ import com.example.demo.service.CurrentUserService;
++ public class ManagementController {
++ 
++     private static final ZoneId TOKYO = ZoneId.of("Asia/Tokyo");
+++    private static final int MIN_YEAR = 2000;
+++    private static final int MAX_YEAR = 2100;
++ 
++     private final SalesRepository salesRepository;
++     private final ExpenseRepository expenseRepository;
++@@ -46,56 +49,68 @@ public class ManagementController {
++     }
++ 
++     @GetMapping("/management")
++-    public String management(Model model) {
+++    public String management(
+++            @RequestParam(name = "year", required = false) Integer requestedYear,
+++            @RequestParam(name = "month", required = false) Integer requestedMonth,
+++            Model model) {
++         String owner = currentUser.email();
++         LocalDate today = LocalDate.now(TOKYO);
++-        int year = today.getYear();
++-        int month = today.getMonthValue();
+++        int selectedYear = validYear(requestedYear) ? requestedYear : today.getYear();
+++        int selectedMonth = validMonth(requestedMonth)
+++                ? requestedMonth
+++                : (selectedYear == today.getYear() ? today.getMonthValue() : 1);
++ 
++         List<Sales> sales = salesRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
++         List<Expense> expenses = expenseRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
++-        List<MonthlyBudget> budgets = budgetRepository.findAllByOwnerEmailAndBudgetYearOrderByBudgetMonthAsc(owner, year);
+++        List<MonthlyBudget> budgets = budgetRepository
+++                .findAllByOwnerEmailAndBudgetYearOrderByBudgetMonthAsc(owner, selectedYear);
++ 
++-        model.addAttribute("currentYear", year);
++-        model.addAttribute("currentMonth", month);
+++        model.addAttribute("selectedYear", selectedYear);
+++        model.addAttribute("todayYear", today.getYear());
+++        model.addAttribute("currentMonth", selectedYear == today.getYear() ? today.getMonthValue() : 0);
+++        model.addAttribute("selectedMonth", selectedMonth);
++         model.addAttribute("cropProfitRows", buildCropProfitRows(sales, expenses));
++         model.addAttribute("sharedExpenseTotal", roundMoney(expenses.stream()
++                 .filter(e -> normalize(e.getCrop()).isEmpty())
++                 .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum()));
++ 
++         MonthlyBudget budgetForm = new MonthlyBudget();
++-        budgetForm.setBudgetYear(year);
++-        budgetForm.setBudgetMonth(month);
++-        budgetRepository.findByOwnerEmailAndBudgetYearAndBudgetMonth(owner, year, month).ifPresent(existing -> {
++-            budgetForm.setSalesBudget(existing.getSalesBudget());
++-            budgetForm.setExpenseBudget(existing.getExpenseBudget());
++-        });
+++        budgetForm.setBudgetYear(selectedYear);
+++        budgetForm.setBudgetMonth(selectedMonth);
+++        budgetRepository.findByOwnerEmailAndBudgetYearAndBudgetMonth(owner, selectedYear, selectedMonth)
+++                .ifPresent(existing -> {
+++                    budgetForm.setSalesBudget(existing.getSalesBudget());
+++                    budgetForm.setExpenseBudget(existing.getExpenseBudget());
+++                });
++         model.addAttribute("budgetForm", budgetForm);
++-        model.addAttribute("budgetRows", buildBudgetRows(year, sales, expenses, budgets));
+++        model.addAttribute("budgetRows", buildBudgetRows(selectedYear, sales, expenses, budgets));
++ 
++-        double ytdSales = sales.stream()
++-                .filter(s -> isCurrentYearActual(s.getDate(), today))
+++        double yearSalesActualTotal = sales.stream()
+++                .filter(s -> s.getDate() != null && s.getDate().getYear() == selectedYear)
++                 .map(Sales::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
++-        double ytdExpenses = expenses.stream()

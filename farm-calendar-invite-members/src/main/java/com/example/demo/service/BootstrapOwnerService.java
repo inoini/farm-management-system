@@ -141,21 +141,54 @@ public class BootstrapOwnerService implements ApplicationRunner {
         });
     }
 
+    /**
+     * 旧データでユーザー名が空だった場合でも、メールアドレスからユーザー名を作らない。
+     * 過去の処理でメールの @ より前がユーザー名に入ったレコードも、表示名を基準に修復する。
+     */
     private void fillMissingUsernames() {
         for (UserAccount user : userRepository.findAll()) {
-            if (blank(user.getUsername())) {
-                String local = user.getEmail() == null ? "farm" : user.getEmail().split("@", 2)[0];
-                String base = local.replaceAll("[^\\p{L}\\p{N}._-]", "-");
-                if (base.length() < 3) base = "farm-" + base;
-                if (base.length() > 32) base = base.substring(0, 32);
-                user.setUsername(uniqueUsername(CurrentUserService.normalizeUsername(base)));
-                userRepository.save(user);
+            boolean missingUsername = blank(user.getUsername());
+            boolean legacyEmailDerivedUsername = isLegacyEmailDerivedUsername(user);
+
+            if (missingUsername || legacyEmailDerivedUsername) {
+                String base = usernameBaseFromDisplayName(user.getDisplayName());
+                String normalizedBase = CurrentUserService.normalizeUsername(base);
+
+                if (missingUsername || !normalizedBase.equalsIgnoreCase(user.getUsername())) {
+                    user.setUsername(uniqueUsername(normalizedBase));
+                    userRepository.save(user);
+                }
             }
+
             if (blank(user.getFarmRole())) {
                 user.setFarmRole("OWNER");
                 userRepository.save(user);
             }
         }
+    }
+
+    private boolean isLegacyEmailDerivedUsername(UserAccount user) {
+        if (blank(user.getUsername()) || blank(user.getEmail())) return false;
+        return user.getUsername().equalsIgnoreCase(legacyEmailUsernameBase(user.getEmail()));
+    }
+
+    private String legacyEmailUsernameBase(String email) {
+        String local = email == null ? "farm" : email.split("@", 2)[0];
+        String base = local.replaceAll("[^\\p{L}\\p{N}._-]", "-");
+        if (base.length() < 3) base = "farm-" + base;
+        if (base.length() > 32) base = base.substring(0, 32);
+        return CurrentUserService.normalizeUsername(base);
+    }
+
+    private String usernameBaseFromDisplayName(String displayName) {
+        String base = displayName == null ? "" : displayName.strip();
+        base = base.replaceAll("[^\\p{L}\\p{N}._-]", "-");
+        base = base.replaceAll("-+", "-");
+        base = base.replaceAll("^-+|-+$", "");
+        if (base.length() < 3) base = "farm-" + base;
+        if (base.length() > 32) base = base.substring(0, 32);
+        if (base.isBlank()) base = "farm-user";
+        return base;
     }
 
     private String uniqueUsername(String requested) {

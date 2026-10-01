@@ -72,7 +72,7 @@ public class BootstrapOwnerService implements ApplicationRunner {
         String farmName = env.getProperty("BOOTSTRAP_FARM_NAME", displayName + "の農場").strip();
 
         if (!email.isBlank() && password != null && password.length() >= 8 && password.length() <= 64
-                && !userRepository.existsByEmailIgnoreCase(email)) {
+                && !userRepository.existsByEmailIgnoreCaseAndFarmRoleIgnoreCase(email, "OWNER")) {
             UserAccount user = new UserAccount();
             user.setUsername(uniqueUsername(username.isBlank() ? "admin" : username));
             user.setEmail(email);
@@ -93,7 +93,7 @@ public class BootstrapOwnerService implements ApplicationRunner {
         boolean migrate = Boolean.parseBoolean(env.getProperty("MIGRATE_LEGACY_DATA", "false"));
         if (!migrate || email.isBlank()) return;
 
-        UserAccount owner = userRepository.findByEmailIgnoreCase(email).orElse(null);
+        UserAccount owner = userRepository.findFirstByEmailIgnoreCaseAndFarmRoleIgnoreCase(email, "OWNER").orElse(null);
         if (owner == null || owner.getFarm() == null) return;
         String dataKey = owner.getFarm().getDataKey();
 

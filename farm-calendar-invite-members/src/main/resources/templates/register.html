@@ -18,7 +18,7 @@
 <main class="login-card">
     <div class="login-mark" aria-hidden="true">🌱</div>
     <h1>新しい農場を作成</h1>
-    <p class="login-intro">最初の登録者が農場の管理者になります。あとから招待コードを発行し、家族や従業員を同じ農場へ追加できます。</p>
+    <p class="login-intro">最初の登録者が農場の管理者になります。別の農場でメンバーとして使っているメールアドレスも利用できますが、同じメールアドレスで管理者になれるのは1回だけです。</p>
     <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">入力内容を確認してください。</p>
     <form th:action="@{/register}" method="post">
         <label for="farmName">農場名</label>
@@ -32,12 +32,12 @@
         <label for="username">あなたのユーザー名</label>
         <input id="username" name="username" type="text" minlength="3" maxlength="40" autocomplete="username"
                autocapitalize="none" spellcheck="false" th:value="${username}" required>
-        <p class="field-help">3～40文字。メンバーごとに別のユーザー名を使用します。</p>
+        <p class="field-help">3～40文字。アカウントごとに別のユーザー名を使用します。ログインにはこのユーザー名を使います。</p>
 
         <label for="email">あなたのメールアドレス</label>
         <input id="email" name="email" type="email" maxlength="254" autocomplete="email"
                autocapitalize="none" spellcheck="false" th:value="${email}" required>
-        <p class="field-help">ユーザー名・パスワードを忘れた場合の本人確認と復旧に使用します。</p>
+        <p class="field-help">同じメールアドレスをメンバー登録には複数回使えます。管理者登録は同じメールアドレスにつき1回だけです。</p>
 
         <label for="password">パスワード</label>
         <input id="password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required>
@@ -45,7 +45,7 @@
 
         <label for="passwordConfirm">パスワード（確認）</label>
         <input id="passwordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="64" autocomplete="new-password" required>
-        <button class="login-submit" type="submit">農場を作成して登録</button>
+        <button class="login-submit" type="submit">農場を作成して管理者登録</button>
     </form>
     <div class="auth-switch auth-switch-column">
         <span>すでに招待コードを持っていますか？</span>

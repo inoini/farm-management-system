@@ -61,6 +61,7 @@ public class RecoveryMailService {
     public boolean sendUsername(UserAccount account) {
         String body = "農業管理システムのユーザー名は次のとおりです。\n\n"
                 + account.getUsername() + "\n\n"
+                + accountLabel(account)
                 + "このメールに心当たりがない場合は、そのまま破棄してください。";
         return send(account.getEmail(), "【農業管理システム】ユーザー名のお知らせ", body);
     }
@@ -68,10 +69,25 @@ public class RecoveryMailService {
     public boolean sendPasswordReset(UserAccount account, String rawToken) {
         String link = baseUrl + "/reset-password?token=" + rawToken;
         String body = "農業管理システムのパスワード再設定を受け付けました。\n\n"
+                + "対象ユーザー名: " + safe(account.getUsername()) + "\n"
+                + accountLabel(account)
                 + "次のリンクから30分以内に新しいパスワードを設定してください。\n"
                 + link + "\n\n"
                 + "このメールに心当たりがない場合は、リンクを開かず破棄してください。";
         return send(account.getEmail(), "【農業管理システム】パスワード再設定", body);
+    }
+
+    private String accountLabel(UserAccount account) {
+        String farmName = account.getFarm() == null ? "" : safe(account.getFarm().getName());
+        String role = "OWNER".equalsIgnoreCase(account.getFarmRole()) ? "管理者" : "メンバー";
+        if (farmName.isBlank()) {
+            return "権限: " + role + "\n\n";
+        }
+        return "農場: " + farmName + "\n権限: " + role + "\n\n";
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
     }
 
     private boolean send(String to, String subject, String body) {

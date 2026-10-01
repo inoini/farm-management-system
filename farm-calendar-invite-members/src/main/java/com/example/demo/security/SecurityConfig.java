@@ -2,11 +2,11 @@ package com.example.demo.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,9 +26,7 @@ public class SecurityConfig {
     @Bean
     UserDetailsService users(UserAccountRepository userRepository) {
         return loginId -> userRepository.findByUsernameIgnoreCase(CurrentUserService.normalizeUsername(loginId))
-                .or(() -> userRepository.findByEmailIgnoreCase(CurrentUserService.normalize(loginId)))
-                .map(account -> User.withUsername(account.getUsername() == null || account.getUsername().isBlank()
-                                ? account.getEmail() : account.getUsername())
+                .map(account -> User.withUsername(account.getUsername())
                         .password(account.getPasswordHash())
                         .roles(account.getRole() == null || account.getRole().isBlank() ? "USER" : account.getRole())
                         .disabled(Boolean.FALSE.equals(account.getEnabled()))

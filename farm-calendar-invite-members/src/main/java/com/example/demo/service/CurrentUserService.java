@@ -31,8 +31,7 @@ public class CurrentUserService {
 
     public UserAccount account() {
         String principal = principalName();
-        return userRepository.findByUsernameIgnoreCase(principal)
-                .or(() -> userRepository.findByEmailIgnoreCase(normalize(principal)))
+        return userRepository.findByUsernameIgnoreCase(normalizeUsername(principal))
                 .orElseThrow(() -> new IllegalStateException("ログインユーザーが見つかりません。"));
     }
 

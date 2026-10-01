@@ -42,6 +42,10 @@ public class RegistrationService {
         if (normalizedFarmName.isBlank() || normalizedFarmName.length() > 100) {
             throw new IllegalArgumentException("農場名は1～100文字で入力してください。");
         }
+        if (userRepository.existsByEmailIgnoreCaseAndFarmRoleIgnoreCase(input.email(), "OWNER")) {
+            throw new IllegalArgumentException(
+                    "このメールアドレスではすでに管理者登録されています。管理者登録は1回のみです。メンバーとしては登録できます。");
+        }
 
         Farm farm = new Farm();
         farm.setName(normalizedFarmName);
@@ -84,9 +88,6 @@ public class RegistrationService {
         if (userRepository.existsByUsernameIgnoreCase(normalizedUsername)) {
             throw new IllegalArgumentException("このユーザー名はすでに使用されています。");
         }
-        if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
-            throw new IllegalArgumentException("このメールアドレスはすでに登録されています。");
-        }
         return new ValidatedUser(normalizedName, normalizedUsername, normalizedEmail, password);
     }
 
@@ -102,9 +103,13 @@ public class RegistrationService {
         user.setFarmRole(farmRole);
         user.setCreatedAt(LocalDateTime.now());
         try {
-            userRepository.save(user);
+            userRepository.saveAndFlush(user);
         } catch (DataIntegrityViolationException ex) {
-            throw new IllegalArgumentException("ユーザー名またはメールアドレスはすでに登録されています。");
+            if ("OWNER".equalsIgnoreCase(farmRole)) {
+                throw new IllegalArgumentException(
+                        "このメールアドレスではすでに管理者登録されています。管理者登録は1回のみです。別のユーザー名でメンバー登録はできます。");
+            }
+            throw new IllegalArgumentException("このユーザー名はすでに使用されています。");
         }
     }
 

@@ -38,23 +38,25 @@ public class AccountRecoveryService {
     }
 
     /**
-     * 常に同じ画面応答にできるよう、アカウントが存在しない場合も正常終了する。
+     * 同じメールアドレスを複数アカウントで利用できるため、
+     * 該当する全アカウントのユーザー名をそれぞれ通知する。
      */
     @Transactional(readOnly = true)
     public void requestUsernameReminder(String email) {
         ensureMailConfigured();
-        userRepository.findByEmailIgnoreCase(CurrentUserService.normalize(email))
+        userRepository.findAllByEmailIgnoreCaseOrderByCreatedAtAsc(CurrentUserService.normalize(email)).stream()
                 .filter(user -> user.getUsername() != null && !user.getUsername().isBlank())
-                .ifPresent(mailService::sendUsername);
+                .forEach(mailService::sendUsername);
     }
 
     /**
-     * 常に同じ画面応答にできるよう、アカウントが存在しない場合も正常終了する。
+     * 同じメールアドレスに複数アカウントがある場合は、
+     * 各アカウント専用の再設定リンクを発行する。
      */
     @Transactional
     public void requestPasswordReset(String email) {
         ensureMailConfigured();
-        userRepository.findByEmailIgnoreCase(CurrentUserService.normalize(email)).ifPresent(user -> {
+        for (UserAccount user : userRepository.findAllByEmailIgnoreCaseOrderByCreatedAtAsc(CurrentUserService.normalize(email))) {
             tokenRepository.deleteAllByUserId(user.getId());
             String rawToken = newToken();
             PasswordResetToken token = new PasswordResetToken();
@@ -64,7 +66,7 @@ public class AccountRecoveryService {
             token.setExpiresAt(LocalDateTime.now().plusMinutes(30));
             tokenRepository.save(token);
             mailService.sendPasswordReset(user, rawToken);
-        });
+        }
     }
 
     @Transactional(readOnly = true)

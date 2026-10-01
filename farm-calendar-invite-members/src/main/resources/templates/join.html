@@ -18,7 +18,7 @@
 <main class="login-card">
     <div class="login-mark" aria-hidden="true">🤝</div>
     <h1>招待コードで参加</h1>
-    <p class="login-intro">農場の管理者から受け取った招待コードを入力してください。自分専用のログイン情報を作成し、農場データだけを共有します。</p>
+    <p class="login-intro">農場の管理者から受け取った招待コードを入力してください。すでに別の農場で使っているメールアドレスでも、メンバーとして参加できます。</p>
     <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">入力内容を確認してください。</p>
     <form th:action="@{/join}" method="post">
         <label for="inviteCode">農場の招待コード</label>
@@ -34,11 +34,12 @@
         <label for="username">あなたのユーザー名</label>
         <input id="username" name="username" type="text" minlength="3" maxlength="40" autocomplete="username"
                autocapitalize="none" spellcheck="false" th:value="${username}" required>
+        <p class="field-help">アカウントごとに別のユーザー名が必要です。ログインにはこのユーザー名を使います。</p>
 
         <label for="email">あなたのメールアドレス</label>
         <input id="email" name="email" type="email" maxlength="254" autocomplete="email"
                autocapitalize="none" spellcheck="false" th:value="${email}" required>
-        <p class="field-help">パスワード再設定はこのメールアドレスを使い、あなたのアカウントだけ変更します。</p>
+        <p class="field-help">同じメールアドレスを複数のメンバーアカウントで使用できます。パスワード再設定時は対象ユーザー名がメールに表示されます。</p>
 
         <label for="password">あなたのパスワード</label>
         <input id="password" name="password" type="password" minlength="8" maxlength="64" autocomplete="new-password" required>

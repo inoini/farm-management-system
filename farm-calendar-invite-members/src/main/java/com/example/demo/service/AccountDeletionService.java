@@ -92,7 +92,6 @@ public class AccountDeletionService {
         return userRepository.findAllByFarmIdOrderByCreatedAtAsc(actor.getFarm().getId()).stream()
                 .filter(member -> !Objects.equals(member.getId(), actor.getId()))
                 .filter(member -> Boolean.TRUE.equals(member.getEnabled()))
-                .filter(member -> canReceiveOwnerRole(actor, member))
                 .toList();
     }
 
@@ -141,9 +140,6 @@ public class AccountDeletionService {
             if (!Boolean.TRUE.equals(successor.getEnabled())) {
                 throw new IllegalArgumentException("利用停止中のメンバーには管理者権限を引き継げません。先にBANを解除してください。");
             }
-            if (!canReceiveOwnerRole(actor, successor)) {
-                throw new IllegalArgumentException("選択したメンバーのメールアドレスでは、すでに別の管理者登録があります。別のメンバーを選択してください。");
-            }
 
             successor.setFarmRole("OWNER");
             userRepository.saveAndFlush(successor);
@@ -161,13 +157,6 @@ public class AccountDeletionService {
         farmRepository.delete(farm);
         farmRepository.flush();
         return new DeletionResult(false, null);
-    }
-
-    private boolean canReceiveOwnerRole(UserAccount actor, UserAccount candidate) {
-        String email = CurrentUserService.normalize(candidate.getEmail());
-        return userRepository.findAllByEmailIgnoreCaseOrderByCreatedAtAsc(email).stream()
-                .filter(account -> "OWNER".equalsIgnoreCase(account.getFarmRole()))
-                .allMatch(account -> Objects.equals(account.getId(), actor.getId()));
     }
 
     private void deleteUserOnly(UserAccount actor) {

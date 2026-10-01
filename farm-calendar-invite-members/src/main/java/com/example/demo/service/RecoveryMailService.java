@@ -20,6 +20,8 @@ public class RecoveryMailService {
     private final JavaMailSenderImpl mailSender;
     private final String from;
     private final String mailHost;
+    private final String mailUsername;
+    private final String mailPassword;
     private final String baseUrl;
 
     public RecoveryMailService(
@@ -33,15 +35,17 @@ public class RecoveryMailService {
             @Value("${spring.mail.properties.mail.smtp.starttls.required:false}") boolean startTlsRequired,
             @Value("${spring.mail.properties.mail.smtp.ssl.enable:false}") boolean sslEnable,
             @Value("${app.base-url:http://localhost:8080}") String baseUrl) {
-        this.from = from == null ? "" : from.strip();
-        this.mailHost = mailHost == null ? "" : mailHost.strip();
+        this.from = normalize(from);
+        this.mailHost = normalize(mailHost);
+        this.mailUsername = normalize(mailUsername);
+        this.mailPassword = mailPassword == null ? "" : mailPassword;
         this.baseUrl = baseUrl == null ? "http://localhost:8080" : baseUrl.strip().replaceAll("/+$", "");
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(this.mailHost);
         sender.setPort(mailPort);
-        sender.setUsername(mailUsername == null ? "" : mailUsername.strip());
-        sender.setPassword(mailPassword == null ? "" : mailPassword);
+        sender.setUsername(this.mailUsername);
+        sender.setPassword(this.mailPassword);
         sender.setDefaultEncoding("UTF-8");
         Properties properties = sender.getJavaMailProperties();
         properties.put("mail.smtp.auth", Boolean.toString(smtpAuth));
@@ -55,7 +59,10 @@ public class RecoveryMailService {
     }
 
     public boolean isConfigured() {
-        return !from.isBlank() && !mailHost.isBlank();
+        return !from.isBlank()
+                && !mailHost.isBlank()
+                && !mailUsername.isBlank()
+                && !mailPassword.isBlank();
     }
 
     public boolean sendUsername(UserAccount account) {
@@ -92,7 +99,7 @@ public class RecoveryMailService {
 
     private boolean send(String to, String subject, String body) {
         if (!isConfigured()) {
-            log.error("Recovery mail is not configured: spring.mail.host/app.mail.from is blank");
+            log.error("Recovery mail is not configured: sender/host/username/password is incomplete");
             return false;
         }
         try {
@@ -107,5 +114,9 @@ public class RecoveryMailService {
             log.error("Failed to send recovery mail", ex);
             return false;
         }
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.strip();
     }
 }

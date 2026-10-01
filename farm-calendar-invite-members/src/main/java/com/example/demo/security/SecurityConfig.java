@@ -70,7 +70,7 @@ public class SecurityConfig {
             .addFilterAfter(accountEnabledFilter, RememberMeAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .successHandler((request, response, authentication) -> {
+                .logoutSuccessHandler((request, response, authentication) -> {
                     if (authentication != null) {
                         userRepository.findByUsernameIgnoreCase(CurrentUserService.normalizeUsername(authentication.getName()))
                                 .ifPresent(account -> postLogoutDeletionTokenService.issue(response, account.getId()));

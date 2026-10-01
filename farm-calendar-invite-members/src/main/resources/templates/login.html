@@ -26,6 +26,7 @@
     <p class="login-message error" role="alert" th:if="${param.expired != null}">ログイン画面を更新しました。もう一度ログインしてください。</p>
     <p class="login-message error" role="alert" th:if="${param.error != null and param.banned == null}">ユーザー名またはパスワードが正しくありません。</p>
     <p class="login-message" role="status" th:if="${param.logout != null}">ログアウトしました。</p>
+    <p class="login-message success" role="status" th:if="${param.deleted != null}">アカウントを削除しました。</p>
     <p class="login-message success" role="status" th:if="${param.registered != null}">農場と管理者アカウントを作成しました。ログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.joined != null}">農場への参加登録が完了しました。自分のユーザー名とパスワードでログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.passwordReset != null}">パスワードを変更しました。新しいパスワードでログインしてください。</p>
@@ -48,7 +49,7 @@
     </div>
     <button type="button" class="pwa-install-button" data-pwa-install hidden>📲 アプリをインストール</button>
     <p class="pwa-ios-help" data-pwa-ios-help hidden>iPhoneはSafariの共有ボタンから「ホーム画面に追加」を選択してください。</p>
-    <p class="login-build-version">公開版 2026.09.27 / PWA・30日ログイン保持対応</p>
+    <p class="login-build-version">公開版 2026.10.01 / アカウント削除・管理者引き継ぎ対応</p>
 </main>
 </body>
 </html>

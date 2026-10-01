@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.Expense;
@@ -29,6 +30,8 @@ import com.example.demo.service.CurrentUserService;
 public class ManagementController {
 
     private static final ZoneId TOKYO = ZoneId.of("Asia/Tokyo");
+    private static final int MIN_YEAR = 2000;
+    private static final int MAX_YEAR = 2100;
 
     private final SalesRepository salesRepository;
     private final ExpenseRepository expenseRepository;
@@ -46,56 +49,68 @@ public class ManagementController {
     }
 
     @GetMapping("/management")
-    public String management(Model model) {
+    public String management(
+            @RequestParam(name = "year", required = false) Integer requestedYear,
+            @RequestParam(name = "month", required = false) Integer requestedMonth,
+            Model model) {
         String owner = currentUser.email();
         LocalDate today = LocalDate.now(TOKYO);
-        int year = today.getYear();
-        int month = today.getMonthValue();
+        int selectedYear = validYear(requestedYear) ? requestedYear : today.getYear();
+        int selectedMonth = validMonth(requestedMonth)
+                ? requestedMonth
+                : (selectedYear == today.getYear() ? today.getMonthValue() : 1);
 
         List<Sales> sales = salesRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
         List<Expense> expenses = expenseRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
-        List<MonthlyBudget> budgets = budgetRepository.findAllByOwnerEmailAndBudgetYearOrderByBudgetMonthAsc(owner, year);
+        List<MonthlyBudget> budgets = budgetRepository
+                .findAllByOwnerEmailAndBudgetYearOrderByBudgetMonthAsc(owner, selectedYear);
 
-        model.addAttribute("currentYear", year);
-        model.addAttribute("currentMonth", month);
+        model.addAttribute("selectedYear", selectedYear);
+        model.addAttribute("todayYear", today.getYear());
+        model.addAttribute("currentMonth", selectedYear == today.getYear() ? today.getMonthValue() : 0);
+        model.addAttribute("selectedMonth", selectedMonth);
         model.addAttribute("cropProfitRows", buildCropProfitRows(sales, expenses));
         model.addAttribute("sharedExpenseTotal", roundMoney(expenses.stream()
                 .filter(e -> normalize(e.getCrop()).isEmpty())
                 .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum()));
 
         MonthlyBudget budgetForm = new MonthlyBudget();
-        budgetForm.setBudgetYear(year);
-        budgetForm.setBudgetMonth(month);
-        budgetRepository.findByOwnerEmailAndBudgetYearAndBudgetMonth(owner, year, month).ifPresent(existing -> {
-            budgetForm.setSalesBudget(existing.getSalesBudget());
-            budgetForm.setExpenseBudget(existing.getExpenseBudget());
-        });
+        budgetForm.setBudgetYear(selectedYear);
+        budgetForm.setBudgetMonth(selectedMonth);
+        budgetRepository.findByOwnerEmailAndBudgetYearAndBudgetMonth(owner, selectedYear, selectedMonth)
+                .ifPresent(existing -> {
+                    budgetForm.setSalesBudget(existing.getSalesBudget());
+                    budgetForm.setExpenseBudget(existing.getExpenseBudget());
+                });
         model.addAttribute("budgetForm", budgetForm);
-        model.addAttribute("budgetRows", buildBudgetRows(year, sales, expenses, budgets));
+        model.addAttribute("budgetRows", buildBudgetRows(selectedYear, sales, expenses, budgets));
 
-        double ytdSales = sales.stream()
-                .filter(s -> isCurrentYearActual(s.getDate(), today))
+        double yearSalesActualTotal = sales.stream()
+                .filter(s -> s.getDate() != null && s.getDate().getYear() == selectedYear)
                 .map(Sales::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
-        double ytdExpenses = expenses.stream()
-                .filter(e -> isCurrentYearActual(e.getDate(), today))
+        double yearExpenseActualTotal = expenses.stream()
+                .filter(e -> e.getDate() != null && e.getDate().getYear() == selectedYear)
                 .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
 
-        double annualSalesForecast = month == 0 ? 0 : ytdSales / month * 12.0;
-        double annualExpenseForecast = month == 0 ? 0 : ytdExpenses / month * 12.0;
-        double annualBudgetSales = budgets.stream().map(MonthlyBudget::getSalesBudget)
-                .filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
-        double annualBudgetExpenses = budgets.stream().map(MonthlyBudget::getExpenseBudget)
-                .filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
+        boolean hasSalesBudget = budgets.stream().anyMatch(b -> b.getSalesBudget() != null);
+        boolean hasExpenseBudget = budgets.stream().anyMatch(b -> b.getExpenseBudget() != null);
+        boolean hasProfitBudget = budgets.stream()
+                .anyMatch(b -> b.getSalesBudget() != null && b.getExpenseBudget() != null);
 
-        model.addAttribute("ytdSales", roundMoney(ytdSales));
-        model.addAttribute("ytdExpenses", roundMoney(ytdExpenses));
-        model.addAttribute("ytdProfit", roundMoney(ytdSales - ytdExpenses));
-        model.addAttribute("annualSalesForecast", roundMoney(annualSalesForecast));
-        model.addAttribute("annualExpenseForecast", roundMoney(annualExpenseForecast));
-        model.addAttribute("annualProfitForecast", roundMoney(annualSalesForecast - annualExpenseForecast));
-        model.addAttribute("annualBudgetSales", roundMoney(annualBudgetSales));
-        model.addAttribute("annualBudgetExpenses", roundMoney(annualBudgetExpenses));
-        model.addAttribute("annualBudgetProfit", roundMoney(annualBudgetSales - annualBudgetExpenses));
+        double yearSalesBudgetTotal = budgets.stream().map(MonthlyBudget::getSalesBudget)
+                .filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
+        double yearExpenseBudgetTotal = budgets.stream().map(MonthlyBudget::getExpenseBudget)
+                .filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
+        double yearProfitBudgetTotal = budgets.stream()
+                .filter(b -> b.getSalesBudget() != null && b.getExpenseBudget() != null)
+                .mapToDouble(b -> b.getSalesBudget() - b.getExpenseBudget()).sum();
+
+        model.addAttribute("yearSalesBudgetTotal", hasSalesBudget ? roundMoney(yearSalesBudgetTotal) : null);
+        model.addAttribute("yearSalesActualTotal", roundMoney(yearSalesActualTotal));
+        model.addAttribute("yearExpenseBudgetTotal", hasExpenseBudget ? roundMoney(yearExpenseBudgetTotal) : null);
+        model.addAttribute("yearExpenseActualTotal", roundMoney(yearExpenseActualTotal));
+        model.addAttribute("yearProfitBudgetTotal", hasProfitBudget ? roundMoney(yearProfitBudgetTotal) : null);
+        model.addAttribute("yearProfitActualTotal", roundMoney(yearSalesActualTotal - yearExpenseActualTotal));
 
         return "management";
     }
@@ -104,7 +119,7 @@ public class ManagementController {
     public String saveBudget(@ModelAttribute MonthlyBudget input, RedirectAttributes redirectAttributes) {
         Integer year = input.getBudgetYear();
         Integer month = input.getBudgetMonth();
-        if (year == null || year < 2000 || year > 2100 || month == null || month < 1 || month > 12
+        if (!validYear(year) || !validMonth(month)
                 || invalidMoney(input.getSalesBudget()) || invalidMoney(input.getExpenseBudget())) {
             redirectAttributes.addFlashAttribute("budgetError", "予算の年月と金額を確認してください。");
             return "redirect:/management#budget";
@@ -117,11 +132,12 @@ public class ManagementController {
         budget.setOwnerEmail(owner);
         budget.setBudgetYear(year);
         budget.setBudgetMonth(month);
-        budget.setSalesBudget(input.getSalesBudget() == null ? 0.0 : input.getSalesBudget());
-        budget.setExpenseBudget(input.getExpenseBudget() == null ? 0.0 : input.getExpenseBudget());
+        // 空欄は 0 円に変換せず「未設定(null)」として保存する。
+        budget.setSalesBudget(input.getSalesBudget());
+        budget.setExpenseBudget(input.getExpenseBudget());
         budgetRepository.save(budget);
         redirectAttributes.addFlashAttribute("budgetSaved", year + "年" + month + "月の予算を保存しました。");
-        return "redirect:/management#budget";
+        return "redirect:/management?year=" + year + "&month=" + month + "#budget";
     }
 
     private List<Map<String, Object>> buildCropProfitRows(List<Sales> sales, List<Expense> expenses) {
@@ -152,7 +168,9 @@ public class ManagementController {
     private List<Map<String, Object>> buildBudgetRows(int year, List<Sales> sales, List<Expense> expenses,
             List<MonthlyBudget> budgets) {
         Map<Integer, MonthlyBudget> byMonth = new LinkedHashMap<>();
-        for (MonthlyBudget budget : budgets) byMonth.put(budget.getBudgetMonth(), budget);
+        for (MonthlyBudget budget : budgets) {
+            byMonth.put(budget.getBudgetMonth(), budget);
+        }
 
         List<Map<String, Object>> rows = new ArrayList<>();
         for (int month = 1; month <= 12; month++) {
@@ -164,24 +182,29 @@ public class ManagementController {
                     .filter(e -> e.getDate() != null && YearMonth.from(e.getDate()).equals(target))
                     .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
             MonthlyBudget plan = byMonth.get(month);
-            double salesBudget = plan == null || plan.getSalesBudget() == null ? 0 : plan.getSalesBudget();
-            double expenseBudget = plan == null || plan.getExpenseBudget() == null ? 0 : plan.getExpenseBudget();
+            Double salesBudget = plan == null ? null : plan.getSalesBudget();
+            Double expenseBudget = plan == null ? null : plan.getExpenseBudget();
 
             Map<String, Object> row = new LinkedHashMap<>();
             row.put("month", month);
-            row.put("salesBudget", roundMoney(salesBudget));
+            row.put("salesBudget", salesBudget == null ? null : roundMoney(salesBudget));
             row.put("salesActual", roundMoney(actualSales));
-            row.put("expenseBudget", roundMoney(expenseBudget));
+            row.put("expenseBudget", expenseBudget == null ? null : roundMoney(expenseBudget));
             row.put("expenseActual", roundMoney(actualExpenses));
-            row.put("profitBudget", roundMoney(salesBudget - expenseBudget));
+            row.put("profitBudget", salesBudget == null || expenseBudget == null
+                    ? null : roundMoney(salesBudget - expenseBudget));
             row.put("profitActual", roundMoney(actualSales - actualExpenses));
             rows.add(row);
         }
         return rows;
     }
 
-    private boolean isCurrentYearActual(LocalDate date, LocalDate today) {
-        return date != null && date.getYear() == today.getYear() && !date.isAfter(today);
+    private boolean validYear(Integer year) {
+        return year != null && year >= MIN_YEAR && year <= MAX_YEAR;
+    }
+
+    private boolean validMonth(Integer month) {
+        return month != null && month >= 1 && month <= 12;
     }
 
     private boolean invalidMoney(Double value) {

@@ -31,7 +31,7 @@ public class GlobalModelAttributes {
                 String dataKey = currentUser.email();
                 setting = settingRepository.findFirstByOwnerEmail(dataKey).orElse(setting);
                 model.addAttribute("loginUserName", account.getDisplayName());
-                model.addAttribute("loginUsername", account.getUsername());
+                model.addAttribute("loginUsername", currentUser.username());
                 model.addAttribute("loginUserEmail", account.getEmail());
                 model.addAttribute("loginFarmRole", account.getFarmRole());
                 if (account.getFarm() != null && account.getFarm().getName() != null

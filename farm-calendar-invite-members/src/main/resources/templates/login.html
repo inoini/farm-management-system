@@ -16,6 +16,11 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/auth.js(v='20260927-mobile-login-csrf-1')}" src="/js/auth.js?v=20260927-mobile-login-csrf-1"></script>
     <script defer th:src="@{/js/pwa.js(v='20260927-android-install-2')}" src="/js/pwa.js?v=20260927-android-install-2"></script>
+    <style>
+        .logout-delete-action{margin:14px 0 4px;text-align:center}
+        .logout-delete-button{display:inline-block;padding:11px 18px;border-radius:10px;background:#b42318;color:#fff;text-decoration:none;font-weight:700}
+        .logout-delete-note{margin:8px 0 0;font-size:.88rem;color:#6b746d}
+    </style>
 </head>
 <body class="login-page">
 <main class="login-card">
@@ -30,13 +35,21 @@
     <p class="login-message success" role="status" th:if="${param.registered != null}">農場と管理者アカウントを作成しました。ログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.joined != null}">農場への参加登録が完了しました。自分のユーザー名とパスワードでログインしてください。</p>
     <p class="login-message success" role="status" th:if="${param.passwordReset != null}">パスワードを変更しました。新しいパスワードでログインしてください。</p>
+
+    <div class="logout-delete-action" th:if="${param.logout != null}">
+        <a class="logout-delete-button" th:href="@{/login(deleteAccount=1)}" href="/login?deleteAccount=1">アカウント消去</a>
+        <p class="logout-delete-note">本人確認のため、もう一度ログインした後に登録メールアドレスとパスワードを確認します。</p>
+    </div>
+
+    <p class="login-message" role="status" th:if="${param.deleteAccount != null}">アカウント消去の本人確認です。ユーザー名とパスワードでログインしてください。</p>
     <form id="loginForm" th:action="@{/login}" method="post" data-refresh-csrf>
+        <input th:if="${param.deleteAccount != null}" type="hidden" name="deleteAccount" value="1">
         <label for="username">ユーザー名</label>
         <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
         <label for="password">パスワード</label>
         <input id="password" name="password" type="password" autocomplete="current-password" required>
-        <button class="login-submit" type="submit">ログイン</button>
-        <p class="login-persist-note">この端末ではログイン状態を30日間保持します。手動でログアウトすると解除されます。</p>
+        <button class="login-submit" type="submit" th:text="${param.deleteAccount != null ? '本人確認して消去画面へ' : 'ログイン'}">ログイン</button>
+        <p class="login-persist-note" th:if="${param.deleteAccount == null}">この端末ではログイン状態を30日間保持します。手動でログアウトすると解除されます。</p>
     </form>
     <div class="recovery-links" aria-label="アカウント復旧">
         <a th:href="@{/forgot-username}" href="/forgot-username">ユーザー名を忘れた</a>
@@ -49,7 +62,7 @@
     </div>
     <button type="button" class="pwa-install-button" data-pwa-install hidden>📲 アプリをインストール</button>
     <p class="pwa-ios-help" data-pwa-ios-help hidden>iPhoneはSafariの共有ボタンから「ホーム画面に追加」を選択してください。</p>
-    <p class="login-build-version">公開版 2026.10.01 / アカウント削除・管理者引き継ぎ対応</p>
+    <p class="login-build-version">公開版 2026.10.01 / ログアウト後のアカウント消去対応</p>
 </main>
 </body>
 </html>

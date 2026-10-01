@@ -38,8 +38,8 @@ public class AccountRecoveryService {
     }
 
     /**
-     * 同じメールアドレスを複数アカウントで利用できるため、
-     * 該当する全アカウントのユーザー名をそれぞれ通知する。
+     * ユーザー名もパスワードも忘れた場合に備え、登録メールアドレスから
+     * そのメールに紐づくユーザー名を通知する。
      */
     @Transactional(readOnly = true)
     public void requestUsernameReminder(String email) {
@@ -50,23 +50,29 @@ public class AccountRecoveryService {
     }
 
     /**
-     * 同じメールアドレスに複数アカウントがある場合は、
-     * 各アカウント専用の再設定リンクを発行する。
+     * パスワード再設定は「ユーザー名＋登録メールアドレス」が一致した
+     * 1アカウントだけを対象にする。同じメールを複数人で共有していても、
+     * 別アカウントのパスワード再設定リンクは発行しない。
      */
     @Transactional
-    public void requestPasswordReset(String email) {
+    public void requestPasswordReset(String username, String email) {
         ensureMailConfigured();
-        for (UserAccount user : userRepository.findAllByEmailIgnoreCaseOrderByCreatedAtAsc(CurrentUserService.normalize(email))) {
-            tokenRepository.deleteAllByUserId(user.getId());
-            String rawToken = newToken();
-            PasswordResetToken token = new PasswordResetToken();
-            token.setUserId(user.getId());
-            token.setTokenHash(hash(rawToken));
-            token.setCreatedAt(LocalDateTime.now());
-            token.setExpiresAt(LocalDateTime.now().plusMinutes(30));
-            tokenRepository.save(token);
-            mailService.sendPasswordReset(user, rawToken);
-        }
+        String normalizedUsername = CurrentUserService.normalizeUsername(username);
+        String normalizedEmail = CurrentUserService.normalize(email);
+
+        userRepository.findByUsernameIgnoreCase(normalizedUsername)
+                .filter(user -> CurrentUserService.normalize(user.getEmail()).equals(normalizedEmail))
+                .ifPresent(user -> {
+                    tokenRepository.deleteAllByUserId(user.getId());
+                    String rawToken = newToken();
+                    PasswordResetToken token = new PasswordResetToken();
+                    token.setUserId(user.getId());
+                    token.setTokenHash(hash(rawToken));
+                    token.setCreatedAt(LocalDateTime.now());
+                    token.setExpiresAt(LocalDateTime.now().plusMinutes(30));
+                    tokenRepository.save(token);
+                    mailService.sendPasswordReset(user, rawToken);
+                });
     }
 
     @Transactional(readOnly = true)

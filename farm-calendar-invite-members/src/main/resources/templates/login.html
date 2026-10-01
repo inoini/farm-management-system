@@ -4,7 +4,7 @@
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate"><meta http-equiv="Pragma" content="no-cache">
     <title>ログイン | 農業管理システム</title>
-    <link rel="stylesheet" th:href="@{/css/auth.css(v='20261001-account-delete-2')}" href="/css/auth.css?v=20261001-account-delete-2">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20261002-register-button-1')}" href="/css/auth.css?v=20261002-register-button-1">
     <meta name="theme-color" content="#1B5E20">
     <link rel="manifest" th:href="@{/manifest.json(v='20260927-android-install-2')}" href="/manifest.json?v=20260927-android-install-2">
     <script defer th:src="@{/js/auth.js(v='20260927-mobile-login-csrf-1')}" src="/js/auth.js?v=20260927-mobile-login-csrf-1"></script>
@@ -31,6 +31,7 @@
         <label for="password">パスワード</label><input id="password" name="password" type="password" autocomplete="current-password" required>
         <button class="login-submit" type="submit">ログイン</button>
     </form>
+    <a class="register-button" th:href="@{/register}" href="/register">新規登録</a>
     <div class="recovery-links"><a th:href="@{/forgot-username}">ユーザー名を忘れた</a><a th:href="@{/forgot-password}">パスワードを忘れた</a></div>
-    <div class="auth-switch auth-switch-column"><span>初めて利用する方</span><a th:href="@{/register}">新しい農場を作成</a><a th:href="@{/join}">招待コードで農場に参加</a></div>
+    <div class="auth-switch auth-switch-column"><span>すでに農場へ招待されている方</span><a th:href="@{/join}">招待コードで農場に参加</a></div>
 </main></body></html>

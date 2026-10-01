@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.service.RegistrationService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 public class LoginController {
 
@@ -22,7 +24,10 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setDateHeader("Expires", 0);
         return "login";
     }
 

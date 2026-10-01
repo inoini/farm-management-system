@@ -14,14 +14,13 @@ import org.springframework.security.web.authentication.rememberme.RememberMeAuth
 
 import com.example.demo.repository.UserAccountRepository;
 import com.example.demo.service.CurrentUserService;
+import com.example.demo.service.PostLogoutDeletionTokenService;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
     UserDetailsService users(UserAccountRepository userRepository) {
@@ -35,10 +34,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
+    SecurityFilterChain securityFilterChain(HttpSecurity http,
             UserDetailsService userDetailsService,
             AccountEnabledFilter accountEnabledFilter,
+            UserAccountRepository userRepository,
+            PostLogoutDeletionTokenService postLogoutDeletionTokenService,
             @org.springframework.beans.factory.annotation.Value("${app.security.remember-me-key}") String rememberMeKey)
             throws Exception {
         http
@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/", "/robots.txt", "/sitemap.xml",
                     "/login", "/register", "/join", "/forgot-username", "/forgot-password", "/reset-password",
+                    "/account/delete-after-logout",
                     "/auth/csrf", "/health", "/error", "/favicon.ico", "/pwa-check.html", "/app-start.html",
                     "/manifest.json", "/manifest.webmanifest", "/service-worker.js",
                     "/css/**", "/js/**", "/images/**", "/icons/**"
@@ -53,45 +54,31 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .formLogin(login -> login
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .successHandler((request, response, authentication) -> {
-                    boolean accountDelete = request.getParameter("deleteAccount") != null;
-                    String destination = accountDelete ? "/account/delete" : "/calendar";
-                    response.sendRedirect(request.getContextPath() + destination);
-                })
+                .loginPage("/login").loginProcessingUrl("/login")
+                .usernameParameter("username").passwordParameter("password")
+                .defaultSuccessUrl("/calendar", true)
                 .failureHandler((request, response, exception) -> {
-                    boolean disabled = exception instanceof DisabledException
-                            || exception.getCause() instanceof DisabledException;
-                    boolean accountDelete = request.getParameter("deleteAccount") != null;
-                    String destination;
-                    if (disabled) {
-                        destination = accountDelete ? "/login?banned&deleteAccount=1" : "/login?banned";
-                    } else {
-                        destination = accountDelete ? "/login?error&deleteAccount=1" : "/login?error";
-                    }
-                    response.sendRedirect(request.getContextPath() + destination);
-                })
-                .permitAll()
+                    boolean disabled = exception instanceof DisabledException || exception.getCause() instanceof DisabledException;
+                    response.sendRedirect(request.getContextPath() + (disabled ? "/login?banned" : "/login?error"));
+                }).permitAll()
             )
             .rememberMe(remember -> remember
-                .key(rememberMeKey)
-                .userDetailsService(userDetailsService)
+                .key(rememberMeKey).userDetailsService(userDetailsService)
                 .rememberMeCookieName("farm-remember-me")
-                .tokenValiditySeconds(60 * 60 * 24 * 30)
-                .alwaysRemember(true)
-                .useSecureCookie(true)
+                .tokenValiditySeconds(60 * 60 * 24 * 30).alwaysRemember(true).useSecureCookie(true)
             )
             .addFilterAfter(accountEnabledFilter, RememberMeAuthenticationFilter.class)
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID", "farm-remember-me")
-                .permitAll()
+                .successHandler((request, response, authentication) -> {
+                    if (authentication != null) {
+                        userRepository.findByUsernameIgnoreCase(CurrentUserService.normalizeUsername(authentication.getName()))
+                                .ifPresent(account -> postLogoutDeletionTokenService.issue(response, account.getId()));
+                    }
+                    response.sendRedirect(request.getContextPath() + "/login?logout");
+                })
+                .invalidateHttpSession(true).clearAuthentication(true)
+                .deleteCookies("JSESSIONID", "farm-remember-me").permitAll()
             );
         return http.build();
     }

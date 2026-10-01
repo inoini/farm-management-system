@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>農業管理システム</title>
   <meta name="theme-color" content="#138f38">
-  <link rel="manifest" href="/manifest.json?v=20260927-android-install-2">
+  <link rel="manifest" href="/manifest.json?v=20261001-calendar-launch-1">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
   <style>
     html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:#f5f7f5;color:#173a22}
@@ -19,7 +19,7 @@
     <img src="/icons/icon-192.png" alt="">
     <h1>農業管理システム</h1>
     <p class="status" id="status">起動しています…</p>
-    <a class="open" href="/" id="open" hidden>農業管理システムを開く</a>
+    <a class="open" href="/calendar" id="open" hidden>農業管理システムを開く</a>
   </main>
 <script>
 (function(){
@@ -30,7 +30,9 @@
     open.hidden=false;
     return;
   }
-  setTimeout(function(){ location.replace('/'); },250);
+  // PWA起動時は公開トップではなく、ログイン済みなら作業カレンダーへ直接移動する。
+  // 未ログインの場合はSpring Securityがログイン画面へ案内する。
+  setTimeout(function(){ location.replace('/calendar'); },250);
   setTimeout(function(){ status.textContent='自動で開かない場合は下のボタンを押してください。'; open.hidden=false; },1800);
 })();
 </script>

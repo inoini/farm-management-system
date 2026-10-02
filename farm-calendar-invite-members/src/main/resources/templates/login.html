@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20261001-account-delete-2')}" href="/css/auth.css?v=20261001-account-delete-2">
     <meta name="theme-color" content="#1B5E20">
     <link rel="manifest" th:href="@{/manifest.json(v='20260927-android-install-2')}" href="/manifest.json?v=20260927-android-install-2">
-    <script defer th:src="@{/js/auth.js(v='20260927-mobile-login-csrf-1')}" src="/js/auth.js?v=20260927-mobile-login-csrf-1"></script>
+    <script defer th:src="@{/js/auth.js(v='20261002-username-autofill-2')}" src="/js/auth.js?v=20261002-username-autofill-2"></script>
     <script defer th:src="@{/js/pwa.js(v='20260927-android-install-2')}" src="/js/pwa.js?v=20260927-android-install-2"></script>
     <style>
         .logout-delete-action{margin:14px 0 4px;text-align:center}
@@ -34,9 +34,12 @@
         <p class="logout-delete-note">登録メールアドレスと農業管理システムのパスワードで確認して削除します。</p>
     </div>
     <form id="loginForm" th:action="@{/login}" method="post" data-refresh-csrf autocomplete="off">
-        <label for="username">ユーザー名</label><input id="username" name="username" type="text" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" required autofocus>
+        <label for="loginId">ユーザー名</label>
+        <input id="loginId" name="loginId" type="text" maxlength="40" autocomplete="off"
+               autocapitalize="none" spellcheck="false" data-username-only data-lpignore="true" data-1p-ignore required autofocus>
         <p class="field-help">Gmailアドレスではなく、登録したユーザー名を入力してください。</p>
-        <label for="password">パスワード</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+        <label for="loginPassword">パスワード</label>
+        <input id="loginPassword" name="loginPassword" type="password" autocomplete="current-password" required>
         <button class="login-submit" type="submit">ログイン</button>
     </form>
     <div class="recovery-links"><a th:href="@{/forgot-username}">ユーザー名を忘れた</a><a th:href="@{/forgot-password}">パスワードを忘れた</a></div>

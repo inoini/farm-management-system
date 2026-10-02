@@ -2,7 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="accountBar" class="account-bar" aria-label="ログイン情報">
-    <span class="account-user">👤 <strong th:text="${loginUserName}">ユーザー</strong><small th:text="${loginUserEmail}">mail@example.com</small></span>
+    <span class="account-user">👤 <strong th:text="${loginUsername}">username</strong><small th:text="|メール: ${loginUserEmail}|">メール: mail@example.com</small></span>
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="account-logout">ログアウト</button>
     </form>

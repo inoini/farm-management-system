@@ -55,7 +55,7 @@ public class SecurityConfig {
             )
             .formLogin(login -> login
                 .loginPage("/login").loginProcessingUrl("/login")
-                .usernameParameter("username").passwordParameter("password")
+                .usernameParameter("loginId").passwordParameter("loginPassword")
                 .defaultSuccessUrl("/calendar", true)
                 .failureHandler((request, response, exception) -> {
                     boolean disabled = exception instanceof DisabledException || exception.getCause() instanceof DisabledException;

@@ -8,26 +8,46 @@ function farmCsrfHeaders() {
     return { [header.content]: token.content };
 }
 
-function protectUsernameOnlyField(input) {
-    const clearEmailAutofill = () => {
-        const value = (input.value || "").trim();
-        if (value.includes("@")) {
-            input.value = "";
-            input.setAttribute("data-email-autofill-cleared", "true");
-            return true;
-        }
+function restoreUsernameIfEmailAutofill(input) {
+    const value = (input.value || "").trim();
+
+    if (!value.includes("@")) {
+        if (value) input.dataset.lastUsername = value;
         return false;
-    };
+    }
 
-    input.addEventListener("input", clearEmailAutofill);
-    input.addEventListener("change", clearEmailAutofill);
-    input.addEventListener("focus", () => setTimeout(clearEmailAutofill, 0));
+    // Chrome / Edge password managers can replace the username field with a
+    // saved Gmail address after the user has already typed a valid username.
+    // Restore the last manually entered non-email username instead of merely
+    // clearing the field.
+    const previousUsername = (input.dataset.lastUsername || "").trim();
+    input.value = previousUsername;
+    input.setAttribute("data-email-autofill-cleared", "true");
+    return true;
+}
 
-    [0, 100, 250, 500, 1000, 1500, 2500, 4000].forEach(delay => {
-        setTimeout(clearEmailAutofill, delay);
+function protectUsernameOnlyField(input) {
+    const check = () => restoreUsernameIfEmailAutofill(input);
+
+    input.addEventListener("input", check);
+    input.addEventListener("change", check);
+    input.addEventListener("focus", () => setTimeout(check, 0));
+    input.addEventListener("blur", () => setTimeout(check, 0));
+
+    // Password managers sometimes apply autofill without firing input/change.
+    // Re-check for several seconds after the login page is opened.
+    [0, 100, 250, 500, 1000, 1500, 2500, 4000, 6000, 8000, 12000].forEach(delay => {
+        setTimeout(check, delay);
     });
 
-    window.addEventListener("pageshow", () => setTimeout(clearEmailAutofill, 0));
+    const passwordField = input.form?.querySelector('input[type="password"]');
+    if (passwordField) {
+        passwordField.addEventListener("focus", () => setTimeout(check, 0));
+        passwordField.addEventListener("input", () => setTimeout(check, 0));
+        passwordField.addEventListener("change", () => setTimeout(check, 0));
+    }
+
+    window.addEventListener("pageshow", () => setTimeout(check, 0));
 }
 
 // A restored browser-history page must re-check its session after logout.
@@ -66,12 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (submitting) return;
 
             const usernameField = form.querySelector('input[data-username-only]');
-            if (usernameField && (usernameField.value || '').includes('@')) {
-                event.preventDefault();
-                usernameField.value = '';
-                usernameField.focus();
-                alert('ユーザー名欄にはGmailアドレスではなく、登録したユーザー名を入力してください。');
-                return;
+            if (usernameField) {
+                restoreUsernameIfEmailAutofill(usernameField);
+                const username = (usernameField.value || '').trim();
+                if (!username || username.includes('@')) {
+                    event.preventDefault();
+                    usernameField.focus();
+                    alert('ユーザー名欄にはGmailアドレスではなく、登録したユーザー名を入力してください。');
+                    return;
+                }
             }
 
             event.preventDefault();

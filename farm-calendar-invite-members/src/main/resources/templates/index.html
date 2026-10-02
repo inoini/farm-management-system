@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="eSNd9iHJ5d9WgajG5DmtNAWXtClIa1sq8q8NnXbEG-A" />
@@ -77,6 +77,8 @@
         .lead { margin: 0 0 26px; font-size: clamp(16px, 2vw, 19px); color: #4d6251; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
         .note { margin-top: 13px; color: #657568; font-size: 13px; }
+        .usage-count { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 9px 13px; border: 1px solid #c8ddca; border-radius: 999px; background: rgba(255,255,255,.82); color: #24592c; font-size: 14px; font-weight: 800; }
+        .usage-count strong { font-size: 18px; color: #164c20; }
         .preview { padding: 24px; border-radius: 22px; background: #234c2a; color: white; box-shadow: 0 24px 60px rgba(30,78,39,.2); }
         .preview h2 { margin: 0 0 14px; font-size: 21px; }
         .preview-list { display: grid; gap: 10px; }
@@ -133,6 +135,10 @@
                     <a class="btn" href="#features">できることを見る</a>
                 </div>
                 <p class="note">登録後すぐに利用できます。同じ農場のメンバーは招待コードで参加できます。</p>
+                <div class="usage-count" aria-label="現在の登録利用者数">
+                    <span>👥 現在の登録利用者</span>
+                    <strong th:text="${registeredUserCount}">0</strong><span>人</span>
+                </div>
             </div>
             <aside class="preview" aria-label="主な機能">
                 <h2>毎日の農業管理をシンプルに</h2>

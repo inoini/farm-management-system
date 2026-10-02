@@ -20,7 +20,7 @@
     <h1>招待コードで参加</h1>
     <p class="login-intro">農場の管理者から受け取った招待コードを入力してください。すでに別の農場で使っているメールアドレスでも、メンバーとして参加できます。</p>
     <p class="login-message error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}">入力内容を確認してください。</p>
-    <form th:action="@{/join}" method="post">
+    <form th:action="@{/join}" method="post" autocomplete="off">
         <label for="inviteCode">農場の招待コード</label>
         <input id="inviteCode" name="inviteCode" type="text" maxlength="20" autocomplete="one-time-code"
                autocapitalize="characters" spellcheck="false" placeholder="ABCD-EFGH-JKLM"
@@ -32,9 +32,9 @@
                th:value="${displayName}" required>
 
         <label for="username">あなたのユーザー名</label>
-        <input id="username" name="username" type="text" minlength="3" maxlength="40" autocomplete="username"
+        <input id="username" name="username" type="text" minlength="3" maxlength="40" autocomplete="off"
                autocapitalize="none" spellcheck="false" th:value="${username}" required>
-        <p class="field-help">アカウントごとに別のユーザー名が必要です。ログインにはこのユーザー名を使います。</p>
+        <p class="field-help">アカウントごとに別のユーザー名が必要です。Gmailアドレスとは別に設定してください。</p>
 
         <label for="email">あなたのメールアドレス</label>
         <input id="email" name="email" type="email" maxlength="254" autocomplete="email"

@@ -33,8 +33,9 @@
         <a class="logout-delete-button" th:href="@{/account/delete-after-logout}" href="/account/delete-after-logout">アカウント消去</a>
         <p class="logout-delete-note">登録メールアドレスと農業管理システムのパスワードで確認して削除します。</p>
     </div>
-    <form id="loginForm" th:action="@{/login}" method="post" data-refresh-csrf>
-        <label for="username">ユーザー名</label><input id="username" name="username" type="text" autocomplete="username" required autofocus>
+    <form id="loginForm" th:action="@{/login}" method="post" data-refresh-csrf autocomplete="off">
+        <label for="username">ユーザー名</label><input id="username" name="username" type="text" maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false" required autofocus>
+        <p class="field-help">Gmailアドレスではなく、登録したユーザー名を入力してください。</p>
         <label for="password">パスワード</label><input id="password" name="password" type="password" autocomplete="current-password" required>
         <button class="login-submit" type="submit">ログイン</button>
     </form>

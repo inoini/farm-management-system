@@ -8,6 +8,7 @@
     <meta name="description" content="農家・農業法人向けの無料で始められる農業管理システム。作業カレンダー、作物管理、圃場管理、売上・経費・収支、収穫・出荷、在庫をスマホやパソコンからまとめて管理できます。">
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <link rel="canonical" href="https://farm-management-system-ezax.onrender.com/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://farm-management-system-ezax.onrender.com/sitemap.xml">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ja_JP">
     <meta property="og:title" content="無料の農業管理システム｜作業・作物・圃場・経営をまとめて管理">
@@ -21,17 +22,39 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "農業管理システム",
-      "url": "https://farm-management-system-ezax.onrender.com/",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Web browser",
-      "description": "作業カレンダー、作物、圃場、売上、経費、収支、収穫・出荷、在庫を管理できる農業向けWebアプリケーション。",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "JPY"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "農業管理システム",
+          "alternateName": "無料の農業管理システム",
+          "url": "https://farm-management-system-ezax.onrender.com/",
+          "inLanguage": "ja"
+        },
+        {
+          "@type": "WebApplication",
+          "name": "農業管理システム",
+          "url": "https://farm-management-system-ezax.onrender.com/",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web browser",
+          "inLanguage": "ja",
+          "isAccessibleForFree": true,
+          "description": "作業カレンダー、作物管理、圃場管理、売上、経費、収支、収穫・出荷、在庫をスマホやパソコンから一元管理できる農業向けWebアプリケーション。",
+          "featureList": [
+            "農作業カレンダー",
+            "作物管理",
+            "圃場管理",
+            "売上・経費・収支管理",
+            "収穫・出荷管理",
+            "在庫管理",
+            "農場メンバー共有"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+          }
+        }
+      ]
     }
     </script>
     <style>
@@ -74,6 +97,9 @@
         .step::before { counter-increment: step; content: counter(step); width: 34px; height: 34px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 50%; background: #256b30; color: white; font-weight: 900; }
         .step h3 { margin: 0 0 6px; }
         .step p { margin: 0; color: #5c6e60; font-size: 14px; }
+        .seo-copy { max-width: 860px; margin: 0 auto; padding: 28px; border-radius: 18px; background: #fff; border: 1px solid #dbe5dc; }
+        .seo-copy h2 { margin-top: 0; color: #1b5223; }
+        .seo-copy p { margin-bottom: 0; color: #56665a; }
         .cta { padding: 34px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-radius: 20px; background: #1e5f28; color: white; }
         .cta h2 { margin: 0 0 5px; }
         .cta p { margin: 0; color: #dcebdc; }
@@ -100,8 +126,8 @@
         <div class="wrap hero-grid">
             <div>
                 <span class="badge">農家・農業法人向け Webアプリ</span>
-                <h1>農作業と経営を、<br>ひとつの画面で管理。</h1>
-                <p class="lead">作業カレンダー、作物・圃場、売上・経費・収支、収穫・出荷、在庫をまとめて管理。パソコンでもスマホでも使える農業管理システムです。</p>
+                <h1>無料で始められる<br>農業管理システム</h1>
+                <p class="lead">農作業カレンダー、作物管理、圃場管理、売上・経費・収支、収穫・出荷、在庫をひとつにまとめて管理。パソコンでもスマホでも使える農家・農業法人向けのWebシステムです。</p>
                 <div class="hero-actions">
                     <a class="btn primary" href="/register">新しい農場を無料で作成</a>
                     <a class="btn" href="#features">できることを見る</a>
@@ -122,15 +148,22 @@
 
     <section id="features">
         <div class="wrap">
-            <div class="section-head"><h2>農業管理に必要な情報を一元化</h2><p>紙や複数の表に分かれやすい情報を、ひとつのWebシステムで確認できます。</p></div>
+            <div class="section-head"><h2>農業管理システムでできること</h2><p>農作業の予定、作物、圃場、経営、在庫など、紙や複数の表に分かれやすい農場情報をひとつのWebシステムで確認できます。</p></div>
             <div class="features">
-                <article class="card"><div class="card-icon">📅</div><h3>作業カレンダー</h3><p>日付ごとの予定、時間、担当者、作物、圃場、作業内容を登録。予定の検索にも対応しています。</p></article>
+                <article class="card"><div class="card-icon">📅</div><h3>農作業カレンダー</h3><p>日付ごとの予定、時間、担当者、作物、圃場、作業内容を登録。農作業予定の検索にも対応しています。</p></article>
                 <article class="card"><div class="card-icon">🌱</div><h3>作物管理</h3><p>作物の登録・編集・管理に対応。栽培計画や収穫に関する情報をまとめて確認できます。</p></article>
                 <article class="card"><div class="card-icon">🗺️</div><h3>圃場管理</h3><p>圃場情報を一覧で管理し、住所や地図情報とあわせて確認できます。</p></article>
-                <article class="card"><div class="card-icon">💰</div><h3>売上・経費・収支</h3><p>売上と経費を記録し、利益を確認。月別の予算と実績は西暦ごとに切り替えて管理できます。</p></article>
-                <article class="card"><div class="card-icon">📦</div><h3>収穫・出荷・在庫</h3><p>収穫量や出荷の記録、資材などの在庫情報をまとめて管理できます。</p></article>
+                <article class="card"><div class="card-icon">💰</div><h3>売上・経費・収支管理</h3><p>売上と経費を記録し、利益を確認。月別の予算と実績は西暦ごとに切り替えて管理できます。</p></article>
+                <article class="card"><div class="card-icon">📦</div><h3>収穫・出荷・在庫管理</h3><p>収穫量や出荷の記録、資材などの在庫情報をまとめて管理できます。</p></article>
                 <article class="card"><div class="card-icon">👥</div><h3>農場メンバー共有</h3><p>農場ごとにデータを分離。同じ農場のメンバーは招待コードで参加して情報を共有できます。</p></article>
             </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="wrap seo-copy">
+            <h2>農家・農業法人向けの無料農業管理Webアプリ</h2>
+            <p>この農業管理システムは、農作業のカレンダー管理、作物管理、圃場管理、売上・経費・収支管理、収穫・出荷管理、在庫管理をまとめて行いたい農家や農業法人向けのWebアプリです。スマホとパソコンの両方から利用でき、農場メンバーとの情報共有にも対応しています。</p>
         </div>
     </section>
 

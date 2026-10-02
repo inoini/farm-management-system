@@ -39,9 +39,9 @@ public class GlobalModelAttributes {
                     displayFarmName = account.getFarm().getName();
                 }
             } catch (RuntimeException ex) {
-                String principalName = principal.getName();
-                model.addAttribute("loginUserName", principalName);
-                model.addAttribute("loginUsername", principalName);
+                String safePrincipalName = safePrincipalUsername(principal.getName());
+                model.addAttribute("loginUserName", safePrincipalName);
+                model.addAttribute("loginUsername", safePrincipalName);
                 model.addAttribute("loginUserEmail", "");
                 model.addAttribute("loginFarmRole", "MEMBER");
             }
@@ -53,6 +53,14 @@ public class GlobalModelAttributes {
         model.addAttribute("notificationsEnabled", !Boolean.FALSE.equals(setting.getNotificationsEnabled()));
         model.addAttribute("uiTheme", validTheme(setting.getUiTheme()));
         model.addAttribute("layoutMode", validLayout(setting.getLayoutMode()));
+    }
+
+    private String safePrincipalUsername(String principalName) {
+        String value = principalName == null ? "" : principalName.strip();
+        if (value.isBlank() || value.contains("@")) {
+            return "user";
+        }
+        return value;
     }
 
     private String validTheme(String value) {

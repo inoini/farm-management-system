@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="肥料・農薬・種・苗などの在庫を登録し、不足状況を確認する画面です。">
-    <title>在庫管理 | 農業管理システム</title>
+    <meta name="description" content="肥料・農薬・種・苗などの在庫と使用情報をまとめて管理する画面です。">
+    <title>農薬・肥料・資材管理 | 農業管理システム</title>
     <link rel="stylesheet"
           th:href="@{/css/style.css(v='20260922-1')}"
           href="/css/style.css?v=20260922-1">
-    
-<link rel="stylesheet"
+
+    <link rel="stylesheet"
           th:href="@{/css/professional-ui.css(v='20260922-1')}"
           href="/css/professional-ui.css?v=20260922-1">
     <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
@@ -31,9 +31,9 @@
 <main class="stock-page">
     <header class="app-page-header">
         <div>
-            <p class="app-eyebrow">INVENTORY CONTROL</p>
-            <h1>📦 在庫管理</h1>
-            <p>肥料・農薬・種・苗の数量を管理し、補充が必要な資材を確認します。</p>
+            <p class="app-eyebrow">INVENTORY / PESTICIDE / FERTILIZER</p>
+            <h1>📦 農薬・肥料・資材管理</h1>
+            <p>在庫数量に加えて、農薬の使用回数・希釈倍率・収穫前日数、肥料の成分情報もまとめて管理します。</p>
         </div>
         <a class="app-back-button app-home-button" th:href="@{/}" href="/">
             <span aria-hidden="true">🏠</span>
@@ -46,10 +46,10 @@
             <div class="app-panel-heading">
                 <div>
                     <p class="section-kicker">STOCK ENTRY</p>
-                    <h2 id="stock-form-title" th:text="${stock.id == null ? '資材を登録' : '在庫を編集'}">
+                    <h2 id="stock-form-title" th:text="${stock.id == null ? '資材を登録' : '在庫・使用情報を編集'}">
                         資材を登録
                     </h2>
-                    <p>現在数量と最低在庫を入力してください。</p>
+                    <p>カテゴリを選ぶと、農薬・肥料に必要な追加項目が表示されます。</p>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
                 <div class="app-field">
                     <label for="itemName">資材名 <span class="required-badge">必須</span></label>
                     <input id="itemName" type="text" th:field="*{itemName}" maxlength="100"
-                           placeholder="例：化成肥料8-8-8" required>
+                           placeholder="例：化成肥料8-8-8 / 殺菌剤○○" required>
                 </div>
 
                 <div class="app-field">
@@ -74,6 +74,51 @@
                         <option value="苗">苗</option>
                         <option value="その他">その他</option>
                     </select>
+                </div>
+
+                <div class="app-field">
+                    <label for="targetCrop">対象作物 <span class="optional-badge">任意</span></label>
+                    <input id="targetCrop" type="text" th:field="*{targetCrop}" maxlength="100"
+                           placeholder="例：さつまいも、じゃがいも">
+                </div>
+
+                <div id="pesticideFields" hidden>
+                    <div class="app-field">
+                        <label for="dilutionRate">希釈倍率 <span class="optional-badge">農薬</span></label>
+                        <input id="dilutionRate" type="text" th:field="*{dilutionRate}" maxlength="50"
+                               placeholder="例：1000倍">
+                    </div>
+
+                    <div class="app-field">
+                        <label for="maxUsageCount">最大使用回数 <span class="optional-badge">農薬</span></label>
+                        <input id="maxUsageCount" type="number" th:field="*{maxUsageCount}" min="0"
+                               inputmode="numeric" placeholder="例：3">
+                    </div>
+
+                    <div class="app-field">
+                        <label for="usedCount">現在までの使用回数 <span class="optional-badge">農薬</span></label>
+                        <input id="usedCount" type="number" th:field="*{usedCount}" min="0"
+                               inputmode="numeric" placeholder="例：1">
+                    </div>
+
+                    <div class="app-field">
+                        <label for="preHarvestDays">収穫前日数 <span class="optional-badge">農薬</span></label>
+                        <input id="preHarvestDays" type="number" th:field="*{preHarvestDays}" min="0"
+                               inputmode="numeric" placeholder="例：7">
+                    </div>
+                </div>
+
+                <div id="fertilizerFields" hidden>
+                    <div class="app-field">
+                        <label for="fertilizerComposition">肥料成分・配合 <span class="optional-badge">肥料</span></label>
+                        <input id="fertilizerComposition" type="text" th:field="*{fertilizerComposition}" maxlength="100"
+                               placeholder="例：N-P-K 8-8-8">
+                    </div>
+                </div>
+
+                <div class="app-field">
+                    <label for="lastUsedDate">最終使用日 <span class="optional-badge">任意</span></label>
+                    <input id="lastUsedDate" type="date" th:field="*{lastUsedDate}">
                 </div>
 
                 <div class="app-field">
@@ -90,6 +135,8 @@
                         <option value="本">本</option>
                         <option value="箱">箱</option>
                         <option value="粒">粒</option>
+                        <option value="L">L</option>
+                        <option value="mL">mL</option>
                     </select>
                 </div>
 
@@ -108,7 +155,7 @@
                 <div class="app-field">
                     <label for="memo">備考 <span class="optional-badge">任意</span></label>
                     <textarea id="memo" th:field="*{memo}" maxlength="1000"
-                              placeholder="購入先、使用期限、注意事項など"></textarea>
+                              placeholder="購入先、使用期限、使用時の注意事項など"></textarea>
                 </div>
 
                 <button class="app-primary-button" type="submit">💾 保存する</button>
@@ -119,8 +166,8 @@
             <div class="app-panel-heading">
                 <div>
                     <p class="section-kicker">CURRENT STOCK</p>
-                    <h2 id="stock-list-title">在庫一覧</h2>
-                    <p>最低在庫以下の資材は赤色で表示されます。</p>
+                    <h2 id="stock-list-title">在庫・使用情報一覧</h2>
+                    <p>最低在庫以下の資材は赤色で表示されます。農薬は残り使用可能回数も確認できます。</p>
                 </div>
                 <span class="stock-status-badge">
                     <strong th:text="${stockList == null ? 0 : #lists.size(stockList)}">0</strong>件
@@ -136,6 +183,7 @@
                         <th scope="col">現在数量</th>
                         <th scope="col">最低在庫</th>
                         <th scope="col">状態</th>
+                        <th scope="col">使用情報</th>
                         <th scope="col">保管場所</th>
                         <th scope="col">操作</th>
                     </tr>
@@ -143,7 +191,7 @@
 
                     <tbody>
                     <tr th:if="${#lists.isEmpty(stockList)}">
-                        <td colspan="7" class="app-empty-state">
+                        <td colspan="8" class="app-empty-state">
                             在庫はまだ登録されていません。左側のフォームから最初の資材を登録してください。
                         </td>
                     </tr>
@@ -152,6 +200,9 @@
                         th:classappend="${stockItem.quantity != null and stockItem.minimumStock != null and stockItem.quantity <= stockItem.minimumStock} ? ' stock-row-low'">
                         <td data-label="資材名">
                             <strong th:text="${#strings.isEmpty(stockItem.itemName) ? '名称未設定' : stockItem.itemName}">資材名</strong>
+                            <div th:if="${!#strings.isEmpty(stockItem.targetCrop)}">
+                                <small th:text="|対象：${stockItem.targetCrop}|">対象：作物</small>
+                            </div>
                         </td>
                         <td data-label="カテゴリ"
                             th:text="${#strings.isEmpty(stockItem.category) ? '未設定' : stockItem.category}">未設定</td>
@@ -171,6 +222,25 @@
                                 適正在庫
                             </span>
                         </td>
+                        <td data-label="使用情報">
+                            <div th:if="${stockItem.category == '農薬'}">
+                                <div th:if="${!#strings.isEmpty(stockItem.dilutionRate)}"
+                                     th:text="|希釈：${stockItem.dilutionRate}|">希釈：1000倍</div>
+                                <div th:if="${stockItem.maxUsageCount != null}"
+                                     th:text="|残り使用：${stockItem.remainingUsageCount}回 / 最大${stockItem.maxUsageCount}回|">
+                                    残り使用：2回
+                                </div>
+                                <div th:if="${stockItem.preHarvestDays != null}"
+                                     th:text="|収穫前：${stockItem.preHarvestDays}日|">収穫前：7日</div>
+                            </div>
+                            <div th:if="${stockItem.category == '肥料' and !#strings.isEmpty(stockItem.fertilizerComposition)}"
+                                 th:text="|成分：${stockItem.fertilizerComposition}|">成分：N-P-K 8-8-8</div>
+                            <div th:if="${stockItem.lastUsedDate != null}"
+                                 th:text="|最終使用：${#temporals.format(stockItem.lastUsedDate, 'yyyy/MM/dd')}|">
+                                最終使用：2026/10/04
+                            </div>
+                            <span th:if="${stockItem.category != '農薬' and stockItem.category != '肥料' and stockItem.lastUsedDate == null}">－</span>
+                        </td>
                         <td data-label="保管場所"
                             th:text="${#strings.isEmpty(stockItem.location) ? '未設定' : stockItem.location}">未設定</td>
                         <td data-label="操作">
@@ -189,5 +259,24 @@
         </section>
     </div>
 </main>
+
+<script>
+(function () {
+    const category = document.getElementById('category');
+    const pesticideFields = document.getElementById('pesticideFields');
+    const fertilizerFields = document.getElementById('fertilizerFields');
+
+    function updateCategoryFields() {
+        const value = category ? category.value : '';
+        if (pesticideFields) pesticideFields.hidden = value !== '農薬';
+        if (fertilizerFields) fertilizerFields.hidden = value !== '肥料';
+    }
+
+    if (category) {
+        category.addEventListener('change', updateCategoryFields);
+        updateCategoryFields();
+    }
+})();
+</script>
 </body>
 </html>

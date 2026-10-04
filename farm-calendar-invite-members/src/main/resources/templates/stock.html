@@ -236,7 +236,7 @@
                             <div th:if="${stockItem.category == '肥料' and !#strings.isEmpty(stockItem.fertilizerComposition)}"
                                  th:text="|成分：${stockItem.fertilizerComposition}|">成分：N-P-K 8-8-8</div>
                             <div th:if="${stockItem.lastUsedDate != null}"
-                                 th:text="|最終使用：${#temporals.format(stockItem.lastUsedDate, 'yyyy/MM/dd')}|">
+                                 th:text="|最終使用：${stockItem.lastUsedDate}|">
                                 最終使用：2026/10/04
                             </div>
                             <span th:if="${stockItem.category != '農薬' and stockItem.category != '肥料' and stockItem.lastUsedDate == null}">－</span>

@@ -124,6 +124,10 @@
                 <span aria-hidden="true">📅</span>
                 <span>作業カレンダー</span>
             </a>
+            <a th:href="@{/feature-search}" href="/feature-search">
+                <span aria-hidden="true">🔎</span>
+                <span>機能検索</span>
+            </a>
             <a th:href="@{/crop}" href="/crop">
                 <span aria-hidden="true">🌱</span>
                 <span>作物管理</span>
@@ -239,6 +243,7 @@
             </div>
 
             <nav class="calendar-quick-menu" aria-label="カレンダー画面の項目メニュー">
+                <a th:href="@{/feature-search}" href="/feature-search"><span aria-hidden="true">🔎</span><span>機能検索</span></a>
                 <a th:href="@{/crop}" href="/crop"><span aria-hidden="true">🌱</span><span>作物管理</span></a>
                 <a th:href="@{/field}" href="/field"><span aria-hidden="true">🚜</span><span>圃場管理</span></a>
                 <a th:href="@{/work-history}" href="/work-history"><span aria-hidden="true">◷</span><span>作業履歴</span></a>

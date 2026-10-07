@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>機能検索 | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/professional-ui.css(v='20261007-v3-search-1')}" href="/css/professional-ui.css?v=20261007-v3-search-1">
+    <link rel="stylesheet" th:href="@{/css/discord-theme.css(v='20260922-1')}" href="/css/discord-theme.css?v=20260922-1">
+    <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; font-family: "Yu Gothic", "Meiryo", system-ui, sans-serif; background: #f4f8f4; color: #203c25; }
+        .feature-search-page { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+        .feature-search-header { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 20px; padding: 24px; border: 1px solid #d5e2d7; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px rgba(28,75,38,.07); }
+        .feature-search-header h1 { margin: 0 0 6px; font-size: clamp(25px, 4vw, 36px); color: #1b5e20; }
+        .feature-search-header p { margin: 0; color: #607164; }
+        .back-button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 17px; border-radius: 11px; background: #2e7d32; color: #fff; font-weight: 800; text-decoration: none; white-space: nowrap; }
+        .search-panel { padding: 24px; border: 1px solid #d5e2d7; border-radius: 18px; background: #fff; box-shadow: 0 8px 24px rgba(28,75,38,.07); }
+        .search-panel h2 { margin: 0 0 8px; font-size: 20px; }
+        .search-panel > p { margin: 0 0 18px; color: #607164; }
+        .search-form { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+        .search-form input { width: 100%; min-height: 50px; padding: 11px 14px; border: 2px solid #b9ccbc; border-radius: 11px; font: inherit; font-size: 16px; }
+        .search-form input:focus { outline: 3px solid rgba(46,125,50,.15); border-color: #2e7d32; }
+        .search-form button { min-height: 50px; padding: 10px 24px; border: 0; border-radius: 11px; background: #2e7d32; color: #fff; font: inherit; font-weight: 900; cursor: pointer; }
+        .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .examples a { padding: 7px 10px; border-radius: 999px; background: #e9f4ea; color: #255d2b; font-size: 13px; font-weight: 800; text-decoration: none; }
+        .results-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin: 28px 0 13px; }
+        .results-heading h2 { margin: 0; font-size: 22px; }
+        .results-heading span { color: #607164; font-size: 13px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .feature-card { display: flex; min-height: 172px; padding: 20px; flex-direction: column; gap: 10px; border: 1px solid #d5e2d7; border-radius: 16px; background: #fff; color: inherit; text-decoration: none; box-shadow: 0 6px 18px rgba(28,75,38,.05); transition: transform .16s, box-shadow .16s, border-color .16s; }
+        .feature-card:hover { transform: translateY(-2px); border-color: #84ad89; box-shadow: 0 10px 24px rgba(28,75,38,.1); }
+        .feature-icon { font-size: 28px; }
+        .feature-card h3 { margin: 0; font-size: 19px; color: #1d5625; }
+        .feature-card p { margin: 0; color: #617064; font-size: 14px; line-height: 1.6; }
+        .feature-open { margin-top: auto; color: #2e7d32; font-weight: 900; font-size: 13px; }
+        .empty-state { padding: 34px 20px; border: 1px dashed #b8cbbb; border-radius: 16px; background: #fff; text-align: center; color: #607164; }
+        .preserve-note { margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: #edf6ee; color: #315e37; font-size: 13px; }
+        @media (max-width: 860px) { .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 620px) {
+            .feature-search-page { width: min(100% - 20px, 1120px); padding-top: 14px; }
+            .feature-search-header { align-items: stretch; flex-direction: column; padding: 18px; }
+            .back-button { width: 100%; }
+            .search-panel { padding: 18px; }
+            .search-form { grid-template-columns: 1fr; }
+            .search-form button { width: 100%; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/auth :: accountBar}"></div>
+
+<main class="feature-search-page">
+    <header class="feature-search-header">
+        <div>
+            <h1>🔎 農業管理システム 機能検索</h1>
+            <p>やりたいことを入力すると、該当する機能を探して直接開けます。</p>
+        </div>
+        <a class="back-button" th:href="@{/calendar}" href="/calendar">📅 カレンダーへ戻る</a>
+    </header>
+
+    <section class="search-panel" aria-labelledby="feature-search-title">
+        <h2 id="feature-search-title">何をしたいですか？</h2>
+        <p>例：「在庫」「じゃがいもの収穫」「今月の売上」「圃場」「メンバー」</p>
+        <form class="search-form" method="get" th:action="@{/feature-search}" action="/feature-search" role="search">
+            <input type="search" name="q" th:value="${query}" placeholder="機能・やりたいことを入力" autocomplete="off" autofocus>
+            <button type="submit">機能を検索</button>
+        </form>
+        <div class="examples" aria-label="検索例">
+            <a th:href="@{/feature-search(q='在庫')}">在庫</a>
+            <a th:href="@{/feature-search(q='売上')}">売上</a>
+            <a th:href="@{/feature-search(q='収穫')}">収穫</a>
+            <a th:href="@{/feature-search(q='圃場')}">圃場</a>
+            <a th:href="@{/feature-search(q='分析')}">分析</a>
+            <a th:href="@{/feature-search(q='AI')}">AI</a>
+        </div>
+        <div class="preserve-note">カレンダー内の「予定を検索」は従来どおり残しています。この画面はシステム全体の機能を探すための追加機能です。</div>
+    </section>
+
+    <div class="results-heading">
+        <h2 th:text="${#strings.isEmpty(query) ? 'すべての機能' : '検索結果'}">すべての機能</h2>
+        <span><strong th:text="${resultCount}">0</strong> / <span th:text="${totalCount}">0</span> 項目</span>
+    </div>
+
+    <section class="feature-grid" th:if="${!#lists.isEmpty(results)}" aria-label="機能検索結果">
+        <a class="feature-card" th:each="item : ${results}" th:href="${item.url}">
+            <span class="feature-icon" aria-hidden="true" th:text="${item.icon}">📅</span>
+            <h3 th:text="${item.name}">作業カレンダー</h3>
+            <p th:text="${item.description}">説明</p>
+            <span class="feature-open">この機能を開く →</span>
+        </a>
+    </section>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(results)}">
+        <strong>該当する機能が見つかりませんでした。</strong><br>
+        「売上」「在庫」「収穫」「圃場」など短いキーワードでもう一度お試しください。
+    </div>
+</main>
+</body>
+</html>

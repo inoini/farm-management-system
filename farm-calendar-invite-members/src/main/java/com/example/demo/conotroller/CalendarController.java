@@ -27,6 +27,7 @@ import com.example.demo.model.CalendarDay;
 import com.example.demo.repository.AppSettingRepository;
 import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.FieldRepository;
+import com.example.demo.repository.FarmPhotoRepository;
 import com.example.demo.repository.WorkerRepository;
 import com.example.demo.service.CurrentUserService;
 import com.example.demo.service.ScheduleService;
@@ -43,16 +44,19 @@ public class CalendarController {
     private final WorkerRepository workerRepository;
     private final AppSettingRepository settingRepository;
     private final CurrentUserService currentUser;
+    private final FarmPhotoRepository farmPhotos;
 
     public CalendarController(ScheduleService scheduleService, CropRepository cropRepository,
             FieldRepository fieldRepository, WorkerRepository workerRepository,
-            AppSettingRepository settingRepository, CurrentUserService currentUser) {
+            AppSettingRepository settingRepository, CurrentUserService currentUser,
+            FarmPhotoRepository farmPhotos) {
         this.scheduleService = scheduleService;
         this.cropRepository = cropRepository;
         this.fieldRepository = fieldRepository;
         this.workerRepository = workerRepository;
         this.settingRepository = settingRepository;
         this.currentUser = currentUser;
+        this.farmPhotos = farmPhotos;
     }
 
     @GetMapping("/calendar")
@@ -101,6 +105,15 @@ public class CalendarController {
                     schedulesByDate.getOrDefault(date.toString(), List.of())));
         }
         model.addAttribute("calendarDays", calendarDays);
+
+        // 写真を付けた日をカレンダーに表示（42日分を1回のDB取得で集約）。
+        Map<String, Long> photoCountsByDate = new HashMap<>();
+        for (Object[] record : farmPhotos.countByDateBetween(owner, calendarStart, calendarEnd)) {
+            LocalDate date = (LocalDate) record[0];
+            long count = ((Number) record[1]).longValue();
+            photoCountsByDate.put(date.toString(), count);
+        }
+        model.addAttribute("photoCountsByDate", photoCountsByDate);
 
         List<Schedule> todaySchedules;
         if (!today.isBefore(calendarStart) && !today.isAfter(calendarEnd)) {

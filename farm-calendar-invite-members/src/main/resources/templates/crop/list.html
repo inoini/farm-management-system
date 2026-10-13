@@ -30,6 +30,7 @@
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
+    <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
 </head>
 
 <body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -133,8 +134,9 @@
                 <!-- 登録されている作物 -->
                 <tr th:each="crop : ${crops}">
 
-                    <td th:text="${#strings.isEmpty(crop.cropName) ? '名称未設定' : crop.cropName}">
-                        さつまいも
+                    <td>
+                        <span th:text="${#strings.isEmpty(crop.cropName) ? '名称未設定' : crop.cropName}">さつまいも</span>
+                        <a class="farm-photo-link" th:href="@{/farm-photos(type='CROP',targetId=${crop.id})}">📷 写真</a>
                     </td>
 
                     <td th:text="${#strings.isEmpty(crop.variety) ? '未設定' : crop.variety}">

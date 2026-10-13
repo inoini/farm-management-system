@@ -1,0 +1,62 @@
+/* Shared photo shortcuts: calendar / crop / field / work history.
+   All selectors are scoped so existing button layouts keep working. */
+.farm-photo-link,
+.calendar-screen .day-photo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 32px;
+    padding: 5px 10px;
+    gap: 3px;
+    border: 1px solid #9ac7ac;
+    border-radius: 9px;
+    background: #eaf7ee;
+    color: #185f3c;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.farm-photo-link:hover,
+.calendar-screen .day-photo-link:hover {
+    background: #d4f0dd;
+    color: #115632;
+}
+.farm-photo-link:focus-visible,
+.calendar-screen .day-photo-link:focus-visible {
+    outline: 3px solid #4a976b;
+    outline-offset: 2px;
+}
+.crop-list-table .farm-photo-link {
+    display: flex;
+    margin-top: 6px;
+}
+.field-row-actions .farm-photo-link,
+.history-row-actions .farm-photo-link {
+    flex: 0 0 auto;
+}
+.calendar-screen .calendar-table .day-number .day-photo-link {
+    display: inline-flex !important;
+    min-height: 25px;
+    min-width: 25px;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 0 0 auto !important;
+    padding: 2px 4px !important;
+    border-radius: 7px;
+    font-size: 11px;
+}
+.calendar-screen .calendar-table .day-number {
+    gap: 2px;
+}
+@media (max-width: 768px) {
+    .calendar-screen .calendar-table .day-number .day-photo-link {
+        font-size: 10px;
+        min-height: 23px;
+        min-width: 22px;
+        padding: 2px !important;
+    }
+}

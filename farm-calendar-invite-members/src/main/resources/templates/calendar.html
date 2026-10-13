@@ -88,6 +88,7 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
     <link rel="stylesheet" th:href="@{/css/calendar-top-spacing.css(v='20261013-1')}" href="/css/calendar-top-spacing.css?v=20261013-1">
+    <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}" href="/css/farm-photo-links.css?v=20261013-1">
     <meta name="theme-color" content="#1B5E20">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -311,6 +312,14 @@
 
                         <div class="day-number">
                             <span th:text="${calendarDays[idx].day}">1</span>
+                            <a class="day-photo-link"
+                               th:href="@{/farm-photos(type='DAY',date=${calendarDays[idx].date})}"
+                               th:attr="aria-label=${calendarDays[idx].date + 'の写真を見る・追加する'}"
+                               onclick="event.stopPropagation()">
+                                <span aria-hidden="true">📷</span>
+                                <span th:if="${photoCountsByDate[calendarDays[idx].date] != null}"
+                                      th:text="${photoCountsByDate[calendarDays[idx].date]}">1</span>
+                            </a>
                         </div>
 
                         <button type="button"
@@ -589,7 +598,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 touchMoved = false;
                 return;
             }
-            if (event.target.closest(".schedule-card")) {
+            if (event.target.closest(".schedule-card, .day-photo-link")) {
                 return;
             }
             openNewScheduleModal(dayBox.dataset.date);

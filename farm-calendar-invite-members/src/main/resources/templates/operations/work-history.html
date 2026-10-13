@@ -21,6 +21,7 @@
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
+    <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
 </head>
 <body class="dashboard-body calendar-screen operations-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
@@ -70,6 +71,7 @@
                             </td>
                             <td class="history-actions-cell"><div class="operations-actions history-row-actions">
                                 <a class="operation-button primary" th:href="@{/work-history/edit/{id}(id=${schedule.id})}">編集</a>
+                                <a class="farm-photo-link" th:href="@{/farm-photos(type='SCHEDULE',targetId=${schedule.id})}">📷 写真</a>
                                 <form th:action="@{/work-history/delete/{id}(id=${schedule.id})}" method="post" onsubmit="return confirm('この作業を消去しますか？カレンダーからも削除されます。');">
                                     <button class="operation-button danger" type="submit">消去</button>
                                 </form>

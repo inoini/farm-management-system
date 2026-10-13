@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>写真の記録 | 農業管理システム</title>
+    <link rel="stylesheet" th:href="@{/css/farm-photos.css(v='20261013-1')}" href="/css/farm-photos.css?v=20261013-1">
+</head>
+<body>
+<main class="photo-shell">
+    <nav aria-label="画面の移動" class="photo-navigation">
+        <a th:href="@{/calendar}">← 作業カレンダー</a>
+        <a th:href="@{/crop}">作物管理</a>
+        <a th:href="@{/field}">圃場管理</a>
+        <a th:href="@{/work-history}">作業履歴</a>
+    </nav>
+    <header class="photo-heading">
+        <span class="photo-kicker">農業管理システム・写真記録</span>
+        <h1 th:text="${albumTitle}">10月13日の写真</h1>
+        <p>作業の前後、作物の成長、圃場の状態を写真で残せます。写真は同じ農場のログイン中のメンバーだけが見られます。</p>
+    </header>
+    <p class="message success" th:if="${photoSuccess}" th:text="${photoSuccess}" role="status"></p>
+    <p class="message error" th:if="${photoError}" th:text="${photoError}" role="alert"></p>
+
+    <form class="date-filter" method="get" th:if="${albumType == 'DAY'}" th:action="@{/farm-photos}">
+        <input type="hidden" name="type" value="DAY">
+        <label for="dayPicker">表示する日付</label>
+        <input type="date" name="date" id="dayPicker" th:value="${photoDate}" required>
+        <button type="submit">この日の写真を見る</button>
+    </form>
+
+    <section class="photo-upload-panel" aria-labelledby="upload-title">
+        <h2 id="upload-title">写真を追加</h2>
+        <p th:if="${!photoEnabled}" class="message warning">
+            現在、無料の写真保存先を設定中です。保存先の設定ができるまでアップロードは利用できません。
+        </p>
+        <p th:if="${photoEnabled and !canUpload}" class="message warning">
+            この写真一覧は5枚まで、または保存容量の安全上限に達しています。不要な写真を削除してから追加してください。
+        </p>
+        <form th:if="${canUpload}" th:action="@{/farm-photos/upload}" method="post"
+              enctype="multipart/form-data" class="photo-upload-form">
+            <input type="hidden" name="type" th:value="${albumType}">
+            <input type="hidden" name="targetId" th:if="${targetId != null}" th:value="${targetId}">
+            <label for="photoDate">撮影・記録日</label>
+            <input id="photoDate" type="date" name="date" th:value="${photoDate}" th:readonly="${albumType == 'SCHEDULE'}" required>
+            <label for="file">写真を選ぶ（カメラ撮影も可能）</label>
+            <input id="file" type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
+            <small>JPEG / PNG / WebP、1枚5MB以内。1つの写真一覧に最大5枚まで。</small>
+            <label for="caption">写真の説明（任意）</label>
+            <input id="caption" type="text" name="caption" maxlength="120" placeholder="例：収穫前の葉の様子">
+            <button type="submit">写真を保存する</button>
+        </form>
+    </section>
+
+    <section class="photo-list-section" aria-labelledby="photo-list-title">
+        <div class="photo-list-heading">
+            <h2 id="photo-list-title">登録した写真</h2>
+            <span th:text="${#lists.size(images)} + ' / 5 枚'">0 / 5枚</span>
+        </div>
+        <p class="photo-empty" th:if="${#lists.isEmpty(images)}">まだ写真はありません。</p>
+        <div class="photo-grid">
+            <article class="photo-card" th:each="image : ${images}">
+                <a th:href="@{/farm-photos/{id}/file(id=${image.id})}" target="_blank"
+                   rel="noopener noreferrer" aria-label="写真を拡大して表示">
+                    <img th:src="@{/farm-photos/{id}/file(id=${image.id})}" src=""
+                         alt="登録した農作業の写真" loading="lazy" referrerpolicy="no-referrer">
+                </a>
+                <div class="photo-card-meta">
+                    <strong th:text="${image.caption != null and !image.caption.isBlank() ? image.caption : '作業の写真'}">作業の写真</strong>
+                    <small><span th:text="${image.photoDate}">2026-10-13</span>
+                        ・<span th:text="${image.createdBy}">登録者</span></small>
+                    <form th:action="@{/farm-photos/{id}/delete(id=${image.id})}" method="post"
+                          onsubmit="return confirm('この写真を削除しますか？');">
+                        <button type="submit" class="photo-delete">削除</button>
+                    </form>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>

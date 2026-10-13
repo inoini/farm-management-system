@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.AppSetting;
 import com.example.demo.entity.Expense;
+import com.example.demo.entity.FarmPhoto;
 import com.example.demo.entity.HarvestShipment;
 import com.example.demo.entity.Sales;
 import com.example.demo.entity.Schedule;
@@ -30,6 +31,7 @@ import com.example.demo.entity.Worker;
 import com.example.demo.repository.AppSettingRepository;
 import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.ExpenseRepository;
+import com.example.demo.repository.FarmPhotoRepository;
 import com.example.demo.repository.FieldRepository;
 import com.example.demo.repository.HarvestShipmentRepository;
 import com.example.demo.repository.SalesRepository;
@@ -41,6 +43,7 @@ import com.example.demo.service.CurrentUserService;
 public class OperationsController {
 
     private final ScheduleRepository scheduleRepository;
+    private final FarmPhotoRepository farmPhotoRepository;
     private final WorkerRepository workerRepository;
     private final HarvestShipmentRepository harvestRepository;
     private final AppSettingRepository settingRepository;
@@ -50,12 +53,13 @@ public class OperationsController {
     private final ExpenseRepository expenseRepository;
     private final CurrentUserService currentUser;
 
-    public OperationsController(ScheduleRepository scheduleRepository, WorkerRepository workerRepository,
+    public OperationsController(ScheduleRepository scheduleRepository, FarmPhotoRepository farmPhotoRepository, WorkerRepository workerRepository,
             HarvestShipmentRepository harvestRepository, AppSettingRepository settingRepository,
             CropRepository cropRepository, FieldRepository fieldRepository,
             SalesRepository salesRepository, ExpenseRepository expenseRepository,
             CurrentUserService currentUser) {
         this.scheduleRepository = scheduleRepository;
+        this.farmPhotoRepository = farmPhotoRepository;
         this.workerRepository = workerRepository;
         this.harvestRepository = harvestRepository;
         this.settingRepository = settingRepository;
@@ -68,7 +72,29 @@ public class OperationsController {
 
     @GetMapping("/work-history")
     public String workHistory(Model model) {
-        List<Schedule> schedules = scheduleRepository.findAllByOwnerEmailOrderByDateDescStartTimeDesc(currentUser.email());
+        String owner = currentUser.email();
+        List<Schedule> schedules = scheduleRepository.findAllByOwnerEmailOrderByDateDescStartTimeDesc(owner);
+
+        // Calendar-popup photos are stored by DAY, not by a particular schedule ID.
+        // Group the existing private photo metadata by date so every matching work
+        // history row displays the photos without moving or duplicating objects.
+        Map<String, List<FarmPhoto>> dayPhotosByDate = new LinkedHashMap<>();
+        for (FarmPhoto photo : farmPhotoRepository.findByOwnerEmailAndKindOrderByCreatedAtDesc(owner, "DAY")) {
+            dayPhotosByDate.computeIfAbsent(photo.getPhotoDate().toString(),
+                    ignored -> new ArrayList<>()).add(photo);
+        }
+        // Photos added without a work entry must still be discoverable in history.
+        var workDates = new java.util.HashSet<String>();
+        for (Schedule work : schedules) {
+            if (work.getDate() != null) workDates.add(work.getDate());
+        }
+        Map<String, List<FarmPhoto>> photosWithoutWork = new LinkedHashMap<>();
+        dayPhotosByDate.forEach((date, images) -> {
+            if (!workDates.contains(date)) photosWithoutWork.put(date, images);
+        });
+
+        model.addAttribute("dayPhotosByDate", dayPhotosByDate);
+        model.addAttribute("photosWithoutWork", photosWithoutWork);
         model.addAttribute("schedules", schedules);
         model.addAttribute("totalCount", schedules.size());
         model.addAttribute("completedCount", schedules.stream().filter(s -> "完了".equals(s.getStatus())).count());

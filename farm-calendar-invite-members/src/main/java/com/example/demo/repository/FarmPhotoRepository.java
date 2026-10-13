@@ -12,6 +12,7 @@ import com.example.demo.entity.FarmPhoto;
 
 public interface FarmPhotoRepository extends JpaRepository<FarmPhoto, Long> {
     Optional<FarmPhoto> findByIdAndOwnerEmail(Long id, String ownerEmail);
+    List<FarmPhoto> findByOwnerEmailAndKindOrderByCreatedAtDesc(String ownerEmail, String kind);
     List<FarmPhoto> findByOwnerEmailAndKindAndReferenceIdOrderByCreatedAtDesc(
             String ownerEmail, String kind, Long referenceId);
     List<FarmPhoto> findByOwnerEmailAndKindAndPhotoDateOrderByCreatedAtDesc(

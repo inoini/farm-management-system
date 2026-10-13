@@ -17,7 +17,7 @@ public interface FarmPhotoRepository extends JpaRepository<FarmPhoto, Long> {
     List<FarmPhoto> findByOwnerEmailAndKindAndPhotoDateOrderByCreatedAtDesc(
             String ownerEmail, String kind, LocalDate photoDate);
     long countByOwnerEmailAndKindAndReferenceId(String ownerEmail, String kind, Long referenceId);
-    long countByOwnerEmailAndKindAndPhotoDate(String ownerEmail, String kind, LocalDate photoDate);
+    long countByOwnerEmailAndKindAndPhotoDate(String ownerEmail, String kind, LocalDate photoDate);\n    List<FarmPhoto> findByOwnerEmailAndPhotoDateOrderByCreatedAtDesc(String ownerEmail, LocalDate photoDate);
 
     @Query("select coalesce(sum(p.sizeBytes), 0) from FarmPhoto p")
     Long totalStoredBytes();

@@ -222,7 +222,14 @@ public class FarmPhotoController {
     public String delete(@PathVariable Long id, RedirectAttributes messages) {
         FarmPhoto photo = photos.findByIdAndOwnerEmail(id, user.email())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Album album = album(photo.getKind(), photo.getReferenceId(), photo.getPhotoDate().toString());
+        // Even if the linked crop/field/work was already deleted, its photo
+        // must remain removable from the calendar date gallery.
+        Album destination = new Album("DAY", null, photo.getPhotoDate(), "当日の写真");
+        try {
+            destination = album(photo.getKind(), photo.getReferenceId(), photo.getPhotoDate().toString());
+        } catch (ResponseStatusException ignored) {
+            // Fall back to the date album when a linked record no longer exists.
+        }
         try {
             storage.delete(photo.getStorageKey());
             photos.delete(photo);
@@ -230,7 +237,7 @@ public class FarmPhotoController {
         } catch (IllegalStateException e) {
             messages.addFlashAttribute("photoError", "写真を削除できませんでした。");
         }
-        return link(album);
+        return link(destination);
     }
 
     private String link(Album album) {

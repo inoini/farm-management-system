@@ -106,8 +106,8 @@ public class FarmPhotoController {
 
     private List<FarmPhoto> list(Album album) {
         if ("DAY".equals(album.kind())) {
-            return photos.findByOwnerEmailAndKindAndPhotoDateOrderByCreatedAtDesc(
-                    user.email(), "DAY", album.date());
+            return photos.findByOwnerEmailAndPhotoDateOrderByCreatedAtDesc(
+                    user.email(), album.date());
         }
         return photos.findByOwnerEmailAndKindAndReferenceIdOrderByCreatedAtDesc(
                 user.email(), album.kind(), album.targetId());
@@ -120,7 +120,11 @@ public class FarmPhotoController {
             Model model) {
         Album album = album(type, targetId, date);
         List<FarmPhoto> images = list(album);
-        long used = photos.totalStoredBytes() == null ? 0L : photos.totalStoredBytes();
+        long albumCount = "DAY".equals(album.kind())
+                ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
+                : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
+        Long currentSize = photos.totalStoredBytes();
+        long used = currentSize == null ? 0L : currentSize;
         model.addAttribute("albumTitle", album.title());
         model.addAttribute("albumType", album.kind());
         model.addAttribute("targetId", album.targetId());
@@ -128,10 +132,10 @@ public class FarmPhotoController {
         model.addAttribute("photoEnabled", storage.isConfigured());
         model.addAttribute("images", images);
         model.addAttribute("canUpload", storage.isConfigured()
-                && images.size() < FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM
+                && albumCount < FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM
                 && used < FarmPhotoStorage.APPLICATION_QUOTA_BYTES);
         model.addAttribute("remainingCount", Math.max(0,
-                FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM - images.size()));
+                FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM - albumCount));
         return "farm-photos";
     }
 
@@ -158,8 +162,10 @@ public class FarmPhotoController {
             // Synchronize the app-level quota checks on this instance to limit
             // concurrent uploads from this server without requiring a paid service.
             synchronized (storage) {
-                List<FarmPhoto> existing = list(album);
-                if (existing.size() >= FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM) {
+                long existing = "DAY".equals(album.kind())
+                        ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
+                        : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
+                if (existing >= FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM) {
                     throw new IllegalArgumentException("この写真一覧には5枚まで登録できます。");
                 }
                 Long total = photos.totalStoredBytes();

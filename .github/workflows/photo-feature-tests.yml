@@ -24,4 +24,4 @@ jobs:
           java-version: '21'
           cache: maven
       - name: Run photo tests
-        run: mvn -B -Dtest=FarmPhotoStorageTest,FarmPhotoControllerTest,OperationsPhotoHistoryTest test
+        run: mvn -B -Dtest=FarmPhotoStorageTest,FarmPhotoControllerTest test

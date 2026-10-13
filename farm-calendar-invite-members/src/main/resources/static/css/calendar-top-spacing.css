@@ -35,3 +35,58 @@
         margin-bottom: 6px;
     }
 }
+
+/* 2026-10-13：画面上部の検索欄をコンパクトに。
+   検索欄を削除せず、月間カレンダーをより上に表示する。 */
+.dashboard-body.calendar-screen .calendar-search-panel {
+    padding: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.dashboard-body.calendar-screen .calendar-search-panel h2 {
+    margin-bottom: 6px;
+}
+
+/* レイアウト1の広い画面は、検索見出しと入力欄を一列に並べる。 */
+@media screen and (min-width: 1101px) {
+    .dashboard-body.calendar-screen.layout-sidebar .calendar-search-area {
+        display: grid;
+        width: min(100%, 980px);
+        grid-template-columns: max-content minmax(0, 1fr);
+        align-items: center;
+        gap: 18px;
+    }
+
+    .dashboard-body.calendar-screen.layout-sidebar .calendar-search-panel h2 {
+        margin: 0;
+        text-align: left;
+    }
+
+    .dashboard-body.calendar-screen.layout-sidebar .calendar-search-form {
+        flex-wrap: nowrap;
+        align-items: end;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+
+    .dashboard-body.calendar-screen.layout-sidebar .calendar-search-input {
+        min-width: 0;
+        flex: 1 1 420px;
+    }
+
+    .dashboard-body.calendar-screen.layout-sidebar .calendar-search-scope {
+        flex: 0 0 180px;
+    }
+}
+
+/* 幅の狭い端末では検索フォームの折り返しとタップ領域を維持する。 */
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .calendar-search-panel {
+        padding: 9px 10px;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-body.calendar-screen .calendar-search-panel h2 {
+        margin-bottom: 5px;
+    }
+}

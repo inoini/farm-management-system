@@ -89,6 +89,8 @@
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
     <link rel="stylesheet" th:href="@{/css/calendar-top-spacing.css(v='20261013-1')}" href="/css/calendar-top-spacing.css?v=20261013-1">
     <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}" href="/css/farm-photo-links.css?v=20261013-1">
+    <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261013-2')}" href="/css/farm-photo-widget.css?v=20261013-2">
+    <script defer th:src="@{/js/farm-photo-widget.js(v='20261013-2')}" src="/js/farm-photo-widget.js?v=20261013-2"></script>
     <meta name="theme-color" content="#1B5E20">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -312,14 +314,12 @@
 
                         <div class="day-number">
                             <span th:text="${calendarDays[idx].day}">1</span>
-                            <a class="day-photo-link"
-                               th:href="@{/farm-photos(type='DAY',date=${calendarDays[idx].date})}"
-                               th:attr="aria-label=${calendarDays[idx].date + 'の写真を見る・追加する'}"
-                               onclick="event.stopPropagation()">
+                            <button type="button" class="day-photo-link"
+                               th:attr="aria-label=${calendarDays[idx].date + 'の写真を見る・追加する'}">
                                 <span aria-hidden="true">📷</span>
                                 <span th:if="${photoCountsByDate[calendarDays[idx].date] != null}"
                                       th:text="${photoCountsByDate[calendarDays[idx].date]}">1</span>
-                            </a>
+                            </button>
                         </div>
 
                         <button type="button"
@@ -383,6 +383,27 @@
                 </div>
             </section>
 
+            <hr>
+
+            <section class="farm-photo-widget" data-photo-type="DAY" aria-label="この日の写真">
+                <h3>📷 この日の写真 <span class="farm-photo-date-label"></span></h3>
+                <div class="farm-photo-actions">
+                    <button type="button" class="farm-photo-camera-button">📸 写真を撮る</button>
+                    <button type="button" class="farm-photo-file-button">🗂 ファイルから選ぶ</button>
+                </div>
+                <input class="farm-photo-camera-input" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden aria-label="カメラで写真を撮る">
+                <input class="farm-photo-file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden aria-label="ファイルから写真を選ぶ">
+                <div class="farm-photo-selected" hidden>
+                    <img class="farm-photo-preview-image" alt="保存前の写真プレビュー">
+                    <span class="farm-photo-filename"></span>
+                </div>
+                <label class="farm-photo-caption-label" for="calendarPhotoCaption">写真の説明（任意）</label>
+                <input class="farm-photo-caption" id="calendarPhotoCaption" type="text" maxlength="120" placeholder="例：定植後の様子">
+                <button type="button" class="farm-photo-save-button" disabled>写真を保存</button>
+                <p class="farm-photo-message" role="status" aria-live="polite">日付を選ぶと写真を表示します。</p>
+                <div class="farm-photo-widget-gallery" aria-label="この日の保存済み写真"></div>
+                <a class="farm-photo-full-gallery" href="/farm-photos">写真の一覧・削除を開く</a>
+            </section>
             <hr>
 
             <form id="scheduleForm" th:action="@{/save}" action="/save" method="post">
@@ -528,6 +549,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        if (typeof window.farmPhotosOpenDate === "function") {
+            window.farmPhotosOpenDate(date);
+        }
         if (typeof window.openModal === "function") {
             window.openModal(date);
             return;
@@ -568,6 +592,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return true;
     }
+
+    document.querySelectorAll(".day-photo-link").forEach(function (button) {
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const box = button.closest(".day-box");
+            if (box) openNewScheduleModal(box.dataset.date);
+        });
+    });
 
     document.querySelectorAll(".day-box").forEach(function (dayBox) {
         let touchStartX = 0;

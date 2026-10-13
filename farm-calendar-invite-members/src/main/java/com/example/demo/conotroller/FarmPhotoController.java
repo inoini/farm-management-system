@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Locale;
 
 import org.springframework.http.CacheControl;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -139,6 +142,72 @@ public class FarmPhotoController {
         return "farm-photos";
     }
 
+
+    /** Private JSON endpoints used by calendar popup and crop photo viewer. */
+    private record PhotoInfo(Long id, String url, String caption, String date) {}
+    private record AlbumInfo(boolean photoEnabled, boolean canUpload, int remainingCount,
+            List<PhotoInfo> images) {}
+
+    private String fileUrl(FarmPhoto image) {
+        return "/farm-photos/" + image.getId() + "/file";
+    }
+
+    private AlbumInfo info(Album album) {
+        List<FarmPhoto> images = list(album);
+        long albumCount = "DAY".equals(album.kind())
+                ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
+                : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
+        Long total = photos.totalStoredBytes();
+        boolean enabled = storage.isConfigured();
+        boolean canUpload = enabled
+                && albumCount < FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM
+                && (total == null ? 0L : total) < FarmPhotoStorage.APPLICATION_QUOTA_BYTES;
+        return new AlbumInfo(enabled, canUpload,
+                (int) Math.max(0, FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM - albumCount),
+                images.stream().map(p -> new PhotoInfo(p.getId(), fileUrl(p), p.getCaption(),
+                        p.getPhotoDate().toString())).toList());
+    }
+
+    @GetMapping("/api")
+    @ResponseBody
+    public AlbumInfo photoApi(@RequestParam(defaultValue = "DAY") String type,
+            @RequestParam(required = false) Long targetId,
+            @RequestParam(required = false) String date) {
+        return info(album(type, targetId, date));
+    }
+
+    /** Single request for crop thumbnails; never returns another farm's photos. */
+    @GetMapping("/api/crop-covers")
+    @ResponseBody
+    public Map<Long, String> cropCovers() {
+        Map<Long, String> covers = new LinkedHashMap<>();
+        for (FarmPhoto p : photos.findByOwnerEmailAndKindOrderByCreatedAtDesc(user.email(), "CROP")) {
+            if (p.getReferenceId() != null) {
+                covers.putIfAbsent(p.getReferenceId(), fileUrl(p));
+            }
+        }
+        return covers;
+    }
+
+    @PostMapping("/api/upload")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> photoApiUpload(
+            @RequestParam(defaultValue = "DAY") String type,
+            @RequestParam(required = false) Long targetId,
+            @RequestParam(required = false) String date,
+            @RequestParam("photo") MultipartFile file,
+            @RequestParam(defaultValue = "") String caption) {
+        Album album = album(type, targetId, date);
+        try {
+            FarmPhoto saved = savePhoto(album, file, caption);
+            return ResponseEntity.ok(Map.of("id", saved.getId(), "url", fileUrl(saved),
+                    "message", "写真を保存しました。"));
+        } catch (IOException | IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "保存できませんでした：" + e.getMessage()));
+        }
+    }
+
     @PostMapping("/upload")
     public String upload(@RequestParam(defaultValue = "DAY") String type,
             @RequestParam(required = false) Long targetId,
@@ -147,57 +216,59 @@ public class FarmPhotoController {
             @RequestParam(defaultValue = "") String caption,
             RedirectAttributes messages) {
         Album album = album(type, targetId, date);
-        String redirect = link(album);
-        if (!storage.isConfigured()) {
-            messages.addFlashAttribute("photoError", "保存先がまだ設定されていません。");
-            return redirect;
-        }
         try {
-            if (file == null || file.isEmpty() || file.getSize() > FarmPhotoStorage.MAX_FILE_BYTES) {
-                throw new IllegalArgumentException("写真は1枚5MB以下で選んでください。");
-            }
-            if (caption.length() > 120) {
-                throw new IllegalArgumentException("メモは120文字以内にしてください。");
-            }
-            // Synchronize the app-level quota checks on this instance to limit
-            // concurrent uploads from this server without requiring a paid service.
-            synchronized (storage) {
-                long existing = "DAY".equals(album.kind())
-                        ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
-                        : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
-                if (existing >= FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM) {
-                    throw new IllegalArgumentException("この写真一覧には5枚まで登録できます。");
-                }
-                Long total = photos.totalStoredBytes();
-                if ((total == null ? 0L : total) + file.getSize()
-                        > FarmPhotoStorage.APPLICATION_QUOTA_BYTES) {
-                    throw new IllegalArgumentException("無料枠の安全上限に近づいたため、追加を停止しています。");
-                }
-                byte[] content = file.getBytes();
-                FarmPhotoStorage.ImageType mime = storage.detectImageType(content);
-                String key = storage.upload(content, mime);
-                try {
-                    FarmPhoto photo = new FarmPhoto();
-                    photo.setOwnerEmail(user.email());
-                    photo.setKind(album.kind());
-                    photo.setReferenceId(album.targetId());
-                    photo.setPhotoDate(album.date());
-                    photo.setStorageKey(key);
-                    photo.setContentType(mime.mime());
-                    photo.setSizeBytes(content.length);
-                    photo.setCaption(caption.strip());
-                    photo.setCreatedBy(user.username());
-                    photos.save(photo);
-                } catch (RuntimeException e) {
-                    try { storage.delete(key); } catch (RuntimeException ignored) { }
-                    throw e;
-                }
-            }
+            savePhoto(album, file, caption);
             messages.addFlashAttribute("photoSuccess", "写真を登録しました。");
         } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             messages.addFlashAttribute("photoError", "登録できませんでした：" + e.getMessage());
         }
-        return redirect;
+        return link(album);
+    }
+
+    /** Shared validated save path for the original gallery and both inline views. */
+    private FarmPhoto savePhoto(Album album, MultipartFile file, String caption) throws IOException {
+        if (!storage.isConfigured()) {
+            throw new IllegalStateException("写真の保存先が設定されていません。");
+        }
+        if (file == null || file.isEmpty() || file.getSize() > FarmPhotoStorage.MAX_FILE_BYTES) {
+            throw new IllegalArgumentException("写真は1枚5MB以下で選んでください。");
+        }
+        if (caption == null || caption.length() > 120) {
+            throw new IllegalArgumentException("メモは120文字以内にしてください。");
+        }
+        // The instance-level lock follows the existing quota policy.
+        synchronized (storage) {
+            long existing = "DAY".equals(album.kind())
+                    ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
+                    : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
+            if (existing >= FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM) {
+                throw new IllegalArgumentException("この写真一覧には5枚まで登録できます。");
+            }
+            Long total = photos.totalStoredBytes();
+            if ((total == null ? 0L : total) + file.getSize()
+                    > FarmPhotoStorage.APPLICATION_QUOTA_BYTES) {
+                throw new IllegalArgumentException("無料枠の安全上限に近づいたため、追加を停止しています。");
+            }
+            byte[] content = file.getBytes();
+            FarmPhotoStorage.ImageType mime = storage.detectImageType(content);
+            String key = storage.upload(content, mime);
+            try {
+                FarmPhoto photo = new FarmPhoto();
+                photo.setOwnerEmail(user.email());
+                photo.setKind(album.kind());
+                photo.setReferenceId(album.targetId());
+                photo.setPhotoDate(album.date());
+                photo.setStorageKey(key);
+                photo.setContentType(mime.mime());
+                photo.setSizeBytes(content.length);
+                photo.setCaption(caption.strip());
+                photo.setCreatedBy(user.username());
+                return photos.save(photo);
+            } catch (RuntimeException e) {
+                try { storage.delete(key); } catch (RuntimeException ignored) { }
+                throw e;
+            }
+        }
     }
 
     @GetMapping("/{id}/file")

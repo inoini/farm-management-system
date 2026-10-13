@@ -31,6 +31,8 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
     <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
+    <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261013-2')}">
+    <script defer th:src="@{/js/farm-photo-widget.js(v='20261013-2')}"></script>
 </head>
 
 <body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -136,7 +138,10 @@
 
                     <td>
                         <span th:text="${#strings.isEmpty(crop.cropName) ? '名称未設定' : crop.cropName}">さつまいも</span>
-                        <a class="farm-photo-link" th:href="@{/farm-photos(type='CROP',targetId=${crop.id})}">📷 写真</a>
+                        <button type="button" class="farm-photo-link"
+                                th:attr="data-crop-photo-open=${crop.id},data-crop-name=${crop.cropName}"
+                                aria-label="この作物の写真を撮る・選ぶ">📷 写真</button>
+                        <div class="crop-photo-cover" th:attr="data-crop-photo-cover=${crop.id}" hidden></div>
                     </td>
 
                     <td th:text="${#strings.isEmpty(crop.variety) ? '未設定' : crop.variety}">
@@ -218,6 +223,38 @@
     </section>
 
 </main>
+
+<div id="crop-photo-dialog" class="crop-photo-dialog" role="dialog" aria-modal="true"
+     aria-hidden="true" aria-labelledby="crop-photo-title" hidden>
+    <div class="crop-photo-dialog-body" role="document">
+        <div class="crop-photo-dialog-top">
+            <h2 id="crop-photo-title" class="crop-photo-dialog-heading">作物の写真</h2>
+            <button type="button" class="crop-photo-dialog-close" aria-label="写真画面を閉じる">×</button>
+        </div>
+        <section class="farm-photo-widget" data-photo-type="CROP" aria-label="この作物の写真">
+            <h3>📷 写真を登録・確認</h3>
+            <div class="farm-photo-actions">
+                <button type="button" class="farm-photo-camera-button">📸 写真を撮る</button>
+                <button type="button" class="farm-photo-file-button">🗂 ファイルから選ぶ</button>
+            </div>
+            <input type="file" class="farm-photo-camera-input" accept="image/jpeg,image/png,image/webp"
+                   capture="environment" hidden aria-label="カメラで写真を撮る">
+            <input type="file" class="farm-photo-file-input" accept="image/jpeg,image/png,image/webp"
+                   hidden aria-label="ファイルから写真を選ぶ">
+            <div class="farm-photo-selected" hidden>
+                <img class="farm-photo-preview-image" alt="保存前の写真プレビュー">
+                <span class="farm-photo-filename"></span>
+            </div>
+            <label class="farm-photo-caption-label" for="cropPhotoCaption">写真の説明（任意）</label>
+            <input class="farm-photo-caption" id="cropPhotoCaption" type="text" maxlength="120"
+                   placeholder="例：さつまいもの葉の成長">
+            <button type="button" class="farm-photo-save-button" disabled>写真を保存</button>
+            <p class="farm-photo-message" role="status" aria-live="polite">写真を読み込んでいます。</p>
+            <div class="farm-photo-widget-gallery" aria-label="この作物の保存済み写真"></div>
+            <a class="farm-photo-full-gallery" href="/farm-photos">写真の一覧・削除を開く</a>
+        </section>
+    </div>
+</div>
 
 </body>
 </html>

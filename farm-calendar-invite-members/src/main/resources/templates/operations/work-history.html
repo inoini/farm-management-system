@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" sizes="180x180" th:href="@{/icons/apple-touch-icon-180.png}" href="/icons/apple-touch-icon-180.png">
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
-    <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-2')}">
+    <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
 </head>
 <body class="dashboard-body calendar-screen operations-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
 <div th:replace="~{fragments/auth :: accountBar}"></div>
@@ -55,23 +55,6 @@
                                 <div class="history-long-text history-memo-text" th:if="${!#strings.isEmpty(schedule.memo)}">
                                     <span class="history-text-label">メモ：</span><span th:text="${schedule.memo}"></span>
                                 </div>
-                                <div class="history-day-photos" th:if="${dayPhotosByDate.containsKey(schedule.date)}">
-                                    <div class="history-photo-heading">
-                                        <strong>📷 この日の写真</strong>
-                                        <a th:href="@{/farm-photos(type='DAY',date=${schedule.date})}">すべて見る</a>
-                                    </div>
-                                    <div class="history-photo-gallery">
-                                        <a th:each="photo, photoStat : ${dayPhotosByDate[schedule.date]}"
-                                           th:if="${photoStat.index < 3}"
-                                           th:href="@{/farm-photos/{id}/file(id=${photo.id})}"
-                                           target="_blank" rel="noopener noreferrer">
-                                            <img th:src="@{/farm-photos/{id}/file(id=${photo.id})}"
-                                                 th:alt="${#strings.isEmpty(photo.caption) ? 'この日の作業写真' : photo.caption}"
-                                                 loading="lazy">
-                                        </a>
-                                    </div>
-                                    <small>同じ日付の作業に共通で表示されます。</small>
-                                </div>
                             </td>
                             <td class="history-person-cell" th:text="${#strings.isEmpty(schedule.userName) ? '未設定' : schedule.userName}">担当者</td>
                             <td class="history-field-cell" th:text="${#strings.isEmpty(schedule.fieldName) ? '未設定' : schedule.fieldName}">圃場</td>
@@ -88,9 +71,7 @@
                             </td>
                             <td class="history-actions-cell"><div class="operations-actions history-row-actions">
                                 <a class="operation-button primary" th:href="@{/work-history/edit/{id}(id=${schedule.id})}">編集</a>
-                                <a class="farm-photo-link" th:href="@{/farm-photos(type='SCHEDULE',targetId=${schedule.id})}">📷 作業別写真</a>
-                                <a class="farm-photo-link" th:if="${dayPhotosByDate.containsKey(schedule.date)}"
-                                   th:href="@{/farm-photos(type='DAY',date=${schedule.date})}">📷 この日の写真</a>
+                                <a class="farm-photo-link" th:href="@{/farm-photos(type='DAY',date=${schedule.date})}">📷 この日の写真</a>
                                 <form th:action="@{/work-history/delete/{id}(id=${schedule.id})}" method="post" onsubmit="return confirm('この作業を消去しますか？カレンダーからも削除されます。');">
                                     <button class="operation-button danger" type="submit">消去</button>
                                 </form>
@@ -100,26 +81,6 @@
                     </table>
                 </div>
                 <p class="operations-empty" th:if="${#lists.isEmpty(schedules)}">作業履歴はまだありません。</p>
-            </section>
-            <section class="operations-panel" th:if="${!photosWithoutWork.isEmpty()}">
-                <h2>作業を登録していない日の写真</h2>
-                <p>カレンダーに写真だけを保存した日付です。写真は削除されず、ここから確認できます。</p>
-                <div class="history-orphan-photo-day" th:each="entry : ${photosWithoutWork}">
-                    <div class="history-photo-heading">
-                        <strong th:text="${entry.key}">2026-10-13</strong>
-                        <a th:href="@{/farm-photos(type='DAY',date=${entry.key})}">写真をすべて見る</a>
-                    </div>
-                    <div class="history-photo-gallery">
-                        <a th:each="photo, photoStat : ${entry.value}"
-                           th:if="${photoStat.index < 3}"
-                           th:href="@{/farm-photos/{id}/file(id=${photo.id})}"
-                           target="_blank" rel="noopener noreferrer">
-                            <img th:src="@{/farm-photos/{id}/file(id=${photo.id})}"
-                                 th:alt="${#strings.isEmpty(photo.caption) ? '日付の写真' : photo.caption}"
-                                 loading="lazy">
-                        </a>
-                    </div>
-                </div>
             </section>
         </div>
     </main>

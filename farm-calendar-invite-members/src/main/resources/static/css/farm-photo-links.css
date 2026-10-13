@@ -60,3 +60,59 @@
         padding: 2px !important;
     }
 }
+
+/* Calendar DAY photos shown by date on work history, without associating
+   unrelated jobs on the same day with a specific photo. */
+.history-day-photos {
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #d4e3d5;
+    border-radius: 10px;
+    background: #f4faf5;
+}
+.history-photo-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+.history-photo-heading a {
+    color: #185f3c;
+    font-weight: 700;
+    text-decoration: underline;
+}
+.history-photo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 6px 0;
+}
+.history-photo-gallery a {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #b6d4bb;
+    line-height: 0;
+}
+.history-photo-gallery img {
+    display: block;
+    width: 68px;
+    height: 68px;
+    object-fit: cover;
+}
+.history-day-photos small {
+    display: block;
+    margin-top: 5px;
+    color: #566e5d;
+    font-size: 11px;
+}
+.history-orphan-photo-day {
+    padding: 12px 0;
+    border-top: 1px solid #dde8df;
+}
+@media (max-width: 768px) {
+    .history-photo-gallery img { width: 56px; height: 56px; }
+    .history-day-photos { padding: 8px; }
+}

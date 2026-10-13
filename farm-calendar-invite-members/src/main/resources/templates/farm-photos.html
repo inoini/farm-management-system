@@ -56,7 +56,7 @@
     <section class="photo-list-section" aria-labelledby="photo-list-title">
         <div class="photo-list-heading">
             <h2 id="photo-list-title">登録した写真</h2>
-            <span th:text="${#lists.size(images)} + ' / 5 枚'">0 / 5枚</span>
+            <span th:text="${#lists.size(images)} + '枚'">0枚</span>
         </div>
         <p class="photo-empty" th:if="${#lists.isEmpty(images)}">まだ写真はありません。</p>
         <div class="photo-grid">

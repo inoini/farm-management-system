@@ -23,6 +23,15 @@
         node.textContent = text;
         node.classList.toggle("is-error", Boolean(error));
     }
+    function formatPhotoDate(value) {
+        const matched = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+        return matched ? Number(matched[1]) + "年" + Number(matched[2]) + "月" + Number(matched[3]) + "日" : "日付未設定";
+    }
+    function todayLocal() {
+        const now = new Date();
+        const pad = function (n) { return String(n).padStart(2, "0"); };
+        return now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate());
+    }
     function createThumb(photo) {
         const card = document.createElement("figure");
         card.className = "farm-photo-thumb";
@@ -37,33 +46,19 @@
         img.loading = "lazy";
         link.appendChild(img);
         card.appendChild(link);
+        const description = document.createElement("figcaption");
+        const photoDate = document.createElement("strong");
+        photoDate.className = "farm-photo-taken-date";
+        photoDate.textContent = "撮影日： " + formatPhotoDate(photo.date);
+        description.appendChild(photoDate);
         if (photo.caption) {
-            const caption = document.createElement("figcaption");
+            const caption = document.createElement("span");
+            caption.className = "farm-photo-caption-text";
             caption.textContent = photo.caption;
-            card.appendChild(caption);
+            description.appendChild(caption);
         }
+        card.appendChild(description);
         return card;
-    }
-    async function refreshCovers() {
-        const covers = document.querySelectorAll("[data-crop-photo-cover]");
-        if (!covers.length) return;
-        try {
-            const response = await fetch("/farm-photos/api/crop-covers", { credentials: "same-origin" });
-            const data = await jsonOrError(response);
-            covers.forEach(function (container) {
-                const url = data[container.dataset.cropPhotoCover];
-                container.replaceChildren();
-                container.hidden = !url;
-                if (!url) return;
-                const image = document.createElement("img");
-                image.src = url;
-                image.alt = "登録した作物の最新写真";
-                image.loading = "lazy";
-                container.appendChild(image);
-            });
-        } catch (ignored) {
-            // Login-required images simply remain hidden if not authenticated.
-        }
     }
     function setup(widget) {
         const camera = by(widget, ".farm-photo-camera-input");
@@ -76,6 +71,7 @@
         const previewImage = by(widget, ".farm-photo-preview-image");
         const fileName = by(widget, ".farm-photo-filename");
         const caption = by(widget, ".farm-photo-caption");
+        const captureDate = by(widget, ".farm-photo-capture-date");
         const fullGallery = by(widget, ".farm-photo-full-gallery");
         let currentFile = null;
         let objectUrl = null;
@@ -160,6 +156,18 @@
             fileButton.disabled = true;
             const form = new FormData();
             selectedTarget(widget).forEach(function (value, key) { form.append(key, value); });
+            if (captureDate) {
+                if (!captureDate.value || !captureDate.checkValidity()) {
+                    uploading = false;
+                    cameraButton.disabled = !uploadAllowed;
+                    fileButton.disabled = !uploadAllowed;
+                    saveButton.disabled = false;
+                    message(widget, "撮影日を確認して入力してください。", true);
+                    captureDate.focus();
+                    return;
+                }
+                form.set("date", captureDate.value);
+            }
             form.append("photo", currentFile, currentFile.name);
             form.append("caption", caption.value);
             const csrf = document.querySelector('meta[name="_csrf"]');
@@ -174,7 +182,6 @@
                 await jsonOrError(response);
                 uploading = false;
                 await load();
-                await refreshCovers();
                 message(widget, "写真を保存しました。一覧に掲載されています。", false);
             } catch (e) {
                 uploading = false;
@@ -206,6 +213,11 @@
                 if (!cropDialog || !cropWidget) return;
                 previouslyFocused = document.activeElement;
                 cropWidget.dataset.photoTarget = button.dataset.cropPhotoOpen;
+                const cropDateInput = by(cropWidget, ".farm-photo-capture-date");
+                if (cropDateInput) {
+                    cropDateInput.max = todayLocal();
+                    cropDateInput.value = todayLocal();
+                }
                 const heading = by(cropDialog, ".crop-photo-dialog-heading");
                 if (heading) heading.textContent = (button.dataset.cropName || "作物") + "の写真";
                 cropDialog.hidden = false;
@@ -230,6 +242,5 @@
                 if (event.key === "Escape" && !cropDialog.hidden) closeCrop();
             });
         }
-        refreshCovers();
     });
 })();

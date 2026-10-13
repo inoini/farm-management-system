@@ -106,15 +106,6 @@ public class CalendarController {
         }
         model.addAttribute("calendarDays", calendarDays);
 
-        // 写真を付けた日をカレンダーに表示（42日分を1回のDB取得で集約）。
-        Map<String, Long> photoCountsByDate = new HashMap<>();
-        for (Object[] record : farmPhotos.countByDateBetween(owner, calendarStart, calendarEnd)) {
-            LocalDate date = (LocalDate) record[0];
-            long count = ((Number) record[1]).longValue();
-            photoCountsByDate.put(date.toString(), count);
-        }
-        model.addAttribute("photoCountsByDate", photoCountsByDate);
-
         List<Schedule> todaySchedules;
         if (!today.isBefore(calendarStart) && !today.isAfter(calendarEnd)) {
             todaySchedules = schedulesByDate.getOrDefault(today.toString(), List.of());

@@ -41,7 +41,16 @@
 .farm-photo-widget-gallery { display: grid; grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); gap: 8px; }
 .farm-photo-thumb { margin: 0; border: 1px solid #cbded0; border-radius: 8px; overflow: hidden; min-width: 0; }
 .farm-photo-thumb img { width: 100%; height: 100px; display: block; object-fit: cover; }
-.farm-photo-thumb figcaption { font-size: 12px; padding: 5px; overflow-wrap: anywhere; }
+.farm-photo-thumb figcaption { font-size: 12px; line-height: 1.45; padding: 7px; overflow-wrap: anywhere; background: #fff; }
+.farm-photo-taken-date { display: block; font-size: 12px; font-weight: 800; color: #205b38; }
+.farm-photo-caption-text { display: block; margin-top: 4px; color: #455a4d; }
+.farm-photo-registered-title { margin: 16px 0 8px; font-size: 15px; }
+.farm-photo-widget .farm-photo-capture-date {
+    box-sizing: border-box; display: block; min-height: 42px; max-width: 260px; width: 100%;
+    border: 1px solid #aecfb6; border-radius: 8px; background: #fff; color: #182b20;
+    padding: 7px 9px; font: inherit;
+}
+.farm-photo-date-hint { margin: 6px 0 10px; color: #425d49; font-size: 12px; line-height: 1.5; }
 .farm-photo-full-gallery { display: inline-block; margin-top: 10px; font-size: 13px; color: #175e3d; text-decoration: underline; }
 .crop-list-table .farm-photo-link { font: inherit; font-size: 12px; font-weight: 800; }
 .crop-photo-cover { margin-top: 7px; }
@@ -72,7 +81,7 @@
 @media(max-width: 600px) {
     .farm-photo-widget { padding: 9px; }
     .farm-photo-actions button { flex: 1 1 125px; }
-    .farm-photo-widget-gallery { grid-template-columns: repeat(3,minmax(0,1fr)); }
+    .farm-photo-widget-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
     .farm-photo-thumb img { height: 85px; }
     .crop-photo-dialog { padding: 6px; }
     .crop-photo-dialog-body { padding: 12px; max-height: 94dvh; }

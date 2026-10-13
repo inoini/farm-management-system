@@ -1,0 +1,37 @@
+/* 作業カレンダー上部の余白だけを控えめにする。
+   検索・月切り替え・予定登録のレイアウトと、他の画面には影響させない。 */
+.dashboard-body.calendar-screen .calendar-app-header {
+    min-height: 50px;
+    padding: 6px 16px;
+}
+
+.dashboard-body.calendar-screen .calendar-page {
+    padding-top: 6px;
+}
+
+.dashboard-body.calendar-screen .calendar-header {
+    padding: 9px 14px;
+    margin-bottom: 8px;
+}
+
+.dashboard-body.calendar-screen .calendar-header h1 {
+    margin: 0;
+    line-height: 1.25;
+}
+
+/* スマホは固定ログイン表示とメニューボタンの場所を確保。 */
+@media screen and (max-width: 768px) {
+    .dashboard-body.calendar-screen .calendar-app-header {
+        min-height: 0;
+        padding: 50px 12px 6px 64px;
+    }
+
+    .dashboard-body.calendar-screen .calendar-page {
+        padding-top: 5px;
+    }
+
+    .dashboard-body.calendar-screen .calendar-header {
+        padding: 7px 10px;
+        margin-bottom: 6px;
+    }
+}

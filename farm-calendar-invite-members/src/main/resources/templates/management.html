@@ -675,6 +675,7 @@
 
     <nav class="analysis-nav" aria-label="経営分析メニュー">
         <a href="#crop-profit">作物別収支</a>
+        <a href="#field-profit">圃場別収支</a>
         <a href="#budget">予算と実績</a>
     </nav>
 
@@ -683,9 +684,9 @@
             <div>
                 <p class="section-label">CROP PROFITABILITY</p>
                 <h2 id="crop-profit-title">作物別収支</h2>
-                <p>売上に登録した作物と、経費に指定した作物をまとめて確認します。</p>
+                <p>売上・経費に登録された作物と圃場ごとに確認します。同じ圃場IDに登録された複数の記録は合算されます。</p>
             </div>
-            <a class="back-button" th:href="@{/expenses}" href="/expenses">経費に作物を設定</a>
+            <a class="back-button" th:href="@{/expenses}" href="/expenses">経費に作物・圃場を設定</a>
         </div>
 
         <div class="management-table-wrap" th:if="${cropProfitRows != null and !#lists.isEmpty(cropProfitRows)}">
@@ -693,6 +694,7 @@
                 <thead>
                 <tr>
                     <th>作物</th>
+                    <th>圃場</th>
                     <th class="money-cell">売上</th>
                     <th class="money-cell">直接経費</th>
                     <th class="money-cell">直接利益</th>
@@ -702,6 +704,7 @@
                 <tbody>
                 <tr th:each="row : ${cropProfitRows}">
                     <td th:text="${row.cropName}">さつまいも</td>
+                    <td th:text="${row.fieldName}">第1圃場</td>
                     <td class="money-cell" th:text="|${#numbers.formatInteger(row.sales, 1, 'COMMA')}円|">0円</td>
                     <td class="money-cell" th:text="|${#numbers.formatInteger(row.expenses, 1, 'COMMA')}円|">0円</td>
                     <td class="money-cell"
@@ -713,11 +716,57 @@
             </table>
         </div>
         <p th:if="${cropProfitRows == null or #lists.isEmpty(cropProfitRows)}" class="common-expense-note">
-            作物別データはまだありません。売上の作物名と、経費の「作物」を登録すると表示されます。
+            作物別データはまだありません。売上・経費の作物名を登録すると表示されます。圃場も割り当てると圃場ごとの収支を確認できます。
         </p>
         <p class="common-expense-note">
             共通経費：<strong th:text="|${#numbers.formatInteger(sharedExpenseTotal, 1, 'COMMA')}円|">0円</strong>
-            ／ 作物未指定の経費は共通経費として分けて表示しています。
+            ／ 作物も圃場も未指定の経費は共通経費として分けて表示しています。
+        </p>
+    </section>
+
+    <section class="analysis-section" id="field-profit" aria-labelledby="field-profit-title">
+        <div class="analysis-heading">
+            <div>
+                <p class="section-label">FIELD PROFITABILITY</p>
+                <h2 id="field-profit-title">圃場別収支</h2>
+                <p>同一圃場に登録された複数回の売上・経費や異なる作物の記録を合算します。</p>
+            </div>
+            <a class="back-button" th:href="@{/field}" href="/field">圃場管理を開く</a>
+        </div>
+
+        <div class="management-table-wrap" th:if="${fieldProfitRows != null and !#lists.isEmpty(fieldProfitRows)}">
+            <table class="analysis-table">
+                <thead>
+                <tr>
+                    <th>圃場</th>
+                    <th class="money-cell">売上合計</th>
+                    <th class="money-cell">経費合計</th>
+                    <th class="money-cell">利益</th>
+                    <th class="money-cell">利益率</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${fieldProfitRows}">
+                    <td th:text="${row.fieldName}">第1圃場</td>
+                    <td class="money-cell" th:text="|${#numbers.formatInteger(row.sales, 1, 'COMMA')}円|">0円</td>
+                    <td class="money-cell" th:text="|${#numbers.formatInteger(row.expenses, 1, 'COMMA')}円|">0円</td>
+                    <td class="money-cell"
+                        th:classappend="${row.profit >= 0} ? ' profit-positive' : ' profit-negative'"
+                        th:text="|${#numbers.formatInteger(row.profit, 1, 'COMMA')}円|">0円</td>
+                    <td class="money-cell" th:text="|${#numbers.formatDecimal(row.margin, 1, 1)}%|">0.0%</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p th:if="${fieldProfitRows == null or #lists.isEmpty(fieldProfitRows)}" class="common-expense-note">
+            圃場別データはまだありません。圃場管理で圃場を登録してください。
+        </p>
+        <p class="common-expense-note">
+            圃場未設定の売上：<strong th:text="|${#numbers.formatInteger(unassignedFieldSales, 1, 'COMMA')}円|">0円</strong>
+            ／ 圃場未設定の経費：<strong th:text="|${#numbers.formatInteger(unassignedFieldExpenses, 1, 'COMMA')}円|">0円</strong>
+        </p>
+        <p class="common-expense-note">
+            過去の売上・経費は自動で圃場に割り当てません。各明細の編集画面から圃場を選択すると反映されます。
         </p>
     </section>
 

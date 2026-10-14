@@ -76,6 +76,18 @@
                 </datalist>
             </div>
 
+
+            <div class="app-field">
+                <label for="expenseFieldId">圃場 <span class="optional-badge">任意</span></label>
+                <select id="expenseFieldId" th:field="*{fieldId}">
+                    <option value="">圃場未設定</option>
+                    <option th:each="field : ${fields}"
+                            th:value="${field.id}"
+                            th:text="${fieldLabels.get(field.id)}"></option>
+                </select>
+                <small>圃場管理で登録した圃場を選ぶと、圃場別利益に反映されます。</small>
+            </div>
+
             <div class="app-field">
                 <label for="expenseAmount">金額 <span class="required-badge">必須</span></label>
                 <input id="expenseAmount" type="number" th:field="*{amount}"

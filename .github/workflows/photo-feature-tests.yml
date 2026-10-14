@@ -23,5 +23,5 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Run photo tests
-        run: mvn -B -Dtest=FarmPhotoStorageTest,FarmPhotoControllerTest test
+      - name: Run photo and field profit tests
+        run: mvn -B -Dtest=FarmPhotoStorageTest,FarmPhotoControllerTest,FieldProfitAggregationTest test

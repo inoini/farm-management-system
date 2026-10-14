@@ -602,6 +602,18 @@
                     </datalist>
                 </div>
 
+
+            <div class="field">
+                <label for="expense-field-id">圃場 <span class="optional">任意</span></label>
+                <select id="expense-field-id" th:field="*{fieldId}">
+                    <option value="">圃場未設定</option>
+                    <option th:each="field : ${fields}"
+                            th:value="${field.id}"
+                            th:text="${fieldLabels.get(field.id)}"></option>
+                </select>
+                <small>圃場管理で登録した圃場を選ぶと、圃場別利益に反映されます。</small>
+            </div>
+
                 <div class="field">
                     <label for="expense-amount">
                         金額
@@ -662,6 +674,7 @@
                         <th scope="col">日付</th>
                         <th scope="col">項目</th>
                         <th scope="col">作物</th>
+                        <th scope="col">圃場</th>
                         <th scope="col">金額</th>
                         <th scope="col">メモ</th>
                         <th scope="col">操作</th>
@@ -683,6 +696,7 @@
                         </td>
 
                         <td data-label="作物" th:text="${#strings.isEmpty(expense.crop) ? '共通経費' : expense.crop}">共通経費</td>
+                        <td data-label="圃場" th:text="${expense.fieldId == null ? '未設定' : fieldLabels.getOrDefault(expense.fieldId, '未登録')}">第1圃場</td>
 
                         <td data-label="金額" class="money">
                             <span th:text="${#numbers.formatInteger(expense.amount != null ? expense.amount : 0, 1, 'COMMA')}">0</span>円
@@ -711,7 +725,7 @@
 
                     <tr class="empty"
                         th:if="${expenses == null or #lists.isEmpty(expenses)}">
-                        <td colspan="6">
+                        <td colspan="7">
                             登録されている経費はありません。
                         </td>
                     </tr>

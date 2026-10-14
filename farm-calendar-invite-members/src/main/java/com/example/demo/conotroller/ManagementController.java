@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.Expense;
+import com.example.demo.entity.Field;
 import com.example.demo.entity.MonthlyBudget;
 import com.example.demo.entity.Sales;
 import com.example.demo.repository.ExpenseRepository;
+import com.example.demo.repository.FieldRepository;
 import com.example.demo.repository.MonthlyBudgetRepository;
 import com.example.demo.repository.SalesRepository;
 import com.example.demo.service.CurrentUserService;
+import com.example.demo.util.FieldLabels;
 
 @Controller
 public class ManagementController {
@@ -35,15 +39,18 @@ public class ManagementController {
 
     private final SalesRepository salesRepository;
     private final ExpenseRepository expenseRepository;
+    private final FieldRepository fieldRepository;
     private final MonthlyBudgetRepository budgetRepository;
     private final CurrentUserService currentUser;
 
     public ManagementController(SalesRepository salesRepository,
             ExpenseRepository expenseRepository,
+            FieldRepository fieldRepository,
             MonthlyBudgetRepository budgetRepository,
             CurrentUserService currentUser) {
         this.salesRepository = salesRepository;
         this.expenseRepository = expenseRepository;
+        this.fieldRepository = fieldRepository;
         this.budgetRepository = budgetRepository;
         this.currentUser = currentUser;
     }
@@ -62,6 +69,8 @@ public class ManagementController {
 
         List<Sales> sales = salesRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
         List<Expense> expenses = expenseRepository.findAllByOwnerEmailOrderByDateDescIdDesc(owner);
+        List<Field> fields = fieldRepository.findAllByOwnerEmail(owner);
+        Map<Long, String> fieldLabels = FieldLabels.from(fields);
         List<MonthlyBudget> budgets = budgetRepository
                 .findAllByOwnerEmailAndBudgetYearOrderByBudgetMonthAsc(owner, selectedYear);
 
@@ -69,9 +78,16 @@ public class ManagementController {
         model.addAttribute("todayYear", today.getYear());
         model.addAttribute("currentMonth", selectedYear == today.getYear() ? today.getMonthValue() : 0);
         model.addAttribute("selectedMonth", selectedMonth);
-        model.addAttribute("cropProfitRows", buildCropProfitRows(sales, expenses));
+        model.addAttribute("cropProfitRows", buildCropProfitRows(sales, expenses, fieldLabels));
+        model.addAttribute("fieldProfitRows", buildFieldProfitRows(sales, expenses, fields, fieldLabels));
+        model.addAttribute("unassignedFieldSales", roundMoney(sales.stream()
+                .filter(s -> s.getFieldId() == null)
+                .map(Sales::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum()));
+        model.addAttribute("unassignedFieldExpenses", roundMoney(expenses.stream()
+                .filter(e -> e.getFieldId() == null)
+                .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum()));
         model.addAttribute("sharedExpenseTotal", roundMoney(expenses.stream()
-                .filter(e -> normalize(e.getCrop()).isEmpty())
+                .filter(e -> normalize(e.getCrop()).isEmpty() && e.getFieldId() == null)
                 .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum()));
 
         MonthlyBudget budgetForm = new MonthlyBudget();
@@ -140,28 +156,88 @@ public class ManagementController {
         return "redirect:/management?year=" + year + "&month=" + month + "#budget";
     }
 
-    private List<Map<String, Object>> buildCropProfitRows(List<Sales> sales, List<Expense> expenses) {
-        Set<String> names = new LinkedHashSet<>();
-        sales.stream().map(Sales::getCrop).map(this::normalize).filter(v -> !v.isEmpty()).sorted().forEach(names::add);
-        expenses.stream().map(Expense::getCrop).map(this::normalize).filter(v -> !v.isEmpty()).sorted().forEach(names::add);
+    private record CropFieldKey(String cropName, Long fieldId) {}
+
+    /**
+     * Keep crop and field as separate grouping dimensions. Existing transactions
+     * without a field remain visible under "圃場未設定" rather than being
+     * guessed or assigned to an arbitrary plot.
+     */
+    private List<Map<String, Object>> buildCropProfitRows(
+            List<Sales> sales, List<Expense> expenses, Map<Long, String> fieldLabels) {
+        Map<CropFieldKey, double[]> totals = new LinkedHashMap<>();
+        for (Sales sale : sales) {
+            String crop = normalize(sale.getCrop());
+            Long fieldId = sale.getFieldId();
+            if (crop.isEmpty() && fieldId == null) continue;
+            totals.computeIfAbsent(new CropFieldKey(crop, fieldId), key -> new double[2])[0]
+                    += sale.getAmount() == null ? 0 : sale.getAmount();
+        }
+        for (Expense expense : expenses) {
+            String crop = normalize(expense.getCrop());
+            Long fieldId = expense.getFieldId();
+            if (crop.isEmpty() && fieldId == null) continue; // shared costs
+            totals.computeIfAbsent(new CropFieldKey(crop, fieldId), key -> new double[2])[1]
+                    += expense.getAmount() == null ? 0 : expense.getAmount();
+        }
 
         List<Map<String, Object>> rows = new ArrayList<>();
-        for (String name : names) {
-            double cropSales = sales.stream()
-                    .filter(s -> name.equals(normalize(s.getCrop())))
-                    .map(Sales::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
-            double cropExpense = expenses.stream()
-                    .filter(e -> name.equals(normalize(e.getCrop())))
-                    .map(Expense::getAmount).filter(v -> v != null).mapToDouble(Double::doubleValue).sum();
-            double cropProfit = cropSales - cropExpense;
-            Map<String, Object> row = new LinkedHashMap<>();
-            row.put("cropName", name);
-            row.put("sales", roundMoney(cropSales));
-            row.put("expenses", roundMoney(cropExpense));
-            row.put("profit", roundMoney(cropProfit));
-            row.put("margin", cropSales <= 0 ? 0 : Math.round(cropProfit * 1000.0 / cropSales) / 10.0);
-            rows.add(row);
+        totals.entrySet().stream()
+                .sorted(Comparator
+                        .comparing((Map.Entry<CropFieldKey, double[]> item) -> item.getKey().cropName())
+                        .thenComparing(item -> FieldLabels.label(fieldLabels, item.getKey().fieldId()))
+                        .thenComparing(item -> item.getKey().fieldId() == null ? -1L : item.getKey().fieldId()))
+                .forEach(item -> {
+                    double cropSales = item.getValue()[0];
+                    double cropExpense = item.getValue()[1];
+                    double cropProfit = cropSales - cropExpense;
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("cropName", item.getKey().cropName().isEmpty() ? "作物未設定" : item.getKey().cropName());
+                    row.put("fieldName", FieldLabels.label(fieldLabels, item.getKey().fieldId()));
+                    row.put("sales", roundMoney(cropSales));
+                    row.put("expenses", roundMoney(cropExpense));
+                    row.put("profit", roundMoney(cropProfit));
+                    row.put("margin", cropSales <= 0 ? 0 : Math.round(cropProfit * 1000.0 / cropSales) / 10.0);
+                    rows.add(row);
+                });
+        return rows;
+    }
+
+    /** Sum every transaction assigned to a specific field, across all crops. */
+    private List<Map<String, Object>> buildFieldProfitRows(
+            List<Sales> sales, List<Expense> expenses, List<Field> fields, Map<Long, String> fieldLabels) {
+        Map<Long, double[]> totals = new LinkedHashMap<>();
+        for (Field field : fields) {
+            totals.put(field.getId(), new double[2]);
         }
+        for (Sales sale : sales) {
+            if (sale.getFieldId() != null) {
+                totals.computeIfAbsent(sale.getFieldId(), key -> new double[2])[0]
+                        += sale.getAmount() == null ? 0 : sale.getAmount();
+            }
+        }
+        for (Expense expense : expenses) {
+            if (expense.getFieldId() != null) {
+                totals.computeIfAbsent(expense.getFieldId(), key -> new double[2])[1]
+                        += expense.getAmount() == null ? 0 : expense.getAmount();
+            }
+        }
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        totals.entrySet().stream()
+                .sorted(Comparator.comparing(item -> FieldLabels.label(fieldLabels, item.getKey())))
+                .forEach(item -> {
+                    double fieldSales = item.getValue()[0];
+                    double fieldExpense = item.getValue()[1];
+                    double fieldProfit = fieldSales - fieldExpense;
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("fieldName", FieldLabels.label(fieldLabels, item.getKey()));
+                    row.put("sales", roundMoney(fieldSales));
+                    row.put("expenses", roundMoney(fieldExpense));
+                    row.put("profit", roundMoney(fieldProfit));
+                    row.put("margin", fieldSales <= 0 ? 0 : Math.round(fieldProfit * 1000.0 / fieldSales) / 10.0);
+                    rows.add(row);
+                });
         return rows;
     }
 

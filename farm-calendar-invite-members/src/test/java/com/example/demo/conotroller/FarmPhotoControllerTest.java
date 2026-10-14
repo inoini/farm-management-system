@@ -50,6 +50,34 @@ class FarmPhotoControllerTest {
     }
 
     @Test
+    void refusesToOpenAnotherFarmsFieldAlbum() {
+        when(user.email()).thenReturn("farm-one");
+        when(fields.findByIdAndOwnerEmail(17L, "farm-one"))
+                .thenReturn(Optional.empty());
+        assertThrows(ResponseStatusException.class,
+                () -> controller.gallery("FIELD", 17L, "2026-10-14", "list",
+                        new ExtendedModelMap()));
+        verify(fields).findByIdAndOwnerEmail(17L, "farm-one");
+    }
+
+    @Test
+    void fieldPhotoAlbumKeepsItsFieldIdAndCompactMode() {
+        when(user.email()).thenReturn("farm-one");
+        com.example.demo.entity.Field field = new com.example.demo.entity.Field();
+        field.setId(17L);
+        field.setName("第1圃場");
+        when(fields.findByIdAndOwnerEmail(17L, "farm-one"))
+                .thenReturn(Optional.of(field));
+
+        ExtendedModelMap model = new ExtendedModelMap();
+        assertEquals("farm-photos", controller.gallery("FIELD", 17L, "2026-10-14", "list", model));
+        assertEquals("FIELD", model.get("albumType"));
+        assertEquals(17L, model.get("targetId"));
+        assertEquals(true, model.get("compactView"));
+        verify(photos).findByOwnerEmailAndKindAndReferenceIdOrderByCreatedAtDesc("farm-one", "FIELD", 17L);
+    }
+
+    @Test
     void albumTypeIsWhitelisted() {
         when(user.email()).thenReturn("farm-one");
         assertThrows(ResponseStatusException.class,

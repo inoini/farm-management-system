@@ -87,7 +87,7 @@
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="stylesheet" th:href="@{/css/auth.css(v='20260927-green-icon-2')}" href="/css/auth.css?v=20260927-green-icon-2">
-    <link rel="stylesheet" th:href="@{/css/calendar-top-spacing.css(v='20261013-1')}" href="/css/calendar-top-spacing.css?v=20261013-1">
+    <link rel="stylesheet" th:href="@{/css/calendar-top-spacing.css(v='20261014-search-clear-1')}" href="/css/calendar-top-spacing.css?v=20261014-search-clear-1">
     <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}" href="/css/farm-photo-links.css?v=20261013-1">
     <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261014-list-1')}" href="/css/farm-photo-widget.css?v=20261014-list-1">
     <script defer th:src="@{/js/farm-photo-widget.js(v='20261014-list-1')}" src="/js/farm-photo-widget.js?v=20261014-list-1"></script>
@@ -234,7 +234,7 @@
                             <option value="month" th:selected="${searchScope == 'month'}">表示中の月</option>
                         </select>
                     </div>
-                    <a class="calendar-search-reset" th:if="${!#strings.isEmpty(searchQuery)}" th:href="@{/calendar(year=${year},month=${month})}">解除</a>
+
                 </form>
             </div>
 
@@ -254,7 +254,13 @@
         </div>
 
         <div th:if="${!#strings.isEmpty(searchQuery)}" class="calendar-search-results">
-            <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
+            <div class="calendar-search-results-header">
+                <h3><span th:text="${searchQuery}"></span>：<span th:text="${#lists.size(searchResults)}">0</span>件</h3>
+                <a class="calendar-search-reset" th:href="@{/calendar(year=${year},month=${month})}">
+                    <span class="calendar-search-reset-icon" aria-hidden="true">✕</span>
+                    <span>検索を解除</span>
+                </a>
+            </div>
             <p th:if="${#lists.isEmpty(searchResults)}">該当する予定はありません。キーワードや検索範囲を変更してください。</p>
             <div class="search-result-list">
                 <button type="button" class="schedule-card search-result-card"

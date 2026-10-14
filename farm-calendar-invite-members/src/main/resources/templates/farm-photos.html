@@ -5,32 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
     <title>写真の記録 | 農業管理システム</title>
-    <link rel="stylesheet" th:href="@{/css/farm-photos.css(v='20261013-1')}" href="/css/farm-photos.css?v=20261013-1">
+    <link rel="stylesheet" th:href="@{/css/farm-photos.css(v='20261014-list-1')}" href="/css/farm-photos.css?v=20261014-list-1">
 </head>
-<body>
+<body th:classappend="${compactView} ? 'photo-compact-view' : ''">
 <main class="photo-shell">
-    <nav aria-label="画面の移動" class="photo-navigation">
+    <nav aria-label="画面の移動" class="photo-navigation" th:if="${!compactView}">
         <a th:href="@{/calendar}">← 作業カレンダー</a>
         <a th:href="@{/crop}">作物管理</a>
         <a th:href="@{/field}">圃場管理</a>
         <a th:href="@{/work-history}">作業履歴</a>
     </nav>
+    <nav aria-label="戻る" class="photo-navigation photo-compact-navigation" th:if="${compactView}">
+        <a th:href="${albumType == 'CROP' ? '/crop' : (albumType == 'FIELD' ? '/field' : (albumType == 'SCHEDULE' ? '/work-history' : '/calendar'))}">← 戻る</a>
+    </nav>
     <header class="photo-heading">
-        <span class="photo-kicker">農業管理システム・写真記録</span>
+        <span class="photo-kicker" th:if="${!compactView}">農業管理システム・写真記録</span>
         <h1 th:text="${albumTitle}">10月13日の写真</h1>
-        <p>作業の前後、作物の成長、圃場の状態を写真で残せます。写真は同じ農場のログイン中のメンバーだけが見られます。</p>
+        <p th:if="${!compactView}">作業の前後、作物の成長、圃場の状態を写真で残せます。写真は同じ農場のログイン中のメンバーだけが見られます。</p>
     </header>
     <p class="message success" th:if="${photoSuccess}" th:text="${photoSuccess}" role="status"></p>
     <p class="message error" th:if="${photoError}" th:text="${photoError}" role="alert"></p>
 
-    <form class="date-filter" method="get" th:if="${albumType == 'DAY'}" th:action="@{/farm-photos}">
+    <form class="date-filter" method="get" th:if="${albumType == 'DAY' and !compactView}" th:action="@{/farm-photos}">
         <input type="hidden" name="type" value="DAY">
         <label for="dayPicker">表示する日付</label>
         <input type="date" name="date" id="dayPicker" th:value="${photoDate}" required>
         <button type="submit">この日の写真を見る</button>
     </form>
 
-    <section class="photo-upload-panel" aria-labelledby="upload-title">
+    <section class="photo-upload-panel" th:if="${!compactView}" aria-labelledby="upload-title">
         <h2 id="upload-title">写真を追加</h2>
         <p th:if="${!photoEnabled}" class="message warning">
             現在、無料の写真保存先を設定中です。保存先の設定ができるまでアップロードは利用できません。
@@ -55,7 +58,7 @@
 
     <section class="photo-list-section" aria-labelledby="photo-list-title">
         <div class="photo-list-heading">
-            <h2 id="photo-list-title">登録した写真</h2>
+            <h2 id="photo-list-title" th:text="${compactView ? '写真一覧' : '登録した写真'}">登録した写真</h2>
             <span th:text="${#lists.size(images)} + '枚'">0枚</span>
         </div>
         <p class="photo-empty" th:if="${#lists.isEmpty(images)}">まだ写真はありません。</p>
@@ -67,12 +70,17 @@
                          alt="登録した農作業の写真" loading="lazy" referrerpolicy="no-referrer">
                 </a>
                 <div class="photo-card-meta">
-                    <strong th:text="${image.caption != null and !image.caption.isBlank() ? image.caption : '作業の写真'}">作業の写真</strong>
-                    <small><span th:text="${image.photoDate}">2026-10-13</span>
+                    <strong th:if="${!compactView}"
+                            th:text="${image.caption != null and !image.caption.isBlank() ? image.caption : '作業の写真'}">作業の写真</strong>
+                    <small th:if="${compactView}" class="photo-taken-date">
+                        撮影日：<span th:text="${#temporals.format(image.photoDate, 'yyyy年M月d日')}">2026年10月13日</span>
+                    </small>
+                    <small th:if="${!compactView}"><span th:text="${image.photoDate}">2026-10-13</span>
                         ・<span th:text="${image.createdBy}">登録者</span></small>
                     <form th:action="@{/farm-photos/{id}/delete(id=${image.id})}" method="post"
-                          onsubmit="return confirm('この写真を削除しますか？');">
-                        <button type="submit" class="photo-delete">削除</button>
+                          onsubmit="return confirm('この写真を消去しますか？');">
+                        <input th:if="${compactView}" type="hidden" name="view" value="list">
+                        <button type="submit" class="photo-delete" th:text="${compactView ? '消去' : '削除'}">消去</button>
                     </form>
                 </div>
             </article>

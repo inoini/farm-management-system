@@ -69,3 +69,32 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   .photo-card-meta strong { font-size: 13px; }
   .photo-card-meta small { font-size: 11px; }
 }
+
+/* Opened from the inline "写真の一覧を開く" button: only photos, taken date
+   and the delete action remain visible. Full gallery layout is preserved. */
+.photo-compact-view .photo-shell { max-width: 960px; }
+.photo-compact-view .photo-compact-navigation { margin-bottom: 12px; }
+.photo-compact-view .photo-heading { padding: 16px 20px; margin-bottom: 12px; }
+.photo-compact-view .photo-heading h1 { margin: 0; font-size: clamp(19px, 3vw, 26px); }
+.photo-compact-view .photo-list-section { padding: 18px; }
+.photo-compact-view .photo-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.photo-compact-view .photo-card-meta .photo-taken-date {
+    color: #215f3f;
+    font-size: 13px;
+    font-weight: 800;
+}
+.photo-compact-view .photo-card-meta form { margin: 0; }
+.photo-compact-view .photo-delete { min-width: 72px; min-height: 40px; }
+@media (max-width: 560px) {
+    .photo-compact-view .photo-heading, .photo-compact-view .photo-list-section { padding: 12px; }
+    .photo-compact-view .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .photo-compact-view .photo-card-meta { align-items: stretch; }
+    .photo-compact-view .photo-card-meta form { width: 100%; }
+    .photo-compact-view .photo-delete { width: 100%; }
+}

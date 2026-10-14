@@ -31,8 +31,8 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
     <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
-    <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261013-3')}">
-    <script defer th:src="@{/js/farm-photo-widget.js(v='20261013-3')}"></script>
+    <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261014-list-1')}">
+    <script defer th:src="@{/js/farm-photo-widget.js(v='20261014-list-1')}"></script>
 </head>
 
 <body class="crop-screen" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -254,7 +254,7 @@
             <p class="farm-photo-message" role="status" aria-live="polite">写真を読み込んでいます。</p>
             <h3 class="farm-photo-registered-title">登録済み写真・撮影日</h3>
             <div class="farm-photo-widget-gallery" aria-label="この作物の保存済み写真と撮影日"></div>
-            <a class="farm-photo-full-gallery" href="/farm-photos">写真の一覧・削除を開く</a>
+            <a class="farm-photo-full-gallery" href="/farm-photos?view=list">写真の一覧を開く</a>
         </section>
     </div>
 </div>

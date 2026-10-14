@@ -23,6 +23,8 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/icons/favicon-32.png}" href="/icons/favicon-32.png">
     <script defer th:src="@{/js/pwa.js(v='20260927-install-fix-1')}" src="/js/pwa.js?v=20260927-install-fix-1"></script>
     <link rel="stylesheet" th:href="@{/css/farm-photo-links.css(v='20261013-1')}">
+    <link rel="stylesheet" th:href="@{/css/farm-photo-widget.css(v='20261014-list-2')}">
+    <script defer th:src="@{/js/farm-photo-widget.js(v='20261014-list-2')}"></script>
 </head>
 
 <body class="field-list-body" th:classappend="|theme-${uiTheme} layout-${layoutMode}|">
@@ -214,7 +216,10 @@
                                     <a class="field-action-button field-edit-button"
                                        th:href="@{/field/edit/{id}(id=${field.id})}"
                                        href="#">編集</a>
-                                    <a class="farm-photo-link" th:href="@{/farm-photos(type='FIELD',targetId=${field.id})}">📷 写真</a>
+                                    <button type="button" class="farm-photo-link"
+                                            data-field-photo-open
+                                            th:attr="data-field-photo-open=${field.id},data-field-name=${field.name}"
+                                            aria-haspopup="dialog" aria-controls="field-photo-dialog">📷 写真</button>
                                     <form th:action="@{/field/delete/{id}(id=${field.id})}"
                                           method="post" style="margin:0;display:inline-flex;">
                                         <button class="field-action-button field-delete-button"
@@ -253,6 +258,42 @@
         </section>
 
     </main>
+
+    <div id="field-photo-dialog" class="crop-photo-dialog field-photo-dialog" role="dialog" aria-modal="true"
+         aria-hidden="true" aria-labelledby="field-photo-title" hidden>
+        <div class="crop-photo-dialog-body" role="document">
+            <div class="crop-photo-dialog-top">
+                <h2 id="field-photo-title" class="crop-photo-dialog-heading field-photo-dialog-heading">圃場の写真</h2>
+                <button type="button" class="crop-photo-dialog-close field-photo-dialog-close"
+                        aria-label="写真画面を閉じる">×</button>
+            </div>
+            <section class="farm-photo-widget" data-photo-type="FIELD" aria-label="この圃場の写真">
+                <h3>📷 圃場の写真を登録・確認</h3>
+                <div class="farm-photo-actions">
+                    <button type="button" class="farm-photo-camera-button">📸 写真を撮る</button>
+                    <button type="button" class="farm-photo-file-button">🗂 ファイルから選ぶ</button>
+                </div>
+                <input class="farm-photo-camera-input" type="file" accept="image/jpeg,image/png,image/webp"
+                       capture="environment" hidden aria-label="カメラで写真を撮る">
+                <input class="farm-photo-file-input" type="file" accept="image/jpeg,image/png,image/webp"
+                       hidden aria-label="ファイルから写真を選ぶ">
+                <div class="farm-photo-selected" hidden>
+                    <img class="farm-photo-preview-image" alt="保存前の写真プレビュー">
+                    <span class="farm-photo-filename"></span>
+                </div>
+                <label class="farm-photo-caption-label" for="fieldPhotoDate">撮影日</label>
+                <input class="farm-photo-capture-date" id="fieldPhotoDate" type="date" required>
+                <p class="farm-photo-date-hint">以前に撮った写真は、撮影日を変更して保存できます。</p>
+                <label class="farm-photo-caption-label" for="fieldPhotoCaption">写真の説明（任意）</label>
+                <input class="farm-photo-caption" id="fieldPhotoCaption" type="text"
+                       maxlength="120" placeholder="例：圃場の土づくり">
+                <button type="button" class="farm-photo-save-button" disabled>写真を保存</button>
+                <p class="farm-photo-message" role="status" aria-live="polite">写真を読み込んでいます。</p>
+                <div class="farm-photo-widget-gallery" aria-label="保存済みの圃場写真"></div>
+                <a class="farm-photo-full-gallery" href="/farm-photos?view=list">写真の一覧を開く</a>
+            </section>
+        </div>
+    </div>
 </body>
 
 </html>

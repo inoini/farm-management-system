@@ -120,6 +120,7 @@ public class FarmPhotoController {
     public String gallery(@RequestParam(defaultValue = "DAY") String type,
             @RequestParam(required = false) Long targetId,
             @RequestParam(required = false) String date,
+            @RequestParam(defaultValue = "") String view,
             Model model) {
         Album album = album(type, targetId, date);
         List<FarmPhoto> images = list(album);
@@ -132,6 +133,9 @@ public class FarmPhotoController {
         model.addAttribute("albumType", album.kind());
         model.addAttribute("targetId", album.targetId());
         model.addAttribute("photoDate", album.date());
+        // A minimal photo-and-delete view linked from the calendar/crop popup.
+        // Existing full upload and management screens remain available.
+        model.addAttribute("compactView", "list".equals(view));
         model.addAttribute("photoEnabled", storage.isConfigured());
         model.addAttribute("images", images);
         model.addAttribute("canUpload", storage.isConfigured()
@@ -290,7 +294,8 @@ public class FarmPhotoController {
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id, RedirectAttributes messages) {
+    public String delete(@PathVariable Long id,
+            @RequestParam(defaultValue = "") String view, RedirectAttributes messages) {
         FarmPhoto photo = photos.findByIdAndOwnerEmail(id, user.email())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         // Even if the linked crop/field/work was already deleted, its photo
@@ -308,7 +313,8 @@ public class FarmPhotoController {
         } catch (IllegalStateException e) {
             messages.addFlashAttribute("photoError", "写真を削除できませんでした。");
         }
-        return link(destination);
+        String destinationUrl = link(destination);
+        return "list".equals(view) ? destinationUrl + "&view=list" : destinationUrl;
     }
 
     private String link(Album album) {

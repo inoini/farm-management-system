@@ -117,7 +117,9 @@
             clearPreview();
             caption.value = "";
             message(widget, "写真を読み込んでいます。", false);
-            fullGallery.href = "/farm-photos?" + selectedTarget(widget).toString();
+            const galleryParams = selectedTarget(widget);
+            galleryParams.set("view", "list");
+            fullGallery.href = "/farm-photos?" + galleryParams.toString();
             gallery.replaceChildren();
             try {
                 const response = await fetch("/farm-photos/api?" + selectedTarget(widget).toString(),

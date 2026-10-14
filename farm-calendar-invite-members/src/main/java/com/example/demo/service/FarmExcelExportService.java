@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Crop;
 import com.example.demo.entity.Expense;
 import com.example.demo.entity.Field;
 import com.example.demo.entity.Sales;
@@ -120,6 +121,36 @@ public class FarmExcelExportService {
             sheet(book, "在庫一覧", new String[]{"資材名", "分類", "数量", "単位", "最低在庫", "保管場所",
                     "対象作物", "登録した希釈倍率", "登録した最大使用回数", "入力済使用回数", "収穫前日数",
                     "肥料成分", "最終使用日", "メモ"}, rows);
+            book.write(out);
+            return out.toByteArray();
+        }
+    }
+
+    public byte[] crops(List<Crop> crops) throws IOException {
+        List<Object[]> rows = new ArrayList<>();
+        for (Crop c : crops) {
+            rows.add(new Object[]{trim(c.getCropName()), trim(c.getVariety()), trim(c.getFieldName()),
+                    date(c.getPlantingDate()), date(c.getHarvestDate()),
+                    c.getArea(), c.getExpectedHarvestKg(), trim(c.getStatus()),
+                    date(c.getWeatherAdjustedHarvestDate()), trim(c.getTopdressingGuide())});
+        }
+        try (XSSFWorkbook book = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            sheet(book, "作物一覧", new String[]{"作物名", "品種", "圃場", "植付日", "収穫予定日",
+                    "面積（a）", "収穫予定量（kg）", "状態", "天候調整収穫日", "追肥の目安"}, rows);
+            book.write(out);
+            return out.toByteArray();
+        }
+    }
+
+    public byte[] fields(List<Field> fields) throws IOException {
+        Map<Long, String> names = FieldLabels.from(fields);
+        List<Object[]> rows = new ArrayList<>();
+        for (Field f : fields) {
+            rows.add(new Object[]{FieldLabels.label(names, f.getId()), trim(f.getLocation()),
+                    f.getArea(), trim(f.getCropName()), trim(f.getMemo())});
+        }
+        try (XSSFWorkbook book = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            sheet(book, "圃場一覧", new String[]{"圃場名", "住所", "面積（a）", "栽培作物", "メモ"}, rows);
             book.write(out);
             return out.toByteArray();
         }

@@ -3,7 +3,10 @@ package com.example.demo.conotroller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
+
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -43,14 +46,43 @@ class FarmPhotoControllerTest {
         when(crops.findByIdAndOwnerEmail(12L, "farm-one"))
                 .thenReturn(Optional.empty());
         assertThrows(ResponseStatusException.class,
-                () -> controller.gallery("CROP", 12L, null, new ExtendedModelMap()));
+                () -> controller.gallery("CROP", 12L, null, "", new ExtendedModelMap()));
     }
 
     @Test
     void albumTypeIsWhitelisted() {
         when(user.email()).thenReturn("farm-one");
         assertThrows(ResponseStatusException.class,
-                () -> controller.gallery("NOT_SUPPORTED", 3L, "2026-10-13",
+                () -> controller.gallery("NOT_SUPPORTED", 3L, "2026-10-13", "",
                         new ExtendedModelMap()));
+    }
+
+    @Test
+    void compactListModeIsOnlyEnabledForTheRequestedView() {
+        when(user.email()).thenReturn("farm-one");
+        ExtendedModelMap minimal = new ExtendedModelMap();
+        assertEquals("farm-photos", controller.gallery("DAY", null, "2026-10-14", "list", minimal));
+        assertEquals(true, minimal.get("compactView"));
+
+        ExtendedModelMap full = new ExtendedModelMap();
+        assertEquals("farm-photos", controller.gallery("DAY", null, "2026-10-14", "", full));
+        assertEquals(false, full.get("compactView"));
+    }
+
+    @Test
+    void deletingFromCompactListReturnsToTheSameDateAlbum() {
+        when(user.email()).thenReturn("farm-one");
+        FarmPhoto photo = new FarmPhoto();
+        photo.setId(8L);
+        photo.setKind("DAY");
+        photo.setPhotoDate(LocalDate.parse("2026-10-14"));
+        photo.setStorageKey("example.jpg");
+        when(photos.findByIdAndOwnerEmail(8L, "farm-one"))
+                .thenReturn(Optional.of(photo));
+
+        String result = controller.delete(8L, "list", new RedirectAttributesModelMap());
+        assertEquals("redirect:/farm-photos?type=DAY&date=2026-10-14&view=list", result);
+        verify(storage).delete("example.jpg");
+        verify(photos).delete(photo);
     }
 }

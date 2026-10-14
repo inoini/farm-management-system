@@ -71,7 +71,7 @@
                             </td>
                             <td class="history-actions-cell"><div class="operations-actions history-row-actions">
                                 <a class="operation-button primary" th:href="@{/work-history/edit/{id}(id=${schedule.id})}">編集</a>
-                                <a class="farm-photo-link" th:href="@{/farm-photos(type='DAY',date=${schedule.date})}">📷 この日の写真</a>
+                                <a class="farm-photo-link" th:href="@{/farm-photos(type='DAY',date=${schedule.date},view='list')}">📷 この日の写真</a>
                                 <form th:action="@{/work-history/delete/{id}(id=${schedule.id})}" method="post" onsubmit="return confirm('この作業を消去しますか？カレンダーからも削除されます。');">
                                     <button class="operation-button danger" type="submit">消去</button>
                                 </form>

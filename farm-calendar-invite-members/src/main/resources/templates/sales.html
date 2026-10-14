@@ -585,6 +585,18 @@
                 </div>
 
 
+
+            <div class="field">
+                <label for="sale-field-id">圃場 <span class="optional">任意</span></label>
+                <select id="sale-field-id" th:field="*{fieldId}">
+                    <option value="">圃場未設定</option>
+                    <option th:each="field : ${fields}"
+                            th:value="${field.id}"
+                            th:text="|${field.name == null ? '名称未設定' : field.name}（ID:${field.id}）|"></option>
+                </select>
+                <small>圃場管理で登録した圃場を選ぶと、圃場別利益に反映されます。</small>
+            </div>
+
                 <div role="alert" th:if="${#fields.hasAnyErrors()}">
                     <p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p>
                 </div>
@@ -662,6 +674,7 @@
                     <tr>
                         <th scope="col">日付</th>
                         <th scope="col">作物</th>
+                        <th scope="col">圃場</th>
                         <th scope="col">販売価格</th><th scope="col">数量・総重量</th>
                         <th scope="col">金額</th>
                         <th scope="col">メモ</th>
@@ -680,6 +693,7 @@
                             th:text="${#strings.isEmpty(s.crop) ? '未設定' : s.crop}">
                             さつまいも
                         </td>
+                        <td data-label="圃場" th:text="${s.fieldId == null ? '未設定' : fieldLabels.getOrDefault(s.fieldId, '未登録')}">第1圃場</td>
 
                         <td data-label="販売価格" th:text="${s.priceDescription}">5kgあたり1,500円</td>
                         <td data-label="数量・総重量">
@@ -713,7 +727,7 @@
 
                     <tr class="empty"
                         th:if="${sales == null or #lists.isEmpty(sales)}">
-                        <td colspan="7">
+                        <td colspan="8">
                             登録されている売上はありません。
                         </td>
                     </tr>

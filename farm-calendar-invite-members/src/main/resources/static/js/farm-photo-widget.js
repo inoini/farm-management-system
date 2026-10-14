@@ -244,5 +244,45 @@
                 if (event.key === "Escape" && !cropDialog.hidden) closeCrop();
             });
         }
+
+        // Field photo buttons reuse the existing private upload, preview, and
+        // date-based gallery flow; only the FIELD target changes on opening.
+        const fieldDialog = document.getElementById("field-photo-dialog");
+        const fieldWidget = fieldDialog && by(fieldDialog, ".farm-photo-widget");
+        let fieldPreviouslyFocused = null;
+        document.querySelectorAll("[data-field-photo-open]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                if (!fieldDialog || !fieldWidget) return;
+                fieldPreviouslyFocused = document.activeElement;
+                fieldWidget.dataset.photoTarget = button.dataset.fieldPhotoOpen;
+                const dateInput = by(fieldWidget, ".farm-photo-capture-date");
+                if (dateInput) {
+                    dateInput.max = todayLocal();
+                    dateInput.value = todayLocal();
+                }
+                const heading = by(fieldDialog, ".field-photo-dialog-heading");
+                if (heading) heading.textContent = (button.dataset.fieldName || "圃場") + "の写真";
+                fieldDialog.hidden = false;
+                fieldDialog.setAttribute("aria-hidden", "false");
+                fieldWidget.farmPhotoLoad();
+                by(fieldDialog, ".field-photo-dialog-close").focus();
+            });
+        });
+        function closeFieldPhotoDialog() {
+            if (!fieldDialog || fieldDialog.hidden) return;
+            fieldDialog.hidden = true;
+            fieldDialog.setAttribute("aria-hidden", "true");
+            if (fieldWidget) fieldWidget.farmPhotoClear();
+            if (fieldPreviouslyFocused) fieldPreviouslyFocused.focus();
+        }
+        if (fieldDialog) {
+            by(fieldDialog, ".field-photo-dialog-close").addEventListener("click", closeFieldPhotoDialog);
+            fieldDialog.addEventListener("click", function (event) {
+                if (event.target === fieldDialog) closeFieldPhotoDialog();
+            });
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && !fieldDialog.hidden) closeFieldPhotoDialog();
+            });
+        }
     });
 })();

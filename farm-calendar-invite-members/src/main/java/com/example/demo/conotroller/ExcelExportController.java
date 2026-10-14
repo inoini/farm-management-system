@@ -1,5 +1,6 @@
 package com.example.demo.conotroller;
 
+import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.ExpenseRepository;
 import com.example.demo.repository.FieldRepository;
 import com.example.demo.repository.SalesRepository;
@@ -26,6 +27,7 @@ public class ExcelExportController {
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
     private final FarmExcelExportService excel;
+    private final CropRepository crops;
     private final SalesRepository sales;
     private final ExpenseRepository expenses;
     private final FieldRepository fields;
@@ -33,10 +35,11 @@ public class ExcelExportController {
     private final StockService stock;
     private final CurrentUserService user;
 
-    public ExcelExportController(FarmExcelExportService excel, SalesRepository sales,
+    public ExcelExportController(FarmExcelExportService excel, CropRepository crops, SalesRepository sales,
             ExpenseRepository expenses, FieldRepository fields, ScheduleRepository schedules,
             StockService stock, CurrentUserService user) {
         this.excel = excel;
+        this.crops = crops;
         this.sales = sales;
         this.expenses = expenses;
         this.fields = fields;
@@ -69,6 +72,17 @@ public class ExcelExportController {
     @GetMapping("/stock/export.xlsx")
     public ResponseEntity<byte[]> inventory() throws IOException {
         return download("farm-inventory.xlsx", excel.inventory(stock.findAll()));
+    }
+
+    @GetMapping("/crop/export.xlsx")
+    public ResponseEntity<byte[]> crops() throws IOException {
+        return download("farm-crops.xlsx",
+                excel.crops(crops.findAllByOwnerEmailOrderByIdDesc(user.email())));
+    }
+
+    @GetMapping("/field/export.xlsx")
+    public ResponseEntity<byte[]> fields() throws IOException {
+        return download("farm-fields.xlsx", excel.fields(fields.findAllByOwnerEmail(user.email())));
     }
 
     private int selectedYear(Integer year) {

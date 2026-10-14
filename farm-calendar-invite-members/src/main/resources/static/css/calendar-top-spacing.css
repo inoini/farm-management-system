@@ -90,3 +90,68 @@
         margin-bottom: 5px;
     }
 }
+
+/* 2026-10-14：検索後の解除操作を、結果件数と並ぶ目立つボタンで表示する。 */
+.dashboard-body.calendar-screen .calendar-search-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 10px 0 12px;
+}
+
+.dashboard-body.calendar-screen .calendar-search-results-header h3 {
+    flex: 1 1 220px;
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.dashboard-body.calendar-screen .calendar-search-results-header .calendar-search-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    min-height: 44px;
+    min-width: 160px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 9px 16px;
+    border: 2px solid #982020;
+    border-radius: 10px;
+    background: #c62828;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(115, 20, 20, 0.22);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-body.calendar-screen .calendar-search-results-header .calendar-search-reset:hover {
+    background: #9f1c20;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(115, 20, 20, 0.3);
+}
+
+.dashboard-body.calendar-screen .calendar-search-results-header .calendar-search-reset:focus-visible {
+    outline: 3px solid #ffcc33;
+    outline-offset: 3px;
+}
+
+.dashboard-body.calendar-screen .calendar-search-results-header .calendar-search-reset-icon {
+    font-size: 19px;
+    line-height: 1;
+}
+
+@media screen and (max-width: 520px) {
+    .dashboard-body.calendar-screen .calendar-search-results-header .calendar-search-reset {
+        flex: 1 1 100%;
+        width: 100%;
+        min-height: 44px;
+    }
+}

@@ -20,6 +20,10 @@ public class Sales {
 
     private String crop;
 
+    // Field selected from field management. Null for legacy/unassigned records.
+    @Column(name = "field_id")
+    private Long fieldId;
+
 
     private Double amount;
 
@@ -58,6 +62,9 @@ public class Sales {
         this.crop=crop;
     }
 
+
+    public Long getFieldId() { return fieldId; }
+    public void setFieldId(Long fieldId) { this.fieldId = fieldId; }
 
     public Double getAmount(){
         return amount;

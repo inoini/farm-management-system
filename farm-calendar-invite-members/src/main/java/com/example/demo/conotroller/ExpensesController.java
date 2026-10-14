@@ -15,6 +15,8 @@ import com.example.demo.entity.Expense;
 import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.ExpenseRepository;
 import com.example.demo.repository.FieldRepository;
+import com.example.demo.entity.Field;
+import com.example.demo.util.FieldLabels;
 import com.example.demo.service.CurrentUserService;
 
 @Controller
@@ -101,9 +103,11 @@ public class ExpensesController {
     }
 
     private void addFields(Model model) {
-        model.addAttribute("fields", fieldRepository.findAllByOwnerEmail(currentUser.email()).stream()
+        List<Field> fields = fieldRepository.findAllByOwnerEmail(currentUser.email()).stream()
                 .sorted(java.util.Comparator.comparing(f -> f.getName() == null ? "" : f.getName()))
-                .toList());
+                .toList();
+        model.addAttribute("fields", fields);
+        model.addAttribute("fieldLabels", FieldLabels.from(fields));
     }
 
     private void validateField(Expense expense) {

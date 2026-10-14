@@ -220,6 +220,13 @@
 
 
 
+        <!-- Excel (.xlsx) export. Apache 2.0 license. -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+        </dependency>
+
     </dependencies>
 
 

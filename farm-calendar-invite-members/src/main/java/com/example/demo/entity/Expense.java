@@ -22,6 +22,10 @@ public class Expense {
     // 作物別収支に使用する任意の作物名。空欄は共通経費として扱う。
     private String crop;
 
+    // Field selected from field management. Null for legacy/unassigned records.
+    @Column(name = "field_id")
+    private Long fieldId;
+
     private Double amount;
 
 
@@ -63,6 +67,9 @@ public class Expense {
     public void setCrop(String crop) {
         this.crop = crop;
     }
+
+    public Long getFieldId() { return fieldId; }
+    public void setFieldId(Long fieldId) { this.fieldId = fieldId; }
 
     public Double getAmount() {
         return amount;

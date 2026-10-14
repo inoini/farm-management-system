@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.demo.entity.Expense;
 import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.ExpenseRepository;
+import com.example.demo.repository.FieldRepository;
 import com.example.demo.service.CurrentUserService;
 
 @Controller
@@ -21,11 +22,14 @@ public class ExpensesController {
 
     private final ExpenseRepository expenseRepository;
     private final CropRepository cropRepository;
+    private final FieldRepository fieldRepository;
     private final CurrentUserService currentUser;
 
-    public ExpensesController(ExpenseRepository expenseRepository, CropRepository cropRepository, CurrentUserService currentUser) {
+    public ExpensesController(ExpenseRepository expenseRepository, CropRepository cropRepository,
+            FieldRepository fieldRepository, CurrentUserService currentUser) {
         this.expenseRepository = expenseRepository;
         this.cropRepository = cropRepository;
+        this.fieldRepository = fieldRepository;
         this.currentUser = currentUser;
     }
 
@@ -34,12 +38,14 @@ public class ExpensesController {
         model.addAttribute("expenses", getExpenses());
         model.addAttribute("expense", new Expense());
         addCropNames(model);
+        addFields(model);
         return "expenses";
     }
 
     @PostMapping("/expenses/add")
     public String add(@ModelAttribute Expense expense) {
         expense.setId(null);
+        validateField(expense);
         expense.setCrop(clean(expense.getCrop()));
         expense.setOwnerEmail(currentUser.email());
         expenseRepository.save(expense);
@@ -60,6 +66,7 @@ public class ExpensesController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("expense", expense);
         addCropNames(model);
+        addFields(model);
         return "expenses_edit";
     }
 
@@ -69,6 +76,7 @@ public class ExpensesController {
         if (expense.getId() == null || expenseRepository.findByIdAndOwnerEmail(expense.getId(), owner).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        validateField(expense);
         expense.setCrop(clean(expense.getCrop()));
         expense.setOwnerEmail(owner);
         expenseRepository.save(expense);
@@ -90,6 +98,19 @@ public class ExpensesController {
                 .sorted()
                 .toList();
         model.addAttribute("cropNames", cropNames);
+    }
+
+    private void addFields(Model model) {
+        model.addAttribute("fields", fieldRepository.findAllByOwnerEmail(currentUser.email()).stream()
+                .sorted(java.util.Comparator.comparing(f -> f.getName() == null ? "" : f.getName()))
+                .toList());
+    }
+
+    private void validateField(Expense expense) {
+        if (expense.getFieldId() != null
+                && !fieldRepository.existsByIdAndOwnerEmail(expense.getFieldId(), currentUser.email())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "登録されている圃場から選択してください。");
+        }
     }
 
     private String clean(String value) {

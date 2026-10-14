@@ -609,7 +609,7 @@
                     <option value="">圃場未設定</option>
                     <option th:each="field : ${fields}"
                             th:value="${field.id}"
-                            th:text="|${field.name == null ? '名称未設定' : field.name}（ID:${field.id}）|"></option>
+                            th:text="${fieldLabels.get(field.id)}"></option>
                 </select>
                 <small>圃場管理で登録した圃場を選ぶと、圃場別利益に反映されます。</small>
             </div>

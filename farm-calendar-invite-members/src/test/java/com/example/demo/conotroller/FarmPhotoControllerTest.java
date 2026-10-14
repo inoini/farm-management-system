@@ -86,6 +86,16 @@ class FarmPhotoControllerTest {
     }
 
     @Test
+    void workHistoryPhotoButtonUsesCompactDayGallery() throws java.io.IOException {
+        try (var stream = getClass().getResourceAsStream("/templates/operations/work-history.html")) {
+            assertNotNull(stream, "作業履歴画面がありません。");
+            String html = new String(stream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            assertTrue(html.contains("type='DAY',date=${schedule.date},view='list'"),
+                    "作業履歴の写真ボタンは撮影日・消去のみの一覧を開く必要があります。");
+        }
+    }
+
+    @Test
     void compactListModeIsOnlyEnabledForTheRequestedView() {
         when(user.email()).thenReturn("farm-one");
         ExtendedModelMap minimal = new ExtendedModelMap();

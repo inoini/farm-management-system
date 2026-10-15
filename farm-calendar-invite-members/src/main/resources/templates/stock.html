@@ -246,7 +246,6 @@
                             th:text="${#strings.isEmpty(stockItem.location) ? '未設定' : stockItem.location}">未設定</td>
                         <td data-label="操作">
                             <div class="stock-actions">
-                                <a class="stock-edit" th:if="${stockItem.category == '農薬'}" th:href="@{/stock/pesticide-check/{id}(id=${stockItem.id})}">🧪 使用条件チェック</a>
                                 <a class="stock-edit" th:href="@{/stock/edit/{id}(id=${stockItem.id})}">編集</a>
                                 <form class="auth-delete-form" th:action="@{/stock/delete/{id}(id=${stockItem.id})}" method="post"
                                       onsubmit="return confirm('この資材を削除しますか？');">

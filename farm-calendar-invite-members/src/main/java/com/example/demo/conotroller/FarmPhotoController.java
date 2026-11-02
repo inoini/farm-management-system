@@ -33,6 +33,7 @@ import com.example.demo.repository.FieldRepository;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.service.CurrentUserService;
 import com.example.demo.service.FarmPhotoStorage;
+import com.example.demo.service.PhotoImageOptimizer;
 
 /**
  * Photo albums are never public, even when the application landing page is public.
@@ -143,6 +144,10 @@ public class FarmPhotoController {
                 && used < FarmPhotoStorage.APPLICATION_QUOTA_BYTES);
         model.addAttribute("remainingCount", Math.max(0,
                 FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM - albumCount));
+        model.addAttribute("storageUsedMiB", Math.round(used / 1048576.0));
+        model.addAttribute("storageUsagePercent", Math.min(100,
+                (int) Math.ceil(100.0 * used / FarmPhotoStorage.APPLICATION_QUOTA_BYTES)));
+        model.addAttribute("storageWarning", used >= FarmPhotoStorage.WARNING_QUOTA_BYTES);
         return "farm-photos";
     }
 
@@ -150,7 +155,8 @@ public class FarmPhotoController {
     /** Private JSON endpoints used by calendar popup and crop photo viewer. */
     private record PhotoInfo(Long id, String url, String caption, String date) {}
     private record AlbumInfo(boolean photoEnabled, boolean canUpload, int remainingCount,
-            List<PhotoInfo> images) {}
+            List<PhotoInfo> images, long storageUsedBytes, long storageLimitBytes,
+            boolean storageWarning) {}
 
     private String fileUrl(FarmPhoto image) {
         return "/farm-photos/" + image.getId() + "/file";
@@ -162,14 +168,17 @@ public class FarmPhotoController {
                 ? photos.countByOwnerEmailAndKindAndPhotoDate(user.email(), "DAY", album.date())
                 : photos.countByOwnerEmailAndKindAndReferenceId(user.email(), album.kind(), album.targetId());
         Long total = photos.totalStoredBytes();
+        long used = total == null ? 0L : total;
         boolean enabled = storage.isConfigured();
         boolean canUpload = enabled
                 && albumCount < FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM
-                && (total == null ? 0L : total) < FarmPhotoStorage.APPLICATION_QUOTA_BYTES;
+                && used < FarmPhotoStorage.APPLICATION_QUOTA_BYTES;
         return new AlbumInfo(enabled, canUpload,
                 (int) Math.max(0, FarmPhotoStorage.MAX_PHOTOS_PER_ALBUM - albumCount),
                 images.stream().map(p -> new PhotoInfo(p.getId(), fileUrl(p), p.getCaption(),
-                        p.getPhotoDate().toString())).toList());
+                        p.getPhotoDate().toString())).toList(),
+                used, FarmPhotoStorage.APPLICATION_QUOTA_BYTES,
+                used >= FarmPhotoStorage.WARNING_QUOTA_BYTES);
     }
 
     @GetMapping("/api")
@@ -240,6 +249,13 @@ public class FarmPhotoController {
         if (caption == null || caption.length() > 120) {
             throw new IllegalArgumentException("メモは120文字以内にしてください。");
         }
+        // Optimize only the new photo, leaving all existing uploaded images untouched.
+        byte[] original = file.getBytes();
+        FarmPhotoStorage.ImageType originalType = storage.detectImageType(original);
+        PhotoImageOptimizer.PreparedPhoto prepared = PhotoImageOptimizer.prepare(original, originalType);
+        byte[] content = prepared.bytes();
+        FarmPhotoStorage.ImageType mime = prepared.imageType();
+
         // The instance-level lock follows the existing quota policy.
         synchronized (storage) {
             long existing = "DAY".equals(album.kind())
@@ -249,12 +265,12 @@ public class FarmPhotoController {
                 throw new IllegalArgumentException("この写真一覧には5枚まで登録できます。");
             }
             Long total = photos.totalStoredBytes();
-            if ((total == null ? 0L : total) + file.getSize()
-                    > FarmPhotoStorage.APPLICATION_QUOTA_BYTES) {
-                throw new IllegalArgumentException("無料枠の安全上限に近づいたため、追加を停止しています。");
+            long used = total == null ? 0L : total;
+            // Count the ACTUAL compressed bytes, never the original camera file size.
+            // This check is made before contacting Supabase or saving photo metadata.
+            if (used > FarmPhotoStorage.APPLICATION_QUOTA_BYTES - content.length) {
+                throw new IllegalArgumentException("写真の保存容量が安全上限に達するため、追加を停止しました。");
             }
-            byte[] content = file.getBytes();
-            FarmPhotoStorage.ImageType mime = storage.detectImageType(content);
             String key = storage.upload(content, mime);
             try {
                 FarmPhoto photo = new FarmPhoto();

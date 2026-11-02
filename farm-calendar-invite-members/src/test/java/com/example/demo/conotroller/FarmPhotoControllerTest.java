@@ -123,4 +123,32 @@ class FarmPhotoControllerTest {
         verify(storage).delete("example.jpg");
         verify(photos).delete(photo);
     }
+    @Test
+    void warnsAtEightyPercentOfPhotoStorageBudget() {
+        when(user.email()).thenReturn("farm-one");
+        when(storage.isConfigured()).thenReturn(true);
+        when(photos.totalStoredBytes()).thenReturn(FarmPhotoStorage.WARNING_QUOTA_BYTES);
+        ExtendedModelMap model = new ExtendedModelMap();
+
+        controller.gallery("DAY", null, "2026-11-02", "", model);
+        assertEquals(true, model.get("storageWarning"));
+        assertEquals(80, model.get("storageUsagePercent"));
+        assertEquals(true, model.get("canUpload"));
+    }
+
+    @Test
+    void refusesAnUploadBeforeSupabaseWhenTheSafetyCapIsReached() {
+        when(user.email()).thenReturn("farm-one");
+        when(storage.isConfigured()).thenReturn(true);
+        when(photos.totalStoredBytes()).thenReturn(FarmPhotoStorage.APPLICATION_QUOTA_BYTES);
+        byte[] jpeg = {(byte) 255, (byte) 216, (byte) 255, 10, 10};
+        var upload = new org.springframework.mock.web.MockMultipartFile(
+                "photo", "sample.jpg", "image/jpeg", jpeg);
+        when(storage.detectImageType(jpeg)).thenReturn(new FarmPhotoStorage.ImageType("image/jpeg", "jpg"));
+
+        var response = controller.photoApiUpload("DAY", null, "2026-11-02", upload, "");
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(storage, never()).upload(any(byte[].class), any(FarmPhotoStorage.ImageType.class));
+    }
+
 }

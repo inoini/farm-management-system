@@ -22,6 +22,7 @@
         const node = by(widget, ".farm-photo-message");
         node.textContent = text;
         node.classList.toggle("is-error", Boolean(error));
+        node.classList.toggle("is-warning", !error && text.startsWith("注意："));
     }
     function formatPhotoDate(value) {
         const matched = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
@@ -78,8 +79,10 @@
         let generation = 0;
         let uploading = false;
         let uploadAllowed = false;
+        let selectionGeneration = 0;
 
         function clearPreview() {
+            selectionGeneration++;
             currentFile = null;
             camera.value = "";
             files.value = "";
@@ -90,22 +93,43 @@
             fileName.textContent = "";
             saveButton.disabled = true;
         }
-        function choose(input, other) {
+        async function choose(input, other) {
             const file = input.files && input.files[0];
             if (!file) return;
             other.value = "";
             clearPreview();
-            if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
-                message(widget, "JPEG・PNG・WebP形式の5MB以下の写真を選んでください。", true);
+            const request = selectionGeneration;
+            if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+                message(widget, "JPEG・PNG・WebP形式の写真を選んでください。", true);
                 return;
             }
-            currentFile = file;
-            objectUrl = URL.createObjectURL(file);
-            previewImage.src = objectUrl;
-            fileName.textContent = file.name;
-            preview.hidden = false;
-            saveButton.disabled = !uploadAllowed || uploading;
-            message(widget, "写真を確認して「写真を保存」を押してください。", false);
+            cameraButton.disabled = true;
+            fileButton.disabled = true;
+            message(widget, "写真を自動圧縮しています。", false);
+            try {
+                if (!window.FarmPhotoCompression) {
+                    throw new Error("画像圧縮機能を読み込めませんでした。再読み込みしてください。");
+                }
+                const optimized = await window.FarmPhotoCompression.compress(file);
+                if (request !== selectionGeneration) return;
+                currentFile = optimized;
+                objectUrl = URL.createObjectURL(optimized);
+                previewImage.src = objectUrl;
+                fileName.textContent = optimized === file ? file.name :
+                    file.name + "（" + window.FarmPhotoCompression.sizeLabel(file.size) +
+                    " → " + window.FarmPhotoCompression.sizeLabel(optimized.size) + "）";
+                preview.hidden = false;
+                saveButton.disabled = !uploadAllowed || uploading;
+                message(widget, "写真を確認して「写真を保存」を押してください。", false);
+            } catch (error) {
+                if (request !== selectionGeneration) return;
+                message(widget, error.message || "写真を圧縮できませんでした。", true);
+            } finally {
+                if (request === selectionGeneration) {
+                    cameraButton.disabled = !uploadAllowed || uploading;
+                    fileButton.disabled = !uploadAllowed || uploading;
+                }
+            }
         }
         cameraButton.addEventListener("click", function () { camera.click(); });
         fileButton.addEventListener("click", function () { files.click(); });
@@ -135,6 +159,13 @@
                 });
                 if (!data.photoEnabled) {
                     message(widget, "写真の保存先が未設定です。Renderの保存先設定を確認してください。", true);
+                } else if (data.storageWarning) {
+                    const used = window.FarmPhotoCompression
+                        ? window.FarmPhotoCompression.sizeLabel(data.storageUsedBytes || 0)
+                        : Math.round((data.storageUsedBytes || 0) / 1048576) + "MiB";
+                    message(widget, "注意：写真保存容量が80％以上です（使用中 " + used +
+                        "／安全上限800MiB）。容量を超える写真は保存しません。" +
+                        (!uploadAllowed ? "この一覧への追加は停止しています。" : ""), false);
                 } else if (!uploadAllowed) {
                     message(widget, "この一覧の写真上限（5枚）か保存容量の上限に達しています。", false);
                 } else if (!data.images || data.images.length === 0) {

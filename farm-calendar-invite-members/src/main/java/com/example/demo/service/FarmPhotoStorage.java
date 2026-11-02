@@ -21,6 +21,8 @@ public class FarmPhotoStorage {
     public static final long MAX_FILE_BYTES = 5L * 1024 * 1024;
     // Reserve a safety margin below the 1GB free storage quota.
     public static final long APPLICATION_QUOTA_BYTES = 800L * 1024 * 1024;
+    // Warn at 80% of the application's deliberately conservative 800 MiB cap.
+    public static final long WARNING_QUOTA_BYTES = APPLICATION_QUOTA_BYTES * 80 / 100;
     public static final int MAX_PHOTOS_PER_ALBUM = 5;
 
     @Value("${app.photo.supabase.url:}")

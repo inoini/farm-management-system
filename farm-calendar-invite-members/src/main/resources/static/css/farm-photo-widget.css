@@ -101,3 +101,13 @@
     .crop-photo-dialog { padding: 6px; }
     .crop-photo-dialog-body { padding: 12px; max-height: 94dvh; }
 }
+
+/* Quota warning at 80% of the photo application's storage safety ceiling. */
+.farm-photo-message.is-warning {
+    background: #fff3d7;
+    color: #714a07;
+    border: 1px solid #d3b26e;
+    border-radius: 9px;
+    padding: 10px;
+    font-weight: 750;
+}

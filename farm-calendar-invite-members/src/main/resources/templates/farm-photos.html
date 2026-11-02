@@ -6,6 +6,8 @@
     <meta name="robots" content="noindex,nofollow">
     <title>写真の記録 | 農業管理システム</title>
     <link rel="stylesheet" th:href="@{/css/farm-photos.css(v='20261014-list-1')}" href="/css/farm-photos.css?v=20261014-list-1">
+    <script defer th:src="@{/js/photo-image-compression.js(v='20261102-1')}" src="/js/photo-image-compression.js?v=20261102-1"></script>
+    <script defer th:src="@{/js/photo-upload-form.js(v='20261102-1')}" src="/js/photo-upload-form.js?v=20261102-1"></script>
 </head>
 <body th:classappend="${compactView} ? 'photo-compact-view' : ''">
 <main class="photo-shell">
@@ -25,6 +27,13 @@
     </header>
     <p class="message success" th:if="${photoSuccess}" th:text="${photoSuccess}" role="status"></p>
     <p class="message error" th:if="${photoError}" th:text="${photoError}" role="alert"></p>
+    <p class="message" th:if="${!compactView}" role="status">
+        写真の使用容量：<strong th:text="${storageUsedMiB}">0</strong>MiB ／ 安全上限800MiB
+        （<span th:text="${storageUsagePercent}">0</span>％）
+    </p>
+    <p class="message warning" th:if="${storageWarning and !compactView}" role="alert">
+        注意：写真保存容量が80％以上になりました。安全上限に達する前に新しい写真の保存を停止します。
+    </p>
 
     <form class="date-filter" method="get" th:if="${albumType == 'DAY' and !compactView}" th:action="@{/farm-photos}">
         <input type="hidden" name="type" value="DAY">
@@ -49,7 +58,8 @@
             <input id="photoDate" type="date" name="date" th:value="${photoDate}" th:readonly="${albumType == 'SCHEDULE'}" required>
             <label for="file">写真を選ぶ（カメラ撮影も可能）</label>
             <input id="file" type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>
-            <small>JPEG / PNG / WebP、1枚5MB以内。1つの写真一覧に最大5枚まで。</small>
+            <small>JPEG / PNG / WebPを自動圧縮して保存（アップロード時は5MB以内）。1つの写真一覧に最大5枚まで。</small>
+            <p id="photo-compression-status" class="message" role="status" hidden></p>
             <label for="caption">写真の説明（任意）</label>
             <input id="caption" type="text" name="caption" maxlength="120" placeholder="例：収穫前の葉の様子">
             <button type="submit">写真を保存する</button>

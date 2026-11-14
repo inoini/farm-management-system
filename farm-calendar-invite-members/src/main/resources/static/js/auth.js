@@ -99,12 +99,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             event.preventDefault();
             const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+            // Snapshot the user's username BEFORE the asynchronous CSRF refresh.
+            // A browser/password manager may overwrite the visible field with
+            // a Gmail address while the refresh request is in flight.
+            const loginForm = form.id === 'loginForm' && usernameField;
+            const submittedUsername = loginForm ? usernameField.value.trim() : null;
             if (submitButton) submitButton.disabled = true;
             try {
                 await refreshFormCsrf(form);
+                if (loginForm) {
+                    // Send a protected hidden snapshot, not the autofill-prone
+                    // visible username input. No account/database data changes.
+                    let stableField = form.querySelector('input[data-stable-login-id]');
+                    if (!stableField) {
+                        stableField = document.createElement('input');
+                        stableField.type = 'hidden';
+                        stableField.setAttribute('data-stable-login-id', '');
+                        form.appendChild(stableField);
+                    }
+                    usernameField.removeAttribute('name');
+                    stableField.name = 'loginId';
+                    stableField.value = submittedUsername;
+                    usernameField.value = submittedUsername;
+                }
                 submitting = true;
                 form.submit();
             } catch (error) {
+                if (loginForm) {
+                    usernameField.name = 'loginId';
+                    const stableField = form.querySelector('input[data-stable-login-id]');
+                    if (stableField) stableField.removeAttribute('name');
+                }
                 console.error(error);
                 alert('ログイン画面の有効期限を更新できませんでした。ページを再読み込みして、もう一度お試しください。');
                 if (submitButton) submitButton.disabled = false;
